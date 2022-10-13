@@ -3,6 +3,7 @@ A Python library for mapping 3-D arrays to voxel models.
 
 <!-- ![=250x]() -->
 <img src="tests/voxelmap_example.png" width="250">
+
 ## Installation
 
 Coming soon
