@@ -6,13 +6,9 @@ A Python library for making voxel models from NumPy arrays.
 
 ## Installation
 
-Coming soon
-<!--
 ```ruby
 pip install voxelmap
 ```
--->
-
 
 ## Contributing
 
