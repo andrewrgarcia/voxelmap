@@ -1,3 +1,8 @@
+'''
+Used as a draft script. 
+this is NOT a test module to run unit tests. 
+Check test_module.py file for that. 
+'''
 import sys
 sys.path.append('/home/andrew/voxelmap') 
 import voxelmap as vxm

@@ -1,3 +1,7 @@
+'''main test module to run unit tests on library
+running may be as simple as `python setup.py test` on main directory path, 
+but check online documentation
+'''
 import voxelmap as vxm
 import numpy as np
 import matplotlib.pyplot as plt
