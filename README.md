@@ -1,5 +1,5 @@
 # voxelmap
-A Python library for mapping 3-D arrays to voxel models. 
+A Python library for making voxel models from NumPy arrays.  
 
 <!-- ![=250x]() -->
 <img src="tests/voxelmap_example.png" width="250">

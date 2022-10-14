@@ -1,1 +1,8 @@
 __pycache__
+notes.txt
+venv/
+*.egg-info/
+
+#files created during tests
+block_a
+random-array

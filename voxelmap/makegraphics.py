@@ -1,6 +1,6 @@
 '''
 VOXELMAP 
-Mapping arrays to voxel models
+A Python library for making voxel models from NumPy arrays.
 Andrew Garcia, 2022
 
 '''
@@ -16,19 +16,21 @@ import pickle
 
 
 def load_array(filename):
+    '''Loads a pickled numpy array with `filename` name'''
     return pickle.load( open(filename, "rb" ),encoding='latin1')
 
-def save_array(tensor,filename):
-    return pickle.dump(tensor,open(filename,'wb'))
+def save_array(array,filename):
+    '''Saves an `array` array with `filename` name using the pickle module'''
+    return pickle.dump(array,open(filename,'wb'))
 
 
-def binarize(tensor,colorindex=1):
-    '''convert a tensor with integer entries to either 0 if 0 or 1 if !=0'''
-    tensorv = np.zeros((tensor.shape))
-    for i in np.argwhere(tensor!=0):
-        tensorv[tuple(i)] = colorindex
+def binarize(array,colorindex=1):
+    '''converts an array with integer entries to either 0 if 0 or 1 if !=0'''
+    arrayv = np.zeros((array.shape))
+    for i in np.argwhere(array!=0):
+        arrayv[tuple(i)] = colorindex
     
-    return tensorv
+    return arrayv
 
     
 def set_axes_radius(ax, origin, radius):
@@ -60,8 +62,17 @@ def set_axes_equal(ax):
 class Model:
 
     def __init__(self,array,colormap=cm.cool,cmap_alpha=1):
+        '''Model structure. Calls `3-D` array to process into 3-D model.
+
+        Parameters
+        ----------
+        array : np.array(int)
+            array of the third-order populated with discrete, non-zero integers which may represent a voxel block type
+        hashblocks : dict[int]{str, float }
+            a dictionary for which the keys are the integer values on the discrete arrays (above) an the values are the color (str) for the specific key and the alpha for the voxel object (float)
+        '''
         self.array = array          # array of third-order (3-D)
-        self.hashblocks = {}        #hashblocks is a dictionary for the block colormap (see customadd)
+        self.hashblocks = {}        #hashblocks is 
         self.colormap = colormap
         self.cmap_alpha = cmap_alpha
 
@@ -80,9 +91,7 @@ class Model:
         self.hashblocks[key] = [color,alpha]
 
     def gradmap(self,colormap=cm.cool,cmap_alpha=1):
-        self.colormap = colormap
-        self.cmap_alpha = cmap_alpha
-        '''update colormap for gradient coloring
+        '''Update colormap for gradient coloring
 
         Parameters
         ----------
@@ -92,8 +101,12 @@ class Model:
         alpha : float, optional
             transparency index (0 -> transparent; 1 -> opaque; default = 1.0)
         '''
+        self.colormap = colormap
+        self.cmap_alpha = cmap_alpha
+
 
     def build(self):
+        '''Builds voxel model structure from python numpy array'''
         binarray=binarize(self.array)   # `binarize` array 
         Z,X,Y = np.shape(self.array)
 
@@ -113,6 +126,10 @@ class Model:
         return voxels
     
     def draw(self,coloring='adatoms'):
+        '''Draws voxel model after building it with the provided `array`. 
+        `coloring` option `voxels` requires building custom color map with `Model().customadd`
+        remaining `coloring` options use a default colormap, which may be updated with `Model().gradmap`'''
+
         Z,X,Y = np.shape(self.array)
 
         voxcolors=np.ones((Z,X,Y), dtype=object)

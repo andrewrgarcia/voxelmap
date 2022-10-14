@@ -7,8 +7,8 @@ from matplotlib import cm
 import numpy as np
 import matplotlib.pyplot as plt
 
-# a = np.random.randint(0,10,(7,7,7))
-# vxm.save_array(a,'block_a')
+a = np.random.randint(0,10,(7,7,7))
+vxm.save_array(a,'block_a')
 
 b = vxm.load_array('block_a')
 
