@@ -1,7 +1,5 @@
 # voxelmap
 A Python library for making voxel models from NumPy arrays.  
-
-<!-- ![=250x]() -->
 <img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/voxelmap_example.png?raw=true?" width="300">
 
 ## Installation
@@ -81,7 +79,7 @@ model.draw('voxels')
 ```
 Out:
 
-<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/randarray.png?raw=true" width="250">
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/randarray.png?raw=true" width="200">
 
 
 

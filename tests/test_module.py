@@ -59,8 +59,76 @@ def test_gradient_voxel_colormap2():
 
     model.draw('linear')
 
+
+def test_goxeldog():
+    'process dog.txt from Goxel'
+    path = 'extra/dog.txt'
+
+    gox = vxm.Goxel(path)
+    gox.update_colors('8f563b',1)
+    gox.update_colors('ac3232',2)
+    gox.update_colors('000000',3)
+    gox.update_colors('ffffff',4)
+
+    dog = gox.importfile()
+    dog = np.transpose(dog,(2,1,0))
+
+    model = vxm.Model(dog)
+
+    model.customadd(1,'#8f563b',0.8)
+    model.customadd(2,'#ac3232')
+    model.customadd(3,'#000000')
+
+    model.draw('voxels')
+
+
+    model.gradmap(cm.terrain,0.5)
+    model.draw('nuclear')
+
+def test_sphere():
+    'sphere: stress graphics'
+    path = 'extra/sphere.txt'
+
+    gox = vxm.Goxel(path)
+
+    gox.update_colors('ffffff',1)   #update voxel colors (only ffffff -> white) from .txt to integer index in array
+
+    sphere = gox.importfile()       #convert gox .txt to numpy array
+
+    'coloring the white blocks of the pixelated sphere'
+    for i in np.argwhere(sphere!=0):
+        color =  np.random.randint(10)
+        sphere[tuple(i)] = color
+
+    '--MAKE SPHERE MODE (model1)--'
+    model1 = vxm.Model(sphere)
+
+    'create hashmap of voxel colors'
+    model1.customadd(1,'#84f348',0.8)
+    model1.customadd(2,'#4874f3')
+    model1.customadd(3,'#32CD32')
+    model1.customadd(4,'#653c77',0.90)
+    model1.customadd(5,'lime',0.75)
+    model1.customadd(6,'k',)
+    model1.customadd(7,'#e10af2',0.3)
+    model1.customadd(8,'red',0.3)
+    model1.customadd(9,'orange',0.2)
+    savedhash = model1.hashblocks        # save created hashmap of voxel colors (lines above this one)
+
+    # model1.draw('voxels')             # do not draw full sphere (keep tests relatively short)
+
+    '--MAKE WEDGE MODEL (model2)--'
+    mid = sphere.shape[2]//2
+    wedge = sphere[mid:,mid:,:mid]          # slice above sphere into wedge 
+
+    model2 = vxm.Model(wedge)
+    model2.hashblocks = savedhash       # used the hashmap from model 1
+    model2.draw('voxels')
+
+
 test_pickle()
 test_custom_voxel_colormap()
 test_gradient_voxel_colormap1()
 test_gradient_voxel_colormap2()
-
+test_goxeldog()
+test_sphere()
