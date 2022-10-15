@@ -4,7 +4,6 @@ but check online documentation
 '''
 import voxelmap as vxm
 import numpy as np
-import matplotlib.pyplot as plt
 
 from matplotlib import cm
 
@@ -122,7 +121,7 @@ def test_sphere():
 
 def test_image():
 
-    img = vxm.Image('extra/mountain.png')    # cat with glasses image (Credit: https://www.pictorem.com/profile/Tpencilartist)
+    img = vxm.Image('extra/land.png')    # cat with glasses image (Credit: https://www.pictorem.com/profile/Tpencilartist)
     img.make(1)                       #resized to 0.3x original size (default)
     mapped_img = img.map3d(12)          # mapped to 3d with a depth of 10 voxels
     
@@ -133,10 +132,10 @@ def test_image():
     model.draw('linear')
 
 
-# test_pickle()
+test_pickle()
 test_custom_voxel_colormap()
-# test_gradient_voxel_colormap1()
-# test_gradient_voxel_colormap2()
-# test_goxeldog()
-# test_sphere()
-# test_image()
+test_gradient_voxel_colormap1()
+test_gradient_voxel_colormap2()
+test_goxeldog()
+test_sphere()
+test_image()
