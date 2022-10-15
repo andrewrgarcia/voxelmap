@@ -3,6 +3,8 @@ notes.txt
 tests/draft.py
 venv/
 *.egg-info/
+imgui.ini
+extra/amorph*
 
 #files created during tests
 block_a

@@ -1,6 +1,6 @@
 # voxelmap
 A Python library for making voxel models from NumPy arrays.  
-<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/voxelmap_example.png?raw=true?" width="300">
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/land_mapped.png?raw=true" >
 
 ## Installation
 
@@ -62,24 +62,23 @@ In:
 import voxelmap as vxm
 import numpy as np
 
-#make a 4x4x4 integer array with random values between 6 and 9
-array = np.random.randint(6,10,(4,4,4))
+#make a 4x4x4 integer array with random values between 0 and 9
+array = np.random.randint(0,10,(7,7,7))
 
 #incorporate array to Model structure
-model = vxm.Model(intarray)
+model = vxm.Model(array)
 
-#add voxel colors and alpha-transparency for integer values 6 - 9 (needed for `voxels` coloring)
-model.customadd(6,'k')
-model.customadd(7,'#e10af2',0.3)
-model.customadd(8,'red',0.3)
-model.customadd(9,'orange',0.2)
+#add voxel colors and alpha-transparency for integer values 0 - 9 (needed for `voxels` coloring)
+
+model.customadd(1,'#84f348',0.8); model.customadd(2,'#4874f3'); model.customadd(3,'#32CD32')  model.customadd(4,'#653c77',0.90); model.customadd(5,'lime',0.75) ;  model.customadd(6,'k',)  model.customadd(7,'#e10af2',0.3); model.customadd(8,'red',0.3); model.customadd(9,'orange',0.2)
+
 
 #draw array as a voxel model with `voxels` coloring scheme
 model.draw('voxels')
 ```
 Out:
 
-<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/randarray.png?raw=true" width="200">
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/randomarray.png?raw=true" width="200">
 
 
 

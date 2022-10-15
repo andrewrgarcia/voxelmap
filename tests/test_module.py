@@ -27,15 +27,9 @@ def test_custom_voxel_colormap():
     arr = np.random.randint(0,10,(7,7,7))
     model = vxm.Model(arr)
 
-    model.customadd(1,'#84f348',0.8)
-    model.customadd(2,'#4874f3')
-    model.customadd(3,'#32CD32')
-    model.customadd(4,'#653c77',0.90)
-    model.customadd(5,'lime',0.75)
-    model.customadd(6,'k',)
-    model.customadd(7,'#e10af2',0.3)
-    model.customadd(8,'red',0.3)
-    model.customadd(9,'orange',0.2)
+    model.customadd(1,'#84f348',0.8); model.customadd(2,'#4874f3'); model.customadd(3,'#32CD32') ;  model.customadd(4,'#653c77',0.90)
+    model.customadd(5,'lime',0.75) ;  model.customadd(6,'k',) ;  model.customadd(7,'#e10af2',0.3)
+    model.customadd(8,'red',0.3); model.customadd(9,'orange',0.2)
 
     model.draw('voxels')
 
@@ -126,9 +120,23 @@ def test_sphere():
     model2.draw('voxels')
 
 
-test_pickle()
+def test_image():
+
+    img = vxm.Image('extra/mountain.png')    # cat with glasses image (Credit: https://www.pictorem.com/profile/Tpencilartist)
+    img.make(1)                       #resized to 0.3x original size (default)
+    mapped_img = img.map3d(12)          # mapped to 3d with a depth of 10 voxels
+    
+    model = vxm.Model(mapped_img)
+    model.array = np.transpose(np.flip(model.array),(2,0,1))
+
+    model.gradmap(cm.terrain,0.5)
+    model.draw('linear')
+
+
+# test_pickle()
 test_custom_voxel_colormap()
-test_gradient_voxel_colormap1()
-test_gradient_voxel_colormap2()
-test_goxeldog()
-test_sphere()
+# test_gradient_voxel_colormap1()
+# test_gradient_voxel_colormap2()
+# test_goxeldog()
+# test_sphere()
+# test_image()
