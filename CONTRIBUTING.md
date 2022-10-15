@@ -16,17 +16,12 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 ## Running voxelmap unit tests 
 
-These are the steps I typically take to test any added patches / enhancements to voxelmap. I understand you may have another system, but this one has worked well for me:
+I typically use the following command line call to test any added patches / enhancements for *voxelmap*. I understand you may have another system, but this has worked well for me.
 
+While in highest-level voxelmap directory:
 ```ruby
-python3 -m venv venv              # set up `venv` virtual environment (python 3)
-source venv/bin/activate          # active venv
-pipreqs . --force                 # update pipreqs to requirements.txt
-pip install -r requirements.txt   # install from requirements.txt
-
 python setup.py test              # run unit tests from test_module file (functions to be tested must start with the test_ prefix)
 ```
-
 
 ## Code of Conduct
 
