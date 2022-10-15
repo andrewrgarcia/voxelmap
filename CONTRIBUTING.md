@@ -14,7 +14,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 * Push to the branch (git push origin my-new-feature)
 * Create a new Pull Request
 
-# Running voxelmap unit tests 
+## Running voxelmap unit tests 
 
 These are the steps I typically take to test any added patches / enhancements to voxelmap. I understand you may have another system, but this one has worked well for me:
 
