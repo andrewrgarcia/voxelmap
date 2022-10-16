@@ -125,7 +125,7 @@ class Model:
 
         return voxels
     
-    def draw(self,coloring='adatoms'):
+    def draw(self,coloring='nuclear'):
         '''Draws voxel model after building it with the provided `array`. 
         `coloring` option `voxels` requires building custom color map with `Model().customadd`
         remaining `coloring` options use a default colormap, which may be updated with `Model().gradmap`'''
@@ -181,11 +181,10 @@ class Model:
 
         ax = fig.gca(projection='3d')
         ax._axis3don = False
-        # ax.set_aspect('equal')         
 
         voxels = Model(self.array).build()
 
         ax.voxels(voxels, facecolors=voxcolors)
 
-        set_axes_equal(ax)             # important!
+        set_axes_equal(ax)           
         plt.show()
