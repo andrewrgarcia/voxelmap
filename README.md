@@ -1,6 +1,7 @@
 # voxelmap
 A Python library for making voxel models from NumPy arrays.  
-<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/land_mapped.png?raw=true" >
+
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/wingeddog.png?raw=true" width="300">
 
 ## Installation
 
@@ -15,9 +16,34 @@ You may use the Issues section of this repository if you'd like to propose some 
 
 ## Usage Examples
 
+#### Map a 2-D image to a 3-D model
+
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/land.png?raw=true" width="150" >
+
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/land_mapped.png?raw=true" >
+
+Code:
+
+```ruby
+import voxelmap as vxm
+import numpy as np
+
+img = vxm.Image('extra/land.png')       # incorporate fake land topography .png file
+img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
+mapped_img = img.map3d(12)              # mapped to 3d with a depth of 12 voxels
+
+model = vxm.Model(mapped_img)
+model.array = np.transpose(np.flip(model.array),(2,0,1))
+
+model.gradmap(cm.terrain,0.5)
+model.draw('linear')
+```
+
 #### Process an exported .txt file from a [Goxel](https://goxel.xyz/) project
 
-In:
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/dog.png?raw=true" width="350"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/earthdog.png?raw=true" width="350">
+
+Code:
 
 ```ruby
 import voxelmap as vxm
@@ -48,15 +74,12 @@ model.draw('voxels')
 model.gradmap(cm.terrain,0.5)
 model.draw('nuclear')
 ```
-Out: 
-
-
-<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/dog.png?raw=true" width="350"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/earthdog.png?raw=true" width="350">
-
 
 #### Draw a 3-D model from an array with custom voxel coloring scheme `voxels`
 
-In:
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/randomarray.png?raw=true" width="200">
+
+Code:
 
 ```ruby
 import voxelmap as vxm
@@ -76,9 +99,7 @@ model.customadd(1,'#84f348',0.8); model.customadd(2,'#4874f3'); model.customadd(
 #draw array as a voxel model with `voxels` coloring scheme
 model.draw('voxels')
 ```
-Out:
 
-<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/randomarray.png?raw=true" width="200">
 
 
 

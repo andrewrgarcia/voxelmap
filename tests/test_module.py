@@ -121,9 +121,9 @@ def test_sphere():
 
 def test_image():
 
-    img = vxm.Image('extra/land.png')    # cat with glasses image (Credit: https://www.pictorem.com/profile/Tpencilartist)
-    img.make(1)                       #resized to 0.3x original size (default)
-    mapped_img = img.map3d(12)          # mapped to 3d with a depth of 10 voxels
+    img = vxm.Image('extra/land.png')       # incorporate fake land topography .png file
+    img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
+    mapped_img = img.map3d(12)              # mapped to 3d with a depth of 12 voxels
     
     model = vxm.Model(mapped_img)
     model.array = np.transpose(np.flip(model.array),(2,0,1))
