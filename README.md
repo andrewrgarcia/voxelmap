@@ -10,7 +10,7 @@ pip install voxelmap
 ```
 
 ## Contributing / Hacktoberfest
-Meaningful contributions to the project are always welcome. This project is also active as a part of Hacktoberfest 2021. Before making a PR, please make sure to read the [CONTRIBUTING](./CONTRIBUTING.md) document. 
+Meaningful contributions to the project are always welcome. This project is also active as a part of Hacktoberfest 2022. Before making a PR, please make sure to read the [CONTRIBUTING](./CONTRIBUTING.md) document. 
 
 You may use the Issues section of this repository if you'd like to propose some new ideas/enhancements or report a bug.
 
