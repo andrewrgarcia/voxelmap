@@ -58,19 +58,18 @@ def test_goxeldog():
     path = 'extra/dog.txt'
 
     gox = vxm.Goxel(path)
-    gox.update_colors('8f563b',1)
-    gox.update_colors('ac3232',2)
-    gox.update_colors('000000',3)
-    gox.update_colors('ffffff',4)
 
     dog = gox.importfile()
     dog = np.transpose(dog,(2,1,0))
 
     model = vxm.Model(dog)
 
-    model.customadd(1,'#8f563b',0.8)
-    model.customadd(2,'#ac3232')
-    model.customadd(3,'#000000')
+    # model.colortransfer()         # Future function for Model structure (should do an automatic customadd of imported voxel colors as default)
+
+    model.customadd(1,'#000000')
+    model.customadd(2,'#8f563b',0.8)
+    model.customadd(3,'#ac3232')
+    model.customadd(4,'yellow')
 
     model.draw('voxels')
 

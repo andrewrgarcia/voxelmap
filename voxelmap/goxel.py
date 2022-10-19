@@ -12,12 +12,7 @@ class Goxel:
             file name and/or path for goxel file e.g. my_goxel_file.gox
         '''
         self.file = file
-        self.colorkey = {
-                        '33cc66': 1,
-                        '339900': 2,
-                        'ff99ff': 3,
-                        'ffccff': 4,
-                        }
+        self.colorkey = {}
 
     def update_colors(self,color,array_index):
         '''Update voxel colors (hashes) from Goxel file to be represented as `array_index` integers
@@ -50,12 +45,18 @@ class Goxel:
         
         colorkey = self.colorkey
 
-        print(colorkey)
+        # print(colorkey)
         elems = goxeltxt.T
-        
+
+        'define voxel colorkey dict from colors present in voxel file'
+        model_colors = sorted(list(set(goxeltxt['rgb'])))
+        for i in range(len(model_colors)):
+            self.colorkey.update({i+1: model_colors[i] })
+
+        'write array from .txt file voxel color values and locs'
         for i in range(len(goxeltxt)):
             x,y,z = elems[i][0:3].astype('int')
             rgb = elems[i][3]
-            array[z,y,x] = colorkey[rgb]
+            array[z,y,x] = [i for i in self.colorkey if self.colorkey[i]==rgb][0]
                     
         return array
