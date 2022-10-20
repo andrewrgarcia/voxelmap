@@ -1,5 +1,6 @@
 # voxelmap
-A Python library for making voxel models from NumPy arrays.  
+
+A Python library for making voxel models from NumPy arrays.
 
 <img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/wingeddog.png?raw=true" width="300">
 
@@ -10,7 +11,8 @@ pip install voxelmap
 ```
 
 ## Contributing / Hacktoberfest
-Meaningful contributions to the project are always welcome. This project is also active as a part of Hacktoberfest 2022. Before making a PR, please make sure to read the [CONTRIBUTING](./CONTRIBUTING.md) document. 
+
+Meaningful contributions to the project are always welcome. This project is also active as a part of Hacktoberfest 2022. Before making a PR, please make sure to read the [CONTRIBUTING](./CONTRIBUTING.md) document.
 
 You may use the Issues section of this repository if you'd like to propose some new ideas/enhancements or report a bug.
 
@@ -35,13 +37,14 @@ mapped_img = img.map3d(12)              # mapped to 3d with a depth of 12 voxels
 model = vxm.Model(mapped_img)
 model.array = np.transpose(np.flip(model.array),(2,0,1))
 
-model.gradmap(cm.terrain,0.5)
+model.colormap = cm.terrain
+model.alphacm = 0.5
 model.draw('linear')
 ```
 
 #### Process an exported .txt file from a [Goxel](https://goxel.xyz/) project
 
-<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/dog.png?raw=true" width="350"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/earthdog.png?raw=true" width="350">
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/dog.png?raw=true" width="350"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/dawg.png?raw=true" width="350"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/rainbowd.png?raw=true" width="350">
 
 Code:
 
@@ -52,11 +55,6 @@ import numpy as np
 '''process dog.txt from Goxel'''
 gox = vxm.Goxel('../extra/dog.txt')
 
-'hexanumerical colors in txt file; replace with integer for integer array'
-gox.update_colors('8f563b',1)
-gox.update_colors('ac3232',2)
-gox.update_colors('000000',3)
-gox.update_colors('ffffff',4)
 dog = gox.importfile()      # turn txt file to array
 
 dog = np.transpose(dog,(2,1,0))     #rotate dog
@@ -64,14 +62,21 @@ dog = np.transpose(dog,(2,1,0))     #rotate dog
 'load dog array to voxelmap Model'
 model = vxm.Model(dog)
 
+'color transfer from Goxel to Model'
+model.hashblocks = gox.hashblocks
+model.draw('voxels')
+
 'draw with custom colors'
-model.customadd(1,'#8f563b',0.8)
-model.customadd(2,'#ac3232')
-model.customadd(3,'#000000')
+model.customadd(1,'yellow',1)
+model.customadd(2,'black',0.4)
+model.customadd(3,'cyan',0.75)
+model.customadd(4,'#000000')
+
 model.draw('voxels')
 
 'draw with nuclear fill and terrain colormap'
-model.gradmap(cm.terrain,0.5)
+model.colormap = cm.terrain
+model.alphacm = 0.5
 model.draw('nuclear')
 ```
 
@@ -99,11 +104,6 @@ model.customadd(1,'#84f348',0.8); model.customadd(2,'#4874f3'); model.customadd(
 #draw array as a voxel model with `voxels` coloring scheme
 model.draw('voxels')
 ```
-
-
-
-
-
 
 ## Disclaimer: Use At Your Own Risk
 
