@@ -75,8 +75,8 @@ model.customadd(4,'#000000')
 model.draw('voxels')
 
 'draw with nuclear fill and terrain colormap'
-model.colormap = cm.terrain
-model.alphacm = 0.5
+model.colormap = cm.rainbow
+model.alphacm = 0.8
 model.draw('nuclear')
 ```
 
