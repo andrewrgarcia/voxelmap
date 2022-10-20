@@ -61,7 +61,7 @@ def set_axes_equal(ax):
 
 class Model:
 
-    def __init__(self,array,colormap=cm.cool,cmap_alpha=1):
+    def __init__(self,array):
         '''Model structure. Calls `3-D` array to process into 3-D model.
 
         Parameters
@@ -72,9 +72,9 @@ class Model:
             a dictionary for which the keys are the integer values on the discrete arrays (above) an the values are the color (str) for the specific key and the alpha for the voxel object (float)
         '''
         self.array = array          # array of third-order (3-D)
-        self.hashblocks = {}        #hashblocks is 
-        self.colormap = colormap
-        self.cmap_alpha = cmap_alpha
+        self.hashblocks = {}        # start with empty voxel-color dictionary
+        self.colormap = cm.cool     # default: cool colormap
+        self.alphacm = 1            # default: opaque colormap (alpha=1)
 
     def customadd(self, key, color, alpha=1):
         '''Make your own 3-D colormap option. Adds to hashblocks dictionary.
@@ -90,19 +90,6 @@ class Model:
         '''
         self.hashblocks[key] = [color,alpha]
 
-    def gradmap(self,colormap=cm.cool,cmap_alpha=1):
-        '''Update colormap for gradient coloring
-
-        Parameters
-        ----------
-        colormap : object, optional  
-            colormap function from available Python colormaps (default cm.cool)
-            https://matplotlib.org/stable/tutorials/colors/colormaps.html
-        alpha : float, optional
-            transparency index (0 -> transparent; 1 -> opaque; default = 1.0)
-        '''
-        self.colormap = colormap
-        self.cmap_alpha = cmap_alpha
 
 
     def build(self):
@@ -137,7 +124,7 @@ class Model:
         def gradient_nuclear_coloring():
 
             colormap =  self.colormap
-            alphaval =  self.cmap_alpha
+            alphaval =  self.alphacm
             def center_color(a,L):
                 return abs( 1 - 2*((a+0.5)/L))
 
@@ -150,7 +137,7 @@ class Model:
 
         def gradient_linear_coloring():
             colormap =  self.colormap
-            alphaval =  self.cmap_alpha
+            alphaval =  self.alphacm
             for i in range(X):
                 for j in range(Y):
                     for k in range(Z):
