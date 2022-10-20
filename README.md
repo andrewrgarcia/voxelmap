@@ -2,7 +2,7 @@
 
 A Python library for making voxel models from NumPy arrays.
 
-<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/wingeddog.png?raw=true" width="300">
+<a href="https://andrewatcloud.com/voxelmap/"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/wingeddog.png?raw=true" width="300"></a>
 
 ## Installation
 
