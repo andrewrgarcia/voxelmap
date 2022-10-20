@@ -38,7 +38,8 @@ def test_gradient_voxel_colormap1():
     arr = np.random.randint(0,10,(7,7,7))
     model = vxm.Model(arr)
 
-    model.gradmap(cm.terrain,0.5)
+    model.colormap = cm.terrain
+    model.alphacm = 0.5
 
     model.draw('nuclear')
 
@@ -48,7 +49,8 @@ def test_gradient_voxel_colormap2():
     arr = np.random.randint(0,10,(7,7,7))
     model = vxm.Model(arr)
 
-    model.gradmap(cm.terrain,0.5)
+    model.colormap = cm.terrain
+    model.alphacm = 0.5
 
     model.draw('linear')
 
@@ -64,17 +66,20 @@ def test_goxeldog():
 
     model = vxm.Model(dog)
 
-    # model.colortransfer()         # Future function for Model structure (should do an automatic customadd of imported voxel colors as default)
-
-    model.customadd(1,'#000000')
-    model.customadd(2,'#8f563b',0.8)
-    model.customadd(3,'#ac3232')
-    model.customadd(4,'yellow')
+    model.hashblocks = gox.hashblocks
 
     model.draw('voxels')
 
+    model.customadd(1,'yellow',1)
+    model.customadd(2,'black',0.4)
+    model.customadd(3,'cyan',0.75)
+    model.customadd(4,'#000000')
 
-    model.gradmap(cm.terrain,0.5)
+    model.draw('voxels')
+
+    model.colormap = cm.rainbow
+    model.alphacm = 0.8
+
     model.draw('nuclear')
 
 def test_sphere():
@@ -82,8 +87,6 @@ def test_sphere():
     path = 'extra/sphere.txt'
 
     gox = vxm.Goxel(path)
-
-    gox.update_colors('ffffff',1)   #update voxel colors (only ffffff -> white) from .txt to integer index in array
 
     sphere = gox.importfile()       #convert gox .txt to numpy array
 
@@ -127,7 +130,9 @@ def test_image():
     model = vxm.Model(mapped_img)
     model.array = np.transpose(np.flip(model.array),(2,0,1))
 
-    model.gradmap(cm.terrain,0.5)
+    model.colormap = cm.terrain
+    model.alphacm = 0.5
+
     model.draw('linear')
 
 
