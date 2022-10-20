@@ -12,24 +12,8 @@ class Goxel:
             file name and/or path for goxel file e.g. my_goxel_file.gox
         '''
         self.file = file
-        self.colorkey = {
-                        '33cc66': 1,
-                        '339900': 2,
-                        'ff99ff': 3,
-                        'ffccff': 4,
-                        }
+        self.hashblocks = {}
 
-    def update_colors(self,color,array_index):
-        '''Update voxel colors (hashes) from Goxel file to be represented as `array_index` integers
-
-        Parameters
-        ----------
-        color : str
-            color in hexadecimal format of specific voxel color-block in Goxel
-        array_index: int
-            integer to represent specific voxel color-block from Goxel
-        '''
-        self.colorkey.update({color : array_index})
     
     def importfile(self):
         '''Import Goxel file and convert to numpy array
@@ -48,14 +32,20 @@ class Goxel:
         
         array = np.zeros((Z,Y,X))
         
-        colorkey = self.colorkey
-
-        print(colorkey)
         elems = goxeltxt.T
-        
+
+        'define voxel hashblocks dict from colors present in voxel file'
+        model_colors = sorted(list(set(goxeltxt['rgb'])))
+        for i in range(len(model_colors)):
+            # self.hashblocks.update({i+1: model_colors[i] })
+            self.hashblocks[i+1] = [ '#'+model_colors[i], 1]
+
+        # print(self.hashblocks)
+
+        'write array from .txt file voxel color values and locs'
         for i in range(len(goxeltxt)):
             x,y,z = elems[i][0:3].astype('int')
-            rgb = elems[i][3]
-            array[z,y,x] = colorkey[rgb]
+            rgb = '#'+elems[i][3]
+            array[z,y,x] = [i for i in self.hashblocks if self.hashblocks[i][0]==rgb][0]
                     
         return array
