@@ -44,7 +44,7 @@ model.draw('linear')
 
 #### Process an exported .txt file from a [Goxel](https://goxel.xyz/) project
 
-<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/dog.png?raw=true" width="350"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/dawg.png?raw=true" width="350"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/rainbowd.png?raw=true" width="350">
+<a href="https://goxel.xyz/"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/goxel.png?raw=true" width="350"></a><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/dog.png?raw=true" width="350"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/dawg.png?raw=true" width="350"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/rainbowd.png?raw=true" width="350">
 
 Code:
 
