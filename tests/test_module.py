@@ -104,7 +104,7 @@ def test_goxeldog():
     model.colormap = cm.rainbow
     model.alphacm = 0.8
 
-    model.draw('nuclear')
+    model.draw('nuclear',figsize=(10,20))
 
 def test_sphere():
     'sphere: stress graphics'

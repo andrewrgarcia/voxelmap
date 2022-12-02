@@ -112,7 +112,7 @@ class Model:
 
         return voxels
     
-    def draw(self,coloring='nuclear'):
+    def draw(self,coloring='nuclear',figsize=(6.4,4.8)):
         '''Draws voxel model after building it with the provided `array`. 
         `coloring` option `voxels` requires building custom color map with `Model().customadd`
         remaining `coloring` options use a default colormap, which may be updated with `Model().gradmap`'''
@@ -164,7 +164,7 @@ class Model:
         else gradient_linear_coloring() if coloring == 'linear' \
         else voxel_coloring() if coloring == 'voxels' else None]
 
-        fig = plt.figure()
+        fig = plt.figure(figsize=figsize)
 
         ax = fig.gca(projection='3d')
         ax._axis3don = False
