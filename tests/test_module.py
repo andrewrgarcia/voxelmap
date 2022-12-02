@@ -54,19 +54,43 @@ def test_gradient_voxel_colormap2():
 
     model.draw('linear')
 
+def test_voxelcrds():
+
+    data = vxm.Data()
+    data.xyz = np.random.randint(-1,1,(10,3))+np.random.random((10,3))
+    data.sparsity = 5
+    
+    'undefined rgb voxel colors'
+    cubes = data.importdata('coords')
+    cubes = np.transpose(cubes,(2,1,0))
+    model = vxm.Model(cubes)
+    model.hashblocks = data.hashblocks
+    model.draw('voxels')
+
+    'defined rgb voxel colors'
+    data.rgb = [ hex(np.random.randint(0.5e7,1.5e7))[2:] for i in range(10) ] 
+    cubes = data.importdata('coords')
+    cubes = np.transpose(cubes,(2,1,0))
+    model = vxm.Model(cubes)
+    model.hashblocks = data.hashblocks
+    model.draw('voxels')
+
+
 
 def test_goxeldog():
     'process dog.txt from Goxel'
     path = 'extra/dog.txt'
 
-    gox = vxm.Goxel(path)
+    # gox = vxm.Goxel(path)
+    data = vxm.Data()
+    data.file = path
 
-    dog = gox.importfile()
+    dog = data.importdata()
     dog = np.transpose(dog,(2,1,0))
 
     model = vxm.Model(dog)
 
-    model.hashblocks = gox.hashblocks
+    model.hashblocks = data.hashblocks
 
     model.draw('voxels')
 
@@ -86,9 +110,10 @@ def test_sphere():
     'sphere: stress graphics'
     path = 'extra/sphere.txt'
 
-    gox = vxm.Goxel(path)
+    data = vxm.Data()
+    data.file = path
 
-    sphere = gox.importfile()       #convert gox .txt to numpy array
+    sphere = data.importdata('file')       #convert gox .txt to numpy array
 
     'coloring the white blocks of the pixelated sphere'
     for i in np.argwhere(sphere!=0):
@@ -143,3 +168,4 @@ test_gradient_voxel_colormap2()
 test_goxeldog()
 test_sphere()
 test_image()
+test_voxelcrds()

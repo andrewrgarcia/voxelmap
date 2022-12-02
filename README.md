@@ -55,9 +55,10 @@ import voxelmap as vxm
 import numpy as np
 
 '''process dog.txt from Goxel'''
-gox = vxm.Goxel('../extra/dog.txt')
+data = vxm.Data()
+data.file = '../extra/dog.txt'
 
-dog = gox.importfile()      # turn txt file to array
+dog = data.importdata()      # turn txt file to array
 
 dog = np.transpose(dog,(2,1,0))     #rotate dog
 
