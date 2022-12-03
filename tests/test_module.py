@@ -19,16 +19,16 @@ def test_pickle():
     
 def test_custom_voxel_colormap():
     '''test the custom voxel colormap (dictionary) generation and drawing
-    model.customadd() adds dictionary entries to custom voxel
+    model.hashblocksAdd() adds dictionary entries to custom voxel
      colormap to draw model with `voxels` coloring scheme
     '''
 
     arr = np.random.randint(0,10,(7,7,7))
     model = vxm.Model(arr)
 
-    model.customadd(1,'#84f348',0.8); model.customadd(2,'#4874f3'); model.customadd(3,'#32CD32') ;  model.customadd(4,'#653c77',0.90)
-    model.customadd(5,'lime',0.75) ;  model.customadd(6,'k',) ;  model.customadd(7,'#e10af2',0.3)
-    model.customadd(8,'red',0.3); model.customadd(9,'orange',0.2)
+    model.hashblocksAdd(1,'#84f348',0.8); model.hashblocksAdd(2,'#4874f3'); model.hashblocksAdd(3,'#32CD32') ;  model.hashblocksAdd(4,'#653c77',0.90)
+    model.hashblocksAdd(5,'lime',0.75) ;  model.hashblocksAdd(6,'k',) ;  model.hashblocksAdd(7,'#e10af2',0.3)
+    model.hashblocksAdd(8,'red',0.3); model.hashblocksAdd(9,'orange',0.2)
 
     model.draw('voxels')
 
@@ -94,10 +94,10 @@ def test_goxeldog():
 
     model.draw('voxels')
 
-    model.customadd(1,'yellow',1)
-    model.customadd(2,'black',0.4)
-    model.customadd(3,'cyan',0.75)
-    model.customadd(4,'#000000')
+    model.hashblocksAdd(1,'yellow',1)
+    model.hashblocksAdd(2,'black',0.4)
+    model.hashblocksAdd(3,'cyan',0.75)
+    model.hashblocksAdd(4,'#000000')
 
     model.draw('voxels')
 
@@ -124,15 +124,15 @@ def test_sphere():
     model1 = vxm.Model(sphere)
 
     'create hashmap of voxel colors'
-    model1.customadd(1,'#84f348',0.8)
-    model1.customadd(2,'#4874f3')
-    model1.customadd(3,'#32CD32')
-    model1.customadd(4,'#653c77',0.90)
-    model1.customadd(5,'lime',0.75)
-    model1.customadd(6,'k',)
-    model1.customadd(7,'#e10af2',0.3)
-    model1.customadd(8,'red',0.3)
-    model1.customadd(9,'orange',0.2)
+    model1.hashblocksAdd(1,'#84f348',0.8)
+    model1.hashblocksAdd(2,'#4874f3')
+    model1.hashblocksAdd(3,'#32CD32')
+    model1.hashblocksAdd(4,'#653c77',0.90)
+    model1.hashblocksAdd(5,'lime',0.75)
+    model1.hashblocksAdd(6,'k',)
+    model1.hashblocksAdd(7,'#e10af2',0.3)
+    model1.hashblocksAdd(8,'red',0.3)
+    model1.hashblocksAdd(9,'orange',0.2)
     savedhash = model1.hashblocks        # save created hashmap of voxel colors (lines above this one)
 
     # model1.draw('voxels')             # do not draw full sphere (keep tests relatively short)

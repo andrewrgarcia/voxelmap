@@ -76,7 +76,7 @@ class Model:
         self.colormap = cm.cool     # default: cool colormap
         self.alphacm = 1            # default: opaque colormap (alpha=1)
 
-    def customadd(self, key, color, alpha=1):
+    def hashblocksAdd(self, key, color, alpha=1):
         '''Make your own 3-D colormap option. Adds to hashblocks dictionary.
 
         Parameters
@@ -114,8 +114,17 @@ class Model:
     
     def draw(self,coloring='nuclear',figsize=(6.4,4.8)):
         '''Draws voxel model after building it with the provided `array`. 
-        `coloring` option `voxels` requires building custom color map with `Model().customadd`
-        remaining `coloring` options use a default colormap, which may be updated with `Model().gradmap`'''
+        
+        Parameters
+        ----------
+        coloring: string  
+            voxel coloring scheme
+                'nuclear'  colors model radially, from center to exterior
+                'linear'   colors voxel model vertically, top to bottom. 
+                'voxels'   colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
+        figsize : (float,float)
+            defines plot window dimensions. From matplotlib.pyplot.figure(figsize) kwarg. 
+        '''
 
         Z,X,Y = np.shape(self.array)
 
