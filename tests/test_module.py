@@ -174,8 +174,13 @@ def test_ImageMesh():
 
     img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
 
-    img.ImageMesh('land.obj',True,12,0.52,1)
+    img.ImageMesh('land.obj',True, 12,0.52,1)
 
+    img.MeshView()
+    
+    # img.ImageMesh('land.obj',False,3,0.52,1)
+
+    # img.MeshView()
     
 
 

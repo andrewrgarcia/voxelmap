@@ -1,5 +1,34 @@
 import numpy as np
 
+def findcrossover(array,low,high,value):
+    'finds crossover index of array for `value` value'
+    if array[high] <= value:
+        return high
+    if array[low] > value:
+        return low 
+
+    middle = (high+low) // 2        # floor-division (indexes must be integers)
+
+    if array[middle] == value:
+        return middle
+    elif array[middle] < value:
+        findcrossover(array,middle+1,high,value)
+    
+    return findcrossover(array,low,middle-1,value)
+
+
+def findclosest(array, value): 
+    'adapted from: https://www.geeksforgeeks.org/python-find-closest-number-to-k-in-given-list/'      
+    idx = (np.abs(array - value)).argmin()
+    return idx
+
+def mat2crds(matrix):
+    # X,Y = matrix.shape
+    # Z = np.max(matrix,type=int)
+    crds  = [ [*i,matrix[tuple(i)]] for i in np.argwhere(matrix)]
+    return crds
+
+
 def set_axes_radius(ax, origin, radius):
     '''set_axes_radius and set_axes_equal * * * Credit:
     Mateen Ulhaq (answered Jun 3 '18 at 7:55)
