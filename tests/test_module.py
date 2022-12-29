@@ -149,23 +149,42 @@ def test_sphere():
 def test_image():
 
     img = vxm.Image('extra/land.png')       # incorporate fake land topography .png file
+    # img = vxm.Image('extra/donut_lores.png')       # incorporate fake land topography .png file
+
     img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
     mapped_img = img.map3d(12)              # mapped to 3d with a depth of 12 voxels
     
     model = vxm.Model(mapped_img)
+    
+    # model.array  = model.array[1:]
+
     model.array = np.transpose(np.flip(model.array),(2,0,1))
 
-    model.colormap = cm.terrain
-    model.alphacm = 0.5
+
+    # model.colormap = cm.terrain
+    # model.alphacm = 0.5
 
     model.draw('linear')
+
+
+
+def test_ImageMesh():
+
+    img = vxm.Image('extra/land.png')       # incorporate fake land topography .png file
+
+    img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
+
+    img.ImageMesh('land.obj',True,12,0.52,1)
+
+    
 
 
 test_pickle()
 test_custom_voxel_colormap()
 test_gradient_voxel_colormap1()
 test_gradient_voxel_colormap2()
+test_voxelcrds()
 test_goxeldog()
 test_sphere()
 test_image()
-test_voxelcrds()
+test_ImageMesh()
