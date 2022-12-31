@@ -168,20 +168,33 @@ def test_image():
 
 
 
+
+    
+
+
+
+
 def test_ImageMesh():
+
+    img = vxm.Image('extra/land2.png')       # incorporate fake land topography .png file
+
+    img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
+
+    img.ImageMesh('land.obj', 16, 5, 1, False, figsize=(10,10))
+
+    img.MeshView()
+    
+
+def test_ImageMesh0():
 
     img = vxm.Image('extra/land.png')       # incorporate fake land topography .png file
 
     img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
 
-    img.ImageMesh('land.obj',True, 12,0.52,1)
+    img.ImageMesh('land.obj', 12, 0.52, 1, True, verbose=True)
 
     img.MeshView()
-    
-    # img.ImageMesh('land.obj',False,3,0.52,1)
 
-    # img.MeshView()
-    
 
 
 test_pickle()
@@ -193,3 +206,5 @@ test_goxeldog()
 test_sphere()
 test_image()
 test_ImageMesh()
+# test_ImageMesh0()
+

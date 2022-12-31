@@ -82,7 +82,8 @@ class Image:
 
         return model
 
-    def ImageMesh(self, out_file='model.obj', plot = True, L_sectors = 4, rel_depth = 0.50, trace_min = 5 ):
+    def ImageMesh(self, out_file='model.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 5,\
+                        plot = True, figsize=(4.8,4.8), verbose=False ):
         '''3-D triangulation of 2-D images with a Convex Hull algorithm
         Andrew Garcia, 2022
 
@@ -181,7 +182,7 @@ class Image:
         W = matrix.shape[1]
 
         if plot:
-            fig = plt.figure(figsize=(4.8, 4.8))
+            fig = plt.figure(figsize=figsize)
             ax = fig.add_subplot(111, projection="3d")
 
         "multiple sectors"
@@ -195,15 +196,17 @@ class Image:
                 newpts, newsmpls = SectorHull(matrix, int(ls[i]*L),int(ls[i+1]*L),\
                                     int(ws[j]*W),int(ws[j+1]*W),NUM,rel_depth,'lime')
                 NUM+=len(newpts)
-                print(NUM)
-                print(newpts.shape, newsmpls.shape)
+                if verbose:
+                    print(NUM)
+                    print(newpts.shape, newsmpls.shape)
                 if newpts.shape[0]:
                     points2 = np.concatenate((points2,newpts)) if k!=0 else newpts
                     hullsimplices2 = np.concatenate((hullsimplices2,newsmpls)) if k!=0 else newsmpls
                     k+=1
-                    
-        print('points shape',points2.shape)
-        print('simplices shape',hullsimplices2.shape)
+
+        if verbose:    
+            print('points shape',points2.shape)
+            print('simplices shape',hullsimplices2.shape)
 
         points2n=points2*5/np.max(points2)
         writeobj(points2n,hullsimplices2,out_file)
