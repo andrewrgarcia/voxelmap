@@ -22,11 +22,6 @@ def findclosest(array, value):
     idx = (np.abs(array - value)).argmin()
     return idx
 
-def mat2crds(matrix):
-    # X,Y = matrix.shape
-    # Z = np.max(matrix,type=int)
-    crds  = [ [*i,matrix[tuple(i)]] for i in np.argwhere(matrix)]
-    return crds
 
 
 def set_axes_radius(ax, origin, radius):
@@ -58,6 +53,6 @@ def arr2crds(array,mult):
     # return np.array([ [*i,Z-array[tuple(i)]] for i in np.argwhere(array)])
     return np.array([ [*i,-mult*array[tuple(i)]] for i in np.argwhere(array)])
 
-def tensor2crds(tensor):
+def tensor2crds(tensor,mult):
     # return np.array([ [*i,Z-array[tuple(i)]] for i in np.argwhere(array)])
-    return np.array([ [*i] for i in np.argwhere(tensor)])
+    return np.array([ [*i*mult] for i in np.argwhere(tensor)])

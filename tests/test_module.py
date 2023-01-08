@@ -183,16 +183,34 @@ def test_ImageMesh():
     # img.MeshView()
 
 
+def test_MeshWrap():
+
+    'process dog.txt from Goxel'
+    path = 'extra/dog.txt'
+
+    data = vxm.Data()
+    data.file = path
+    dog = data.importdata()
+    dog = np.transpose(dog,(2,1,0))
+    dog = vxm.resize3d(dog,(2,2,2),1)
+
+    model = vxm.Model(dog)
+    model.draw('nuclear')
+
+    img = vxm.Image('')       # incorporate fake land topography .png file
+    img.tensor = dog
+    print(dog)
+    img.MeshWrap('doggie.obj', 10, 0.1, 1, False, figsize=(10,10))
+    img.MeshView()
 
 
-
-test_pickle()
-test_custom_voxel_colormap()
-test_gradient_voxel_colormap1()
-test_gradient_voxel_colormap2()
-test_voxelcrds()
-test_goxeldog()
-test_sphere()
-test_image()
-test_ImageMesh()
-
+# test_pickle()
+# test_custom_voxel_colormap()
+# test_gradient_voxel_colormap1()
+# test_gradient_voxel_colormap2()
+# test_voxelcrds()
+# test_goxeldog()
+# test_sphere()
+# test_image()
+# test_ImageMesh()
+test_MeshWrap()

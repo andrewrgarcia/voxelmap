@@ -58,29 +58,32 @@ vn -1.00 0.00 0.00
 
 
 def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_there,  
-                simplices0, rel_depth, color='orange', trace_min=1, plot=True, ax=[]):
+                num_simplices, rel_depth, color='orange', trace_min=1, plot=True, ax=[]):
     '''SectorHull does ConvexHull on a specific 2-D sector of the selected image
     adapted [ significantly ] from 
     https://stackoverflow.com/questions/27270477/3d-convex-hull-from-point-cloud'''
 
-    if sector_dims == 2:
-        sector = array[Y_here:Y_there, X_here:X_there]
+    sector = array[Y_here:Y_there, X_here:X_there] if sector_dims == 2 else \
+             array[Z_here:Z_there, Y_here:Y_there, X_here:X_there]
+
 
     if len(np.unique(sector)) > trace_min:
-        points = arr2crds(sector,rel_depth)
+        
+        points = arr2crds(sector, rel_depth) if sector_dims == 2 else tensor2crds(array, rel_depth)
 
         hull = ConvexHull(points)
 
-
-        if plot and sector_dims==2:
+        if plot: 
             for s in hull.simplices:
                 s = np.append(s, s[0])  # Here we cycle back to the first coordinate
-                ax.plot(Y_here+points[s, 1],X_here+points[s, 0], points[s, 2], color=color)
-        
+                ax.plot(Y_here+points[s, 1],X_here+points[s, 0], Z_here+points[s, 2], color=color)
 
-        newsimplices = np.array([s + simplices0 for s in hull.simplices])
+        newsimplices = np.array([s + num_simplices for s in hull.simplices])
 
-        newpoints = np.array([ i+[Y_here,X_here,0] for i in points])
+
+        newpoints = np.array([ i+[Y_here,X_here,Z_here] for i in points]) if sector_dims == 2 else \
+                    np.array([ i+[Z_here,Y_here,X_here] for i in points]) 
+
 
         return newpoints, newsimplices
 
@@ -96,11 +99,16 @@ class Image:
         ----------
         file : str
             file name and/or path for image file
-        intensity : array(float)
-            mutable matrix to contain relative pixel intensities in int levels 
+        intensity : array((int,int)))
+            mutable matrix to contain relative pixel intensities in int levels \
+        tensor: array((int,int,int)))
+            third-order tensor to represent voxel / point-cloud models in array form 
+        objfile: str
+            name of Wavefront (.obj) file to make from ImageMesh
         '''
         self.file = file
         self.intensity = np.ones((5,5))
+        self.tensor = np.ones((5,5,5))
         self.objfile = 'model.obj'
 
     def make(self, res = 1.0, res_interp = cv2.INTER_AREA):
@@ -126,8 +134,6 @@ class Image:
 
         self.intensity = self.intensity.astype('int')  # floor-divide
 
-        # print(mat2crds(self.intensity))
-        # print(np.max(self.intensity))
 
     def ImageMap(self,depth=5):
         '''Map image to 3-D array 
@@ -166,14 +172,14 @@ class Image:
         ----------
         out_file : str
             name and/or path for Wavefront .obj file output. This is the common format for OpenGL 3-D model files (default: model.obj) 
-        plot: bool
-            plots a preliminary 3-D triangulated image if True
         L_sectors: int
             length scale of Convex Hull segments in sector grid, e.g. L_sectors = 4 makes a triangulation of 4 x 4 Convex Hull segments
         rel_depth: float
             relative depth of 3-D model with respect to the image's intensity magnitudes (default: 0.50)
         trace_min: int
             minimum number of points in different z-levels to triangulate per sector (default: 5)
+        plot: bool
+            plots a preliminary 3-D triangulated image if True
         '''
 
         matrix = self.intensity
@@ -233,20 +239,21 @@ class Image:
         ----------
         out_file : str
             name and/or path for Wavefront .obj file output. This is the common format for OpenGL 3-D model files (default: model.obj) 
-        plot: bool
-            plots a preliminary 3-D triangulated image if True
         L_sectors: int
             length scale of Convex Hull segments in sector grid, e.g. L_sectors = 4 makes a triangulation of 4 x 4 Convex Hull segments
         rel_depth: float
             relative depth of 3-D model with respect to the image's intensity magnitudes (default: 0.50)
         trace_min: int
             minimum number of points in different z-levels to triangulate per sector (default: 5)
+        plot: bool
+            plots a preliminary 3-D triangulated image if True
         '''
 
-        matrix = self.intensity
+        array = self.tensor
 
-        L = matrix.shape[0]
-        W = matrix.shape[1]
+        D = array.shape[0]
+        L = array.shape[1]
+        W = array.shape[2]
 
         ax=[]
         if plot:
@@ -255,22 +262,27 @@ class Image:
 
         "multiple sectors"
         NUM = 0
+        ds = np.linspace(0,1,L_sectors+1)
         ls = np.linspace(0,1,L_sectors+1)
         ws = np.linspace(0,1,L_sectors+1)
         k=0
-        for i in range(L_sectors):
-            for j in range(L_sectors):
+        for m in range(L_sectors):
+            for i in range(L_sectors):
+                for j in range(L_sectors):
 
-                newpts, newsmpls = SectorHull(matrix,3,0,0, int(ls[i]*L),int(ls[i+1]*L),\
-                                    int(ws[j]*W),int(ws[j+1]*W),NUM,rel_depth,'lime',trace_min, plot,ax)
-                NUM+=len(newpts)
-                if verbose:
-                    print(NUM)
-                    print(newpts.shape, newsmpls.shape)
-                if newpts.shape[0]:
-                    points2 = np.concatenate((points2,newpts)) if k!=0 else newpts
-                    hullsimplices2 = np.concatenate((hullsimplices2,newsmpls)) if k!=0 else newsmpls
-                    k+=1
+                    newpts, newsmpls = SectorHull(array,3,\
+                                        int(ds[m]*D-1),int(ds[m+1]*D-1),\
+                                        int(ls[i]*L),int(ls[i+1]*L),\
+                                        int(ws[j]*W),int(ws[j+1]*W),\
+                                        NUM,rel_depth,'lime',trace_min, plot,ax)
+                    NUM+=len(newpts)
+                    if verbose:
+                        print(NUM)
+                        print(newpts.shape, newsmpls.shape)
+                    if newpts.shape[0]:
+                        points2 = np.concatenate((points2,newpts)) if k!=0 else newpts
+                        hullsimplices2 = np.concatenate((hullsimplices2,newsmpls)) if k!=0 else newsmpls
+                        k+=1
 
         if verbose:    
             print('points shape',points2.shape)
