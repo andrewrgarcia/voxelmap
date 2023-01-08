@@ -152,7 +152,7 @@ def test_image():
     # img = vxm.Image('extra/donut_lores.png')       # incorporate fake land topography .png file
 
     img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
-    mapped_img = img.map3d(12)              # mapped to 3d with a depth of 12 voxels
+    mapped_img = img.ImageMap(12)              # mapped to 3d with a depth of 12 voxels
     
     model = vxm.Model(mapped_img)
     
@@ -170,30 +170,19 @@ def test_image():
 
 
     
-
-
-
-
 def test_ImageMesh():
 
     img = vxm.Image('extra/land2.png')       # incorporate fake land topography .png file
 
     img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
 
-    img.ImageMesh('land.obj', 16, 5, 1, False, figsize=(10,10))
+    img.ImageMesh('land.obj', 12, 3, 3, False, figsize=(10,10))
+    # img.ImageMesh('land.obj', 12, 0.52, 1, True, verbose=True)
 
-    img.MeshView()
-    
+    img.MeshView(viewport=(1152, 1152))
+    # img.MeshView()
 
-def test_ImageMesh0():
 
-    img = vxm.Image('extra/land.png')       # incorporate fake land topography .png file
-
-    img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
-
-    img.ImageMesh('land.obj', 12, 0.52, 1, True, verbose=True)
-
-    img.MeshView()
 
 
 
@@ -206,5 +195,4 @@ test_goxeldog()
 test_sphere()
 test_image()
 test_ImageMesh()
-# test_ImageMesh0()
 

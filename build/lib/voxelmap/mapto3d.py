@@ -63,7 +63,7 @@ class Image:
 
         self.intensity = self.intensity.astype('int')  # floor-divide
 
-    def map3d(self,depth=5):
+    def ImageMap(self,depth=5):
         '''Map image to 3-D array 
 
         Parameters

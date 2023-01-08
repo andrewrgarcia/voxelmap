@@ -54,7 +54,7 @@ class Image:
         # print(mat2crds(self.intensity))
         # print(np.max(self.intensity))
 
-    def map3d(self,depth=5):
+    def ImageMap(self,depth=5):
         '''Map image to 3-D array 
 
         Parameters

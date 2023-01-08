@@ -151,7 +151,7 @@ class Model:
 
         fig = plt.figure(figsize=figsize)
 
-        ax = fig.gca(projection='3d')
+        ax = fig.add_subplot(projection='3d')
         ax._axis3don = False
 
         voxels = Model(self.array).build()

@@ -45,7 +45,7 @@ def set_axes_equal(ax):
     cubes as cubes, etc..  This is one possible solution to Matplotlib's
     ax.set_aspect('equal') and ax.axis('equal') not working for 3D.
     Input
-      ax: a matplotlib axis, e.g., as output from plt.gca().
+      ax: a matplotlib axis, e.g., as output from plt.add_subplot().
     '''
     limits = np.array([
         ax.get_xlim3d(),
@@ -179,7 +179,7 @@ class Model:
 
         fig = plt.figure()
 
-        ax = fig.gca(projection='3d')
+        ax = fig.add_subplot(projection='3d')
         ax._axis3don = False
         # ax.set_aspect('equal')         
 
