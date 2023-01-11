@@ -6,24 +6,19 @@ A Python library for making voxel and three-dimensional models from NumPy arrays
 
 <center><a href="https://andrewatcloud.com/voxelmap/"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/land_ImageMesh.png?raw=true" width="800"></a></center>
 
-## Installation
+## Installation and Local Usage 
 
 ```ruby
 pip install voxelmap
 pip install --upgrade voxelmap
 ```
 
-## Just starting? Check out the Colab notebook (click on below icon)
+Due to new package management and library integrations, voxelmap may show incompatibility issues when run locally. An alternative to successfully run this package locally using the [Poetry](https://python-poetry.org/) shell has been written in this [POETRY-USAGE](./POETRY-USAGE.md) protocol. 
+
+## Just starting? Remote Usage with a Colab notebook (click below)
 
 <a href="https://colab.research.google.com/drive/1RMEMgZHlk_tKAzfS4QfXLJV9joDgdh8N?usp=sharing">
 <img src="https://github.com/andrewrgarcia/powerxrd/blob/main/img/colab.png?raw=true" width="300" ></a>
-
-
-## Contributing / Hacktoberfest
-
-Meaningful contributions to the project are always welcome. This project is also active as a part of Hacktoberfest 2022. Before making a PR, please make sure to read the [CONTRIBUTING](./CONTRIBUTING.md) document.
-
-You may use the Issues section of this repository if you'd like to propose some new ideas/enhancements or report a bug.
 
 
 ## Disclaimer: Use At Your Own Risk
