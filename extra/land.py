@@ -2,7 +2,7 @@
 import voxelmap as vxm
 import numpy as np
 
-img = vxm.Image('Desktop/land.png')       # incorporate fake land topography .png file
+img = vxm.Image('./land.png')       # incorporate fake land topography .png file
 
 img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
 
