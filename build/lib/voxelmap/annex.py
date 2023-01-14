@@ -22,11 +22,6 @@ def findclosest(array, value):
     idx = (np.abs(array - value)).argmin()
     return idx
 
-def mat2crds(matrix):
-    # X,Y = matrix.shape
-    # Z = np.max(matrix,type=int)
-    crds  = [ [*i,matrix[tuple(i)]] for i in np.argwhere(matrix)]
-    return crds
 
 
 def set_axes_radius(ax, origin, radius):
@@ -36,6 +31,7 @@ def set_axes_radius(ax, origin, radius):
     ax.set_xlim3d([origin[0] - radius, origin[0] + radius])
     ax.set_ylim3d([origin[1] - radius, origin[1] + radius])
     ax.set_zlim3d([origin[2] - radius, origin[2] + radius])
+    
 def set_axes_equal(ax):
     '''Make axes of 3D plot have equal scale so that spheres appear as spheres,
     cubes as cubes, etc..  This is one possible solution to Matplotlib's
@@ -57,3 +53,7 @@ def arr2crds(array,mult):
     Z  = np.max(array)
     # return np.array([ [*i,Z-array[tuple(i)]] for i in np.argwhere(array)])
     return np.array([ [*i,-mult*array[tuple(i)]] for i in np.argwhere(array)])
+
+def tensor2crds(tensor,mult):
+    # return np.array([ [*i,Z-array[tuple(i)]] for i in np.argwhere(array)])
+    return np.array([ [*i*mult] for i in np.argwhere(tensor)])

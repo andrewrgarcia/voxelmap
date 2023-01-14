@@ -2,18 +2,6 @@
 import numpy as np
 import pandas
 
-from scipy.ndimage import zoom
-
-def resize3d(array, mult=(2,2,2), threshold=1):
-    
-    array = zoom(array, (2,2,2))
-    crds_nonzero = np.argwhere(array > threshold)
-    array.fill(0)
-    for k in crds_nonzero:
-        array[tuple(k)] = 1
-
-    return array
-
 
 class Data:
     def __init__(self):
@@ -23,7 +11,7 @@ class Data:
         ----------
         -- FOR FILE PROCESSING --
         file : str
-            file name and/or path for goxel txt file
+            file name a/or path for goxel txt file
 
         -- FOR XYZ COORDINATE ARRAY PROCESSING -- 
         xyz : np.array(float )

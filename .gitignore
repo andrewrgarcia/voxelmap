@@ -1,5 +1,6 @@
 __pycache__
 notes.txt
+try.py
 tests/draft.py
 venv/
 *.egg-info/

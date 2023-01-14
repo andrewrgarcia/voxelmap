@@ -192,25 +192,27 @@ def test_MeshWrap():
     data.file = path
     dog = data.importdata()
     dog = np.transpose(dog,(2,1,0))
-    dog = vxm.resize3d(dog,(2,2,2),1)
+    dog = vxm.resize(dog,(2,2,2),1)
+    dog = vxm.roughen(dog,1)
 
     model = vxm.Model(dog)
     model.draw('nuclear')
 
     img = vxm.Image('')       # incorporate fake land topography .png file
     img.tensor = dog
+    
     print(dog)
     img.MeshWrap('doggie.obj', 10, 0.1, 1, False, figsize=(10,10))
-    img.MeshView()
+    img.MeshView(viewport=(2200, 1300))
 
 
-# test_pickle()
-# test_custom_voxel_colormap()
-# test_gradient_voxel_colormap1()
-# test_gradient_voxel_colormap2()
-# test_voxelcrds()
-# test_goxeldog()
-# test_sphere()
-# test_image()
+test_pickle()
+test_custom_voxel_colormap()
+test_gradient_voxel_colormap1()
+test_gradient_voxel_colormap2()
+test_voxelcrds()
+test_goxeldog()
+test_sphere()
+test_image()
 # test_ImageMesh()
 test_MeshWrap()

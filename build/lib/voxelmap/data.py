@@ -2,6 +2,7 @@
 import numpy as np
 import pandas
 
+
 class Data:
     def __init__(self):
         '''Data structure.
@@ -10,7 +11,7 @@ class Data:
         ----------
         -- FOR FILE PROCESSING --
         file : str
-            file name and/or path for goxel txt file
+            file name a/or path for goxel txt file
 
         -- FOR XYZ COORDINATE ARRAY PROCESSING -- 
         xyz : np.array(float )

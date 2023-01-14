@@ -13,8 +13,6 @@ pip install voxelmap
 pip install --upgrade voxelmap
 ```
 
-Due to new package management and library integrations, voxelmap may show incompatibility issues when run locally. An alternative to successfully run this package locally using the [Poetry](https://python-poetry.org/) shell has been written in this [POETRY-USAGE](./POETRY-USAGE.md) protocol. 
-
 ## Just starting? Remote Usage with a Colab notebook (click below)
 
 <a href="https://colab.research.google.com/drive/1RMEMgZHlk_tKAzfS4QfXLJV9joDgdh8N?usp=sharing">

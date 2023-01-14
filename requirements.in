@@ -1,0 +1,8 @@
+numpy
+pytest
+matplotlib 
+pandas
+opencv-python
+pygame 
+scipy
+pyopengl 
