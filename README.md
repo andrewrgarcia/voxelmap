@@ -12,7 +12,7 @@ A Python library for making voxel and three-dimensional models from NumPy arrays
 pip install voxelmap
 ```
 Due to the many dependencies for this package (see [requirements.txt](./requirements.txt)), it is recommended to run voxelmap using a `virtualenv` virtual environment. To do so, follow the below simple protocol to create the virtual environment, run it, and install the package there:
-``` 
+```ruby 
 virtualenv venv
 source venv/bin/activate
 pip install voxelmap
