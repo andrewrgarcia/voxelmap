@@ -1,6 +1,7 @@
 __pycache__
 setup.py
 requirements.in
+POETRY-USAGE.md
 protocol.txt
 try.py
 tests/draft.py
@@ -12,3 +13,4 @@ extra/amorph*
 #files created during tests
 block_a
 random-array
+*.obj
