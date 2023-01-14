@@ -10,8 +10,15 @@ A Python library for making voxel and three-dimensional models from NumPy arrays
 
 ```ruby
 pip install voxelmap
-pip install --upgrade voxelmap
 ```
+Due to the many dependencies for this package (see [requirements.txt](./requirements.txt)), it is recommended to run voxelmap using a `virtualenv` virtual environment. To do so, follow the below simple protocol to create the virtual environment, run it, and install the package there:
+``` 
+virtualenv venv
+source venv/bin/activate
+pip install voxelmap
+python [your-voxelmap-script.py]
+```
+To exit the virtual environment, simply type `deactivate`. To access it at any other time again, enter with the above `source venv...` command.
 
 ## Just starting? Remote Usage with a Colab notebook (click below)
 
