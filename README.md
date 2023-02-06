@@ -1,10 +1,10 @@
 # voxelmap
 
-A Python library for making voxel and three-dimensional models from NumPy arrays.
+A Python library for making voxel and three-dimensional models from NumPy arrays. [[  Web  ]](https://andrewatcloud.com/voxelmap/)
 
 <!-- <center><a href="https://andrewatcloud.com/voxelmap/"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/voxeldog.png?raw=true" width="450"></a></center> -->
 
-<center><a href="https://andrewatcloud.com/voxelmap/"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/land_ImageMesh.png?raw=true" width="800"></a></center>
+<img src="https://github.com/andrewrgarcia/voxelmap/blob/main/voxelmap.svg" width="400"></a></center>
 
 ## Installation and Local Usage 
 
