@@ -12,18 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 from matplotlib import cm
 from matplotlib import colors
 
-import pickle
 from voxelmap.annex import *
-
-
-def load_array(filename):
-    '''Loads a pickled numpy array with `filename` name'''
-    return pickle.load( open(filename, "rb" ),encoding='latin1')
-
-def save_array(array,filename):
-    '''Saves an `array` array with `filename` name using the pickle module'''
-    return pickle.dump(array,open(filename,'wb'))
-
 
 def binarize(array,colorindex=1):
     '''converts an array with integer entries to either 0 if 0 or 1 if !=0'''
@@ -33,11 +22,9 @@ def binarize(array,colorindex=1):
     
     return arrayv
 
-    
-
 class Model:
 
-    def __init__(self,array):
+    def __init__(self,array=[]):
         '''Model structure. Calls `3-D` array to process into 3-D model.
 
         Parameters
@@ -87,6 +74,7 @@ class Model:
                         voxels = voxels | cube0
 
         return voxels
+
     
     def draw(self,coloring='nuclear',figsize=(6.4,4.8)):
         '''Draws voxel model after building it with the provided `array`. 
@@ -160,3 +148,33 @@ class Model:
 
         set_axes_equal(ax)           
         plt.show()
+
+    def save(self,filename='voxeldata.json'): 
+        '''Save sparse array + color assignments Model data as a dictionary of keys (DOK) JSON file
+        
+        Parameters
+        ----------
+        filename: string  
+            name of file (e.g. 'voxeldata.json')
+        '''
+        tojson(filename, self.array, self.hashblocks)
+
+
+    def load(self,filename='voxeldata.json'): 
+        '''Load Model data represented as (DOK) JSON file to Model object
+        
+        Parameters
+        ----------
+        filename: string  
+            name of file to be loaded (e.g 'voxeldata.json')
+        '''
+        data = load_from_json(filename)
+        self.hashblocks = data['hashblocks']
+
+        self.hashblocks  = {int(k):v for k,v in self.hashblocks .items()}
+        
+        Z,Y,X = data["size"]
+        self.array = np.zeros((Z,Y,X))
+        for c in range(len(data['coords'])):
+            z,y,x = data['coords'][c]
+            self.array[z,y,x] = data['val'][c]

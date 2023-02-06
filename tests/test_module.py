@@ -17,7 +17,7 @@ def test_pickle():
 
     print(loaded_arr)
     
-def test_custom_voxel_colormap():
+def test_custom_voxel_colormap_save():
     '''test the custom voxel colormap (dictionary) generation and drawing
     model.hashblocksAdd() adds dictionary entries to custom voxel
      colormap to draw model with `voxels` coloring scheme
@@ -31,6 +31,19 @@ def test_custom_voxel_colormap():
     model.hashblocksAdd(8,'red',0.3); model.hashblocksAdd(9,'orange',0.2)
 
     model.draw('voxels')
+
+    model.save('myModel.json')
+
+
+def test_custom_voxel_colormap_load():
+
+    model = vxm.Model()
+    model.load('myModel.json')
+
+    print(model.array)
+    print(model.hashblocks)
+    model.draw('voxels')
+
 
 def test_gradient_voxel_colormap1():
     '''test the nuclear gradient voxel colormap (dictionary) drawing'''
@@ -167,9 +180,9 @@ def test_image():
     model.draw('linear')
 
 
-
-
     
+
+
 def test_ImageMesh():
 
     img = vxm.Image('extra/land2.png')       # incorporate fake land topography .png file
@@ -205,14 +218,3 @@ def test_MeshWrap():
     img.MeshWrap('doggie.obj', 10, 0.1, 1, False, figsize=(10,10))
     img.MeshView(viewport=(2200, 1300))
 
-
-test_pickle()
-test_custom_voxel_colormap()
-test_gradient_voxel_colormap1()
-test_gradient_voxel_colormap2()
-test_voxelcrds()
-test_goxeldog()
-test_sphere()
-test_image()
-# test_ImageMesh()
-test_MeshWrap()

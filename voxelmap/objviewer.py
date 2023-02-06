@@ -81,6 +81,7 @@ def objview(file, usemtl=False, viewport=(800,600)):
         glLoadIdentity()
 
         # RENDER OBJECT
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glTranslate(tx/20., ty/20., - zpos)
         glRotate(ry, 1, 0, 0)
         glRotate(rx, 0, 1, 0)

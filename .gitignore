@@ -5,6 +5,7 @@ POETRY-USAGE.md
 protocol.txt
 try.py
 tests/draft.py
+draft.py
 venv/
 *.egg-info/
 imgui.ini

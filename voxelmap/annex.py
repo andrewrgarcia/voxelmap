@@ -1,4 +1,6 @@
+import json
 import numpy as np
+import pickle
 
 def findcrossover(array,low,high,value):
     'finds crossover index of array for `value` value'
@@ -57,3 +59,49 @@ def arr2crds(array,mult):
 def tensor2crds(tensor,mult):
     # return np.array([ [*i,Z-array[tuple(i)]] for i in np.argwhere(array)])
     return np.array([ [*i*mult] for i in np.argwhere(tensor)])
+
+
+def load_array(filename):
+    '''Loads a pickled numpy array with `filename` name'''
+    return pickle.load( open(filename, "rb" ),encoding='latin1')
+
+def save_array(array,filename):
+    '''Saves an `array` array with `filename` name using the pickle module'''
+    return pickle.dump(array,open(filename,'wb'))
+
+
+
+def tojson(filename, array, hashblocks={}):
+
+    dict = {}
+
+    Z,Y,X = array.shape
+
+    for i in ["hashblocks","size","coords","val"]:
+        dict[i] = []    
+
+    for k in range(Z):
+        for j in range(Y):
+            for i in range(X): 
+                if array[k,j,i] != 0:
+                    dict["coords"].append( [k,j,i] ) 
+                    dict["val"].append( int(array[k,j,i]) )
+
+
+    dict["size"] = [Z,Y,X]
+    dict["hashblocks"] = hashblocks
+    
+    jsonobj = json.dumps(dict)
+    # open file for writing, "w" 
+    f = open(filename,"w")
+    # write json object to file
+    f.write(jsonobj)
+    # close file
+    f.close()
+
+
+def load_from_json(filename):
+    '''Load JSON file to object'''
+    with open(filename) as f:
+        data = f.read()
+    return json.loads(data)
