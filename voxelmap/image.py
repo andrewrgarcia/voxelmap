@@ -376,12 +376,14 @@ class Image:
 
 
     # viewport_default = (0.8*np.array(pygame.display.set_mode().get_rect()[2:]))
-    def MeshView(self,viewport=(2048, 1152)):
+    def MeshView(self, wireframe=False, viewport=(2048, 1152)):
         '''MeshView: triangulated mesh view with OpenGL [ uses pygame ]
 
         Parameters
         ----------
+        wireframe: bool
+            Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
         viewport : (int,int)
             viewport / screen (width, height) for display window (default: 80% your screen's width & height)
         '''
-        viewer.objview(self.objfile, usemtl=False, viewport=viewport)
+        viewer.objview(self.objfile, wireframe=wireframe, usemtl=False, viewport=viewport)

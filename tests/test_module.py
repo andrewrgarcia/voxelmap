@@ -192,7 +192,7 @@ def test_ImageMesh():
     img.ImageMesh('land.obj', 12, 3, 3, False, figsize=(10,10))
     # img.ImageMesh('land.obj', 12, 0.52, 1, True, verbose=True)
 
-    img.MeshView(viewport=(1152, 1152))
+    img.MeshView(wireframe=True, viewport=(1152, 1152))
     # img.MeshView()
 
 

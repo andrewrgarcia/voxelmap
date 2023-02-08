@@ -16,7 +16,7 @@ from OpenGL.GLU import *
 # IMPORT OBJECT LOADER
 from voxelmap.objloader import *
 
-def objview(file, usemtl=False, viewport=(800,600)):
+def objview(file, wireframe=True, usemtl=False, viewport=(800,600)):
 
     pygame.init()
     # viewport = (0.8*np.array(pygame.display.set_mode().get_rect()[2:]))        # make viewport 80% the screen's resolution
@@ -81,7 +81,8 @@ def objview(file, usemtl=False, viewport=(800,600)):
         glLoadIdentity()
 
         # RENDER OBJECT
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        if wireframe:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glTranslate(tx/20., ty/20., - zpos)
         glRotate(ry, 1, 0, 0)
         glRotate(rx, 0, 1, 0)
