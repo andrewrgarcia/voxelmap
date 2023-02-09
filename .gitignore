@@ -1,6 +1,5 @@
 __pycache__
 setup.py
-requirements.in
 POETRY-USAGE.md
 protocol.txt
 try.py
@@ -10,8 +9,10 @@ venv/
 *.egg-info/
 imgui.ini
 extra/amorph*
+imagemesh_concept/
 
 #files created during tests
 block_a
 random-array
 *.obj
+myModel.json
