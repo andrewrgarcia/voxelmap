@@ -87,8 +87,10 @@ def roughen(array,kernel_level=1):
     return random_kernel_convolve(array,kernel,(-1,2))
 
 
-def writeobj(points, hull_simplices, filename = 'this.obj'):
-    '''Writes the triangulated image, which makes a 3-D mesh model, as an .obj file.'''
+def writeobj_CH(points, hull_simplices, filename = 'this.obj'):
+    '''Writes the triangulated image, which makes a 3-D mesh model, as an .obj file.
+    *for Convex hull function/code'''
+
     with open(filename, 'w') as f:
         for i in points:
             f.write("v  {:.4f} {:.4f} {:.4f}\n".format(*i))
@@ -289,7 +291,7 @@ class Image:
             print('simplices shape',hullsimplices2.shape)
 
         points2n=points2*5/np.max(points2)
-        writeobj(points2n,hullsimplices2,out_file)
+        writeobj_CH(points2n,hullsimplices2,out_file)
 
         self.objfile = out_file 
 
@@ -362,7 +364,7 @@ class Image:
             print('simplices shape',hullsimplices2.shape)
 
         points2n=points2*5/np.max(points2)
-        writeobj(points2n,hullsimplices2,out_file)
+        writeobj_CH(points2n,hullsimplices2,out_file)
 
         self.objfile = out_file 
 

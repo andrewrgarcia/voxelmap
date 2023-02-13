@@ -2,6 +2,14 @@ import json
 import numpy as np
 import pickle
 
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+from skimage import measure
+from skimage.draw import ellipsoid
+
+
 def findcrossover(array,low,high,value):
     'finds crossover index of array for `value` value'
     if array[high] <= value:
@@ -105,3 +113,104 @@ def load_from_json(filename):
     with open(filename) as f:
         data = f.read()
     return json.loads(data)
+
+
+def writeobj_MC(filename = 'this.obj', *args):
+    '''Writes the triangulated image, which makes a 3-D mesh model, as an .obj file.
+    *for scikit-learn`s Marching Cubes (MC)'''
+    verts, faces, normals, values = args
+
+    with open(filename, 'w') as f:
+        for i in verts:
+            f.write("v  {:.4f} {:.4f} {:.4f}\n".format(*i))
+
+
+        block = """
+vt 1.00 0.00 0.00 
+vt 1.00 1.00 0.00
+vt 0.00 1.00 0.00
+vt 0.00 0.00 0.00
+
+"""
+        for i in normals:
+            f.write("vn  {:.4f} {:.4f} {:.4f}\n".format(*i))
+
+        f.write("\n"+block)
+
+        f.write("\ng Polyhedral\n\n")
+
+        for j in faces:
+            # the vertex texture (vt) triangle indices which color a specific simplex are [ currently ] being defined at random 
+            rand_t0 = np.random.randint(4)
+
+
+            j+=1    # hull simplices start at index 1 not 0 (this makes the correction)
+            j1,j2,j3 = j
+
+            facestr = [j1,(rand_t0+0)%4+1,j1,\
+                    j2,(rand_t0+1)%4+1,j2,\
+                    j3,(rand_t0+2)%4+1,j3 
+                    ]
+
+            f.write("f {}/{}/{} {}/{}/{} {}/{}/{}\n".format(*facestr))
+
+
+def MarchingMesh(array, out_file='model.obj', plot=False, figsize=(4.8,4.8) ):
+
+    '''Marching cubes on sparse 3-D integer `voxelmap` arrays
+
+    Parameters
+    ----------
+    array: np.array((int/float,int/float,int/float))
+        3-D array for which to run the marching cubes algorithm
+    out_file : str
+        name and/or path for Wavefront .obj file output. This is the common format for OpenGL 3-D model files (default: model.obj) 
+    plot: bool
+        plots a preliminary 3-D triangulated image if True
+    '''
+
+    '''Adapted from: https://scikit-image.org/docs/stable/auto_examples/edges/plot_marching_cubes.html'''
+    # Use marching cubes to obtain the surface mesh of these ellipsoids
+    verts, faces, normals, values = measure.marching_cubes(array, 0)
+
+    'write wavefront .obj file for generated mesh'
+    writeobj_MC(out_file, verts, faces, normals, values)
+
+    # Display resulting triangular mesh using Matplotlib. This can also be done
+    # with mayavi (see skimage.measure.marching_cubes_lewiner docstring).
+    if plot:
+        fig = plt.figure(figsize=figsize)
+        ax = fig.add_subplot(111, projection='3d')
+
+        # Fancy indexing: `verts[faces]` to generate a collection of triangles
+        print(verts[faces-1])
+        mesh = Poly3DCollection(verts[faces-1])
+        mesh.set_edgecolor('k')
+        ax.add_collection3d(mesh)
+
+        def maxmin(arr): return np.min(arr), np.max(arr)
+
+        ax.set_xlim(*maxmin(verts.T[0]))  
+        ax.set_ylim(*maxmin(verts.T[1])) 
+        ax.set_zlim(*maxmin(verts.T[2])) 
+
+        plt.tight_layout()
+        plt.show()
+
+
+
+import voxelmap.objviewer as viewer
+
+def MeshView(objfile, wireframe=False, viewport=(2048, 1152)):
+    '''MeshView [GLOBAL]: triangulated mesh view with OpenGL [ uses pygame ]
+
+    Parameters
+    ----------
+    objfile: string
+        .obj file to process with MeshView [in GLOBAL function only]
+    wireframe: bool
+        Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
+    viewport : (int,int)
+        viewport / screen (width, height) for display window (default: 80% your screen's width & height)
+    '''
+    viewer.objview(objfile, wireframe=wireframe, usemtl=False, viewport=viewport)

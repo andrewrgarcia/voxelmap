@@ -192,29 +192,18 @@ def test_ImageMesh():
     img.ImageMesh('land.obj', 12, 3, 3, False, figsize=(10,10))
     # img.ImageMesh('land.obj', 12, 0.52, 1, True, verbose=True)
 
-    img.MeshView(wireframe=True, viewport=(1152, 1152))
+    img.MeshView(wireframe=False, viewport=(1152, 1152))
     # img.MeshView()
 
 
-def test_MeshWrap():
+def test_MarchingMesh():
 
-    'process dog.txt from Goxel'
-    path = 'extra/dog.txt'
-
-    data = vxm.Data()
-    data.file = path
-    dog = data.importdata()
-    dog = np.transpose(dog,(2,1,0))
-    dog = vxm.resize(dog,(2,2,2),1)
-    dog = vxm.roughen(dog,1)
-
-    model = vxm.Model(dog)
+    model = vxm.Model()
+    model.load('extra/island.json')
     model.draw('nuclear')
 
-    img = vxm.Image('')       # incorporate fake land topography .png file
-    img.tensor = dog
-    
-    print(dog)
-    img.MeshWrap('doggie.obj', 10, 0.1, 1, False, figsize=(10,10))
-    img.MeshView(viewport=(2200, 1300))
+    array = model.array
+    array = vxm.roughen(array,1)
 
+    vxm.MarchingMesh(array,'isle.obj',True)
+    vxm.MeshView('isle.obj')
