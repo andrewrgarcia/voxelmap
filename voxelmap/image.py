@@ -74,7 +74,7 @@ def random_kernel_convolve(array, kernel,random_bounds=(-10,10)):
         return ndimage.convolve(array, kernel, mode='constant', cval=0.0)
 
 def roughen(array,kernel_level=1):
-    '''Makes a 3d array model rougher by a special convolution operation. 
+    '''Makes a 3d array model rougher by a special convolution operation. Uses `voxelmap.random_kernel_convolve`.
 
     Parameters
     ----------

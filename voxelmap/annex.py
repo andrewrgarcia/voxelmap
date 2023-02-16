@@ -80,7 +80,7 @@ def save_array(array,filename):
 
 
 def tojson(filename, array, hashblocks={}):
-
+    '''Save 3-D array and `hashblocks` color mapping as JSON file'''
     dict = {}
 
     Z,Y,X = array.shape
