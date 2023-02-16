@@ -16,7 +16,7 @@ import voxelmap.objviewer as viewer
 from scipy import ndimage 
 
 
-def resize(array, mult=(2,2,2), threshold=1):
+def resize_array(array, mult=(2,2,2), threshold=1):
     '''Resizes a three-dimensional array by the three dim factors specified by `mult` tuple. 
     Converts to sparse array of 0s and 1s   
 
@@ -86,52 +86,6 @@ def roughen(array,kernel_level=1):
     kernel = np.zeros((kernel_level,kernel_level,kernel_level))
     return random_kernel_convolve(array,kernel,(-1,2))
 
-
-def writeobj_CH(points, hull_simplices, filename = 'this.obj'):
-    '''Writes the triangulated image, which makes a 3-D mesh model, as an .obj file.
-    *for Convex hull function/code'''
-
-    with open(filename, 'w') as f:
-        for i in points:
-            f.write("v  {:.4f} {:.4f} {:.4f}\n".format(*i))
-
-
-        block = """
-vt 1.00 0.00 0.00 
-vt 1.00 1.00 0.00
-vt 0.00 1.00 0.00
-vt 0.00 0.00 0.00
-
-vn 0.00 0.00 -1.00
-vn 0.00 0.00 1.00
-vn 0.00 -1.00 0.00
-vn 1.00 0.00 0.00
-vn 0.00 1.00 0.00
-vn -1.00 0.00 0.00
-
-\n"""
-
-        f.write("\n"+block)
-
-        f.write("\ng Polyhedral\n\n")
-
-        for j in hull_simplices:
-            # the vertex texture (vt) triangle indices which color a specific simplex are [ currently ] being defined at random 
-            rand_t0 = np.random.randint(4)
-            rand_n = np.random.randint(1,7)
-
-
-            j+=1    # hull simplices start at index 1 not 0 (this makes the correction)
-            j1,j2,j3 = j
-
-            facestr = [j1,(rand_t0+0)%4+1,rand_n,\
-                    j2,(rand_t0+1)%4+1,rand_n,\
-                    j3,(rand_t0+2)%4+1,rand_n  
-                    ]
-
-            f.write("f {}/{}/{} {}/{}/{} {}/{}/{}\n".format(*facestr))
-
-
 def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_there,  
                 num_simplices, rel_depth, color='orange', trace_min=1, plot=True, ax=[]):
     '''SectorHull does ConvexHull on a specific 2-D sector of the selected image
@@ -182,12 +136,13 @@ class Image:
             name of Wavefront (.obj) file to make from ImageMesh
         '''
         self.file = file
+        self.array = []
         self.intensity = np.ones((5,5))
         self.tensor = np.ones((5,5,5))
         self.objfile = 'model.obj'
 
-    def make(self, res = 1.0, res_interp = cv2.INTER_AREA):
-        '''Turn image into intensity matrix i.e. matrix with pixel intensities
+    def resize(self, res = 1.0, res_interp = cv2.INTER_AREA):
+        '''Resize the intensity matrix of the provided image.
 
         Parameters
         ----------
@@ -196,19 +151,38 @@ class Image:
         res_interp: object, optional 
             cv2 interpolation function for resizing (default cv2.INTER_AREA)
         '''
-        img = mpimg.imread(self.file)       #load image
+        
+        'Turn image into intensity matrix'
+        self.array = mpimg.imread(self.file)       #load image
         'Use CCIR 601 luma to convert RGB image to rel. grayscale 2-D matrix (https://en.wikipedia.org/wiki/Luma_(video)) '
         color_weights = [0.299,0.587,0.114]
-        self.intensity = np.sum([img[:,:,i]*color_weights[i] for i in range(3)],0)*100
+        self.intensity = np.sum([self.array[:,:,i]*color_weights[i] for i in range(3)],0)*100
 
-        if res != 1.0:
-            x,y = self.intensity.shape
-            x,y = int(x*res),int(y*res)
-            self.intensity = cv2.resize(self.intensity, (x,y), interpolation = res_interp )
-
+        'resize'
+        x,y = self.intensity.shape
+        x,y = int(x*res),int(y*res)
+        self.intensity = cv2.resize(self.intensity, (x,y), interpolation = res_interp )
 
         self.intensity = self.intensity.astype('int')  # floor-divide
 
+
+    def make(self):
+        '''Turn image into intensity matrix i.e. matrix with pixel intensities
+        '''
+        if self.array == []:
+
+            self.array = mpimg.imread(self.file)       #load image
+            'Use CCIR 601 luma to convert RGB image to rel. grayscale 2-D matrix (https://en.wikipedia.org/wiki/Luma_(video)) '
+            color_weights = [0.299,0.587,0.114]
+            self.intensity = np.sum([self.array[:,:,i]*color_weights[i] for i in range(3)],0)*100
+
+        # 'if resize'
+        # if res != 1.0:
+        #     x,y = self.intensity.shape
+        #     x,y = int(x*res),int(y*res)
+        #     self.intensity = cv2.resize(self.intensity, (x,y), interpolation = res_interp )
+
+        self.intensity = self.intensity.astype('int')  # floor-divide
 
     def ImageMap(self,depth=5):
         '''Map image to 3-D array 
@@ -303,6 +277,63 @@ class Image:
             plt.axis('off')
             plt.show()
 
+    def MarchingMesh(self, voxel_depth=12, level=0,
+                spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, 
+                allow_degenerate=True, method='lewiner', mask=None,
+                plot=False, figsize=(4.8,4.8) ):
+        '''Marching cubes on 3D-mapped image
+
+        Parameters
+        ----------
+        voxel_depth : int
+            depth of 3-D mapped image on number of voxels
+
+        --- FROM SKIMAGE.MEASURE.MARCHING_CUBES ---
+        level : float, optional
+            Contour value to search for isosurfaces in `volume`. If not
+            given or None, the average of the min and max of vol is used.
+        spacing : length-3 tuple of floats, optional
+            Voxel spacing in spatial dimensions corresponding to numpy array
+            indexing dimensions (M, N, P) as in `volume`.
+        gradient_direction : string, optional
+            Controls if the mesh was generated from an isosurface with gradient
+            descent toward objects of interest (the default), or the opposite,
+            considering the *left-hand* rule.
+            The two options are:
+            * descent : Object was greater than exterior
+            * ascent : Exterior was greater than object
+
+        step_size : int, optional
+            Step size in voxels. Default 1. Larger steps yield faster but
+            coarser results. The result will always be topologically correct
+            though.
+        allow_degenerate : bool, optional
+            Whether to allow degenerate (i.e. zero-area) triangles in the
+            end-result. Default True. If False, degenerate triangles are
+            removed, at the cost of making the algorithm slower.
+        method: str, optional
+            One of 'lewiner', 'lorensen' or '_lorensen'. Specify which of
+            Lewiner et al. or Lorensen et al. method will be used. The
+            '_lorensen' flag correspond to an old implementation that will
+            be deprecated in version 0.19.
+        mask : (M, N, P) array, optional
+            Boolean array. The marching cube algorithm will be computed only on
+            True elements. This will save computational time when interfaces
+            are located within certain region of the volume M, N, P-e.g. the top
+            half of the cube-and also allow to compute finite surfaces-i.e. open
+            surfaces that do not end at the border of the cube.
+
+        plot: bool
+            plots a preliminary 3-D triangulated image if True
+        '''
+
+        self.make()                             # resized to 1.0x original size i.e. not resized (default)
+        mapped_img = self.ImageMap(voxel_depth)              # mapped to 3d with a depth of 12 voxels
+
+        MarchingMesh(mapped_img, out_file=self.objfile, level=level,
+                spacing=spacing, gradient_direction=gradient_direction, step_size=step_size, 
+                allow_degenerate=allow_degenerate, method=method, mask=mask,
+                plot=plot, figsize=figsize)
 
 
     # viewport_default = (0.8*np.array(pygame.display.set_mode().get_rect()[2:]))

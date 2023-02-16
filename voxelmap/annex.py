@@ -115,6 +115,51 @@ def load_from_json(filename):
     return json.loads(data)
 
 
+def writeobj_CH(points, hull_simplices, filename = 'this.obj'):
+    '''Writes the triangulated image, which makes a 3-D mesh model, as an .obj file.
+    *for Convex hull function/code'''
+
+    with open(filename, 'w') as f:
+        for i in points:
+            f.write("v  {:.4f} {:.4f} {:.4f}\n".format(*i))
+
+
+        block = """
+vt 1.00 0.00 0.00 
+vt 1.00 1.00 0.00
+vt 0.00 1.00 0.00
+vt 0.00 0.00 0.00
+
+vn 0.00 0.00 -1.00
+vn 0.00 0.00 1.00
+vn 0.00 -1.00 0.00
+vn 1.00 0.00 0.00
+vn 0.00 1.00 0.00
+vn -1.00 0.00 0.00
+
+\n"""
+
+        f.write("\n"+block)
+
+        f.write("\ng Polyhedral\n\n")
+
+        for j in hull_simplices:
+            # the vertex texture (vt) triangle indices which color a specific simplex are [ currently ] being defined at random 
+            rand_t0 = np.random.randint(4)
+            rand_n = np.random.randint(1,7)
+
+
+            j+=1    # hull simplices start at index 1 not 0 (this makes the correction)
+            j1,j2,j3 = j
+
+            facestr = [j1,(rand_t0+0)%4+1,rand_n,\
+                    j2,(rand_t0+1)%4+1,rand_n,\
+                    j3,(rand_t0+2)%4+1,rand_n  
+                    ]
+
+            f.write("f {}/{}/{} {}/{}/{} {}/{}/{}\n".format(*facestr))
+
+
 def writeobj_MC(filename = 'this.obj', *args):
     '''Writes the triangulated image, which makes a 3-D mesh model, as an .obj file.
     *for scikit-learn`s Marching Cubes (MC)'''
@@ -161,8 +206,8 @@ def MarchingMesh(
                 allow_degenerate=True, method='lewiner', mask=None,
                 plot=False, figsize=(4.8,4.8) 
                 ):
-
-    '''Marching cubes on sparse 3-D integer `voxelmap` arrays
+    '''[GLOBAL_METHOD] 
+    Marching cubes on sparse 3-D integer `voxelmap` arrays
 
     Parameters
     ----------
@@ -185,6 +230,7 @@ def MarchingMesh(
         The two options are:
         * descent : Object was greater than exterior
         * ascent : Exterior was greater than object
+
     step_size : int, optional
         Step size in voxels. Default 1. Larger steps yield faster but
         coarser results. The result will always be topologically correct
@@ -245,8 +291,9 @@ def MarchingMesh(
 
 import voxelmap.objviewer as viewer
 
-def MeshView(objfile, wireframe=False, viewport=(2048, 1152)):
-    '''MeshView [GLOBAL]: triangulated mesh view with OpenGL [ uses pygame ]
+def MeshView(objfile='model.obj', wireframe=False, viewport=(2048, 1152)):
+    '''[GLOBAL_METHOD] 
+    MeshView: triangulated mesh view with OpenGL [ uses pygame ]
 
     Parameters
     ----------

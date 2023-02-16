@@ -164,36 +164,28 @@ def test_image():
     img = vxm.Image('extra/land.png')       # incorporate fake land topography .png file
     # img = vxm.Image('extra/donut_lores.png')       # incorporate fake land topography .png file
 
-    img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
+    img.make()                             # resized to 1.0x original size i.e. not resized (default)
     mapped_img = img.ImageMap(12)              # mapped to 3d with a depth of 12 voxels
     
     model = vxm.Model(mapped_img)
     
-    # model.array  = model.array[1:]
-
     model.array = np.transpose(np.flip(model.array),(2,0,1))
 
+    # img.MarchingMesh(12)
+    # img.MeshView()
 
-    # model.colormap = cm.terrain
-    # model.alphacm = 0.5
-
-    model.draw('linear')
-
-
-    
 
 
 def test_ImageMesh():
 
     img = vxm.Image('extra/land2.png')       # incorporate fake land topography .png file
 
-    img.make(1)                             # resized to 1.0x original size i.e. not resized (default)
+    img.make()                             # resized to 1.0x original size i.e. not resized (default)
 
     img.ImageMesh('land.obj', 12, 3, 3, False, figsize=(10,10))
     # img.ImageMesh('land.obj', 12, 0.52, 1, True, verbose=True)
 
-    img.MeshView(wireframe=False, viewport=(1152, 1152))
-    # img.MeshView()
+    # img.MeshView(wireframe=False, viewport=(1152, 1152))
 
 
 def test_MarchingMesh():
