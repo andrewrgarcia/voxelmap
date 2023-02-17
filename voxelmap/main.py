@@ -76,7 +76,7 @@ class Model:
         return voxels
 
     
-    def draw(self,coloring='nuclear',figsize=(6.4,4.8)):
+    def draw(self,coloring='nuclear',edgecolors=None,figsize=(6.4,4.8),axis3don=False):
         '''Draws voxel model after building it with the provided `array`. 
         
         Parameters
@@ -86,8 +86,12 @@ class Model:
                 'nuclear'  colors model radially, from center to exterior
                 'linear'   colors voxel model vertically, top to bottom. 
                 'voxels'   colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
+        edgecolors: string/hex
+            edge color of voxels (default: None)
         figsize : (float,float)
             defines plot window dimensions. From matplotlib.pyplot.figure(figsize) kwarg. 
+        axis3don: bool
+            defines presence of 3D axis in voxel model plot (Default: False)
         '''
 
         Z,X,Y = np.shape(self.array)
@@ -140,12 +144,11 @@ class Model:
         fig = plt.figure(figsize=figsize)
 
         ax = fig.add_subplot(projection='3d')
-        ax._axis3don = False
+        ax._axis3don = axis3don
 
         voxels = Model(self.array).build()
 
-        ax.voxels(voxels, facecolors=voxcolors)
-
+        ax.voxels(voxels, facecolors=voxcolors,edgecolors=edgecolors) 
         set_axes_equal(ax)           
         plt.show()
 
