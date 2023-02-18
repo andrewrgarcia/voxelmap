@@ -54,7 +54,7 @@ def test_gradient_voxel_colormap1():
     model.colormap = cm.terrain
     model.alphacm = 0.5
 
-    model.draw('nuclear')
+    model.draw('cool')
 
 def test_gradient_voxel_colormap2():
     '''test the linear gradient voxel colormap (dictionary) drawing'''
@@ -65,7 +65,7 @@ def test_gradient_voxel_colormap2():
     model.colormap = cm.terrain
     model.alphacm = 0.5
 
-    model.draw('linear')
+    model.draw('fire')
 
 def test_voxelcrds():
 
@@ -117,7 +117,7 @@ def test_goxeldog():
     model.colormap = cm.rainbow
     model.alphacm = 0.8
 
-    model.draw('nuclear',figsize=(10,20))
+    model.draw('none')
 
 def test_sphere():
     'sphere: stress graphics'
@@ -192,7 +192,7 @@ def test_MarchingMesh():
 
     model = vxm.Model()
     model.load('extra/island.json')
-    model.draw('nuclear')
+    model.draw('none')
 
     array = model.array
     array = vxm.roughen(array,1)
