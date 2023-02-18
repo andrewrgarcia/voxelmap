@@ -12,6 +12,8 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 from matplotlib import cm
 from matplotlib import colors
 
+import pyvista 
+
 from voxelmap.annex import *
 
 def binarize(array,colorindex=1):
@@ -76,8 +78,9 @@ class Model:
         return voxels
 
     
-    def draw(self,coloring='nuclear',edgecolors=None,figsize=(6.4,4.8),axis3don=False):
-        '''Draws voxel model after building it with the provided `array`. 
+    def draw_mpl(self,coloring='nuclear',edgecolors=None,figsize=(6.4,4.8),axis3don=False):
+        ''' DRAW MATPLOTLIB.VOXELS
+        Draws voxel model after building it with the provided `array`. 
         
         Parameters
         ----------
@@ -151,6 +154,54 @@ class Model:
         ax.voxels(voxels, facecolors=voxcolors,edgecolors=edgecolors) 
         set_axes_equal(ax)           
         plt.show()
+
+    def draw(self, coloring='none', scalars='', background_color = '#cccccc',window_size=[1024, 768]):
+        '''Draws voxel model after building it with the provided `array` with PYVISTA
+        
+        Parameters
+        ----------
+        coloring: string  
+            voxel coloring scheme
+                'voxels' --> colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
+                'none'   --> no coloring
+                ELSE:  coloring == cmap (colormap)
+                'cool'      cool colormap
+                'fire'      fire colormap
+                and so on...
+        scalars : list
+            list of scalars for cmap coloring scheme
+        background_color : string / hex
+            background color of pyvista plot
+        window_size : (float,float)
+            defines plot window dimensions. Defaults to [1024, 768], unless set differently in the relevant theme’s window_size property [pyvista.Plotter]
+        '''
+
+        xx,yy,zz, voxid = arr2crds(self.array,-1).T
+
+        centers = np.vstack((xx.ravel(), yy.ravel(), zz.ravel())).T
+
+        pl = pyvista.Plotter(window_size=window_size)
+
+        if background_color != "": 
+            pl.background_color = background_color 
+
+        for i in range(len(centers)):
+
+            voxel = pyvista.Cube(center=centers[i]) 
+
+            if coloring=='voxels':
+                voxel_color, voxel_alpha = self.hashblocks[voxid[i]]
+                pl.add_mesh(voxel, color=voxel_color, opacity=voxel_alpha)
+            elif coloring=='none':
+                pl.add_mesh(voxel)
+            else:
+                pl.add_mesh(voxel,scalars=[i for i in range(8)] if scalars=='' else scalars,cmap=coloring)
+
+
+        pl.isometric_view_interactive()
+        pl.show(interactive=True)
+
+
 
     def save(self,filename='voxeldata.json'): 
         '''Save sparse array + color assignments Model data as a dictionary of keys (DOK) JSON file
