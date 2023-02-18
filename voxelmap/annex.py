@@ -69,6 +69,85 @@ def tensor2crds(tensor,mult):
     return np.array([ [*i*mult] for i in np.argwhere(tensor)])
 
 
+def resize_array(array, mult=(2,2,2)):
+    '''Resizes a three-dimensional array by the three dim factors specified by `mult` tuple. 
+    Converts to sparse array of 0s and 1s   
+
+    Parameters
+    ----------
+    array : np.array(int,int,int)
+        array to resize
+    mult: tuple(float,float,float)
+        depth length width factors to resize array with. e.g 2,2,2 resizes array to double its size in all dims
+    '''
+    
+    unique = np.unique(array)
+
+    array = ndimage.zoom(array, mult).astype('int')
+    crds_nonzero = np.argwhere(array > 0)
+    src = array.copy()
+
+    print(np.unique(src))
+    array.fill(0)
+
+    for k in crds_nonzero:
+        if src[tuple(k)] in unique:
+            array[tuple(k)] = src[tuple(k)]
+
+    return array
+
+
+def random_kernel_convolve(array, kernel,random_bounds=(-10,10)):
+    '''Applies a three-dimensional convolution with a randomly-mutating `kernel` 
+    on a 3-D `array` which changes for every array site when random_bounds are set to tuple. 
+    If random_bounds are set to False, convolution occurs in constant mode for the specified kernel. 
+
+    Parameters
+    ----------
+    array : np.array(int,int,int)
+        array to convolve
+    kernel: np.array(int,int,int)
+        kernel to use for convolution. If random_bounds are set to tuple, only the kernel's shape is used to specify the random_kernels
+    random_bounds : tuple(int,int) OR bool
+        see above explanation.
+    '''
+    if random_bounds and kernel.shape[0]%2:	
+        new_array = np.zeros(array.shape)
+
+        array = np.pad(array,kernel.shape[0]//2)
+
+        k_z,k_y,k_x = kernel.shape
+        Z,Y,X = new_array.shape 
+        # adapted from: 
+        # https://towardsdatascience.com/tensorflow-for-computer-vision-how-to-implement-convolutions-from-scratch-in-python-609158c24f82
+        for k in range(Z):
+            for j in range(Y):
+                for i in range(X):
+                    sector = array[k:k+k_z, j:j+k_y, i:i+k_x]
+
+                    kernel = np.random.randint(*random_bounds,(k_z,k_y,k_x)) 
+                    new_array[k,j,i] = np.sum(np.multiply(sector, kernel))
+        return new_array
+
+    else:
+        return ndimage.convolve(array, kernel, mode='constant', cval=0.0)
+
+def roughen(array,kernel_level=1):
+    '''Makes a 3d array model rougher by a special convolution operation. Uses `voxelmap.random_kernel_convolve`.
+
+    Parameters
+    ----------
+    array : np.array(int,int,int)
+        array to `roughen up`
+    kernel_level: int
+        length scale (size) of random kernels used. The smallest scale (=1) gives the roughest transformation.
+    '''
+    kernel = np.zeros((kernel_level,kernel_level,kernel_level))
+    return random_kernel_convolve(array,kernel,(-1,2))
+
+
+
+
 def load_array(filename):
     '''Loads a pickled numpy array with `filename` name'''
     return pickle.load( open(filename, "rb" ),encoding='latin1')
