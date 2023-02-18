@@ -115,11 +115,17 @@ array([[[0., 0., 0., 0., 0., 0., 0., 0., 0.],
         [0., 0., 0., 0., 0., 0., 0., 0., 0.],
         [0., 0., 0., 0., 0., 0., 0., 0., 0.]]])
         
-
 voxeldog = np.transpose(voxeldog,(2,1,0))
 model = vxm.Model(voxeldog)
-model.alphacm = 0.9
-model.draw()
+
+# model.array = vxm.resize_array(model.array,(3,3,3))
+
+model.hashblocks = {
+        1: ['yellow', 1], 
+        2: ['cyan', 0.35], 
+        3: ['#98fc66', 1], 
+        4: ['#eeeeee', 1]}
 
 
+model.draw('voxels',background_color='#3e404e')
 

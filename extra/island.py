@@ -103,7 +103,7 @@ model.hashblocks = {
                         5: ['#ffff99', 1]
                         }
 
-model.draw('voxels')
+model.draw('voxels',background_color='#3e404e')
 
-
-
+# vxm.MarchingMesh(np.transpose(island,(2,1,0)))
+# vxm.MeshView(viewport=(1152,1152))
