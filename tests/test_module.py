@@ -69,24 +69,26 @@ def test_gradient_voxel_colormap2():
 
 def test_voxelcrds():
 
-    data = vxm.Data()
-    data.xyz = np.random.randint(-1,1,(10,3))+np.random.random((10,3))
-    data.sparsity = 5
+    model= vxm.Model()
+    model.XYZ = np.random.randint(-1,1,(10,3))+np.random.random((10,3))
+    model.sparsity = 5
     
     'undefined rgb voxel colors'
-    cubes = data.importdata('coords')
-    cubes = np.transpose(cubes,(2,1,0))
-    model = vxm.Model(cubes)
-    model.hashblocks = data.hashblocks
+    model.load(coords=True)
+
+    model.array = np.transpose(model.array,(2,1,0))
     model.draw('voxels')
 
     'defined rgb voxel colors'
-    data.rgb = [ hex(np.random.randint(0.5e7,1.5e7))[2:] for i in range(10) ] 
-    cubes = data.importdata('coords')
-    cubes = np.transpose(cubes,(2,1,0))
-    model = vxm.Model(cubes)
-    model.hashblocks = data.hashblocks
-    model.draw('voxels')
+    model2= vxm.Model()
+    model2.XYZ =  model.XYZ
+    model2.sparsity = 5
+
+    model2.RGB = [ hex(np.random.randint(0.5e7,1.5e7))[2:] for i in range(10) ] 
+    model2.load(coords=True)
+    model2.array = np.transpose(model2.array,(2,1,0))
+
+    model2.draw('voxels')
 
 
 
@@ -94,16 +96,10 @@ def test_goxeldog():
     'process dog.txt from Goxel'
     path = 'extra/dog.txt'
 
-    # gox = vxm.Goxel(path)
-    data = vxm.Data()
-    data.file = path
+    model = vxm.Model()
+    model.load(path)
 
-    dog = data.importdata()
-    dog = np.transpose(dog,(2,1,0))
-
-    model = vxm.Model(dog)
-
-    model.hashblocks = data.hashblocks
+    model.array = np.transpose(model.array,(2,1,0))
 
     model.draw('voxels')
 
@@ -121,42 +117,39 @@ def test_goxeldog():
 
 def test_sphere():
     'sphere: stress graphics'
+
+    '-- MAKE SPHERE MODEL --'
     path = 'extra/sphere.txt'
-
-    data = vxm.Data()
-    data.file = path
-
-    sphere = data.importdata('file')       #convert gox .txt to numpy array
+    sphere = vxm.Model()
+    sphere.load(path)
 
     'coloring the white blocks of the pixelated sphere'
-    for i in np.argwhere(sphere!=0):
+    for i in np.argwhere(sphere.array!=0):
         color =  np.random.randint(10)
-        sphere[tuple(i)] = color
-
-    '--MAKE SPHERE MODE (model1)--'
-    model1 = vxm.Model(sphere)
+        sphere.array[tuple(i)] = color
 
     'create hashmap of voxel colors'
-    model1.hashblocksAdd(1,'#84f348',0.8)
-    model1.hashblocksAdd(2,'#4874f3')
-    model1.hashblocksAdd(3,'#32CD32')
-    model1.hashblocksAdd(4,'#653c77',0.90)
-    model1.hashblocksAdd(5,'lime',0.75)
-    model1.hashblocksAdd(6,'k',)
-    model1.hashblocksAdd(7,'#e10af2',0.3)
-    model1.hashblocksAdd(8,'red',0.3)
-    model1.hashblocksAdd(9,'orange',0.2)
-    savedhash = model1.hashblocks        # save created hashmap of voxel colors (lines above this one)
+    sphere.hashblocksAdd(1,'#84f348',0.8)
+    sphere.hashblocksAdd(2,'#4874f3')
+    sphere.hashblocksAdd(3,'#32CD32')
+    sphere.hashblocksAdd(4,'#653c77',0.90)
+    sphere.hashblocksAdd(5,'lime',0.75)
+    sphere.hashblocksAdd(6,'k',)
+    sphere.hashblocksAdd(7,'#e10af2',0.3)
+    sphere.hashblocksAdd(8,'red',0.3)
+    sphere.hashblocksAdd(9,'orange',0.2)
 
-    # model1.draw('voxels')             # do not draw full sphere (keep tests relatively short)
+    savedhash = sphere.hashblocks        # save created hashmap of voxel colors (lines above this one)
+    sphere.array = vxm.resize_array(sphere.array,(0.5,0.5,0.5))     #resize sphere (make smaller)
+    sphere.draw('voxels')            
 
-    '--MAKE WEDGE MODEL (model2)--'
-    mid = sphere.shape[2]//2
-    wedge = sphere[mid:,mid:,:mid]          # slice above sphere into wedge 
+    '-- MAKE WEDGE MODEL --'
+    mid = sphere.array.shape[2]//2
+    wedge_array = sphere.array[mid:,mid:,:mid]          # slice above sphere into wedge 
 
-    model2 = vxm.Model(wedge)
-    model2.hashblocks = savedhash       # used the hashmap from model 1
-    model2.draw('voxels')
+    wedge = vxm.Model(wedge_array)
+    wedge.hashblocks = savedhash       # used the hashmap from model 1
+    wedge.draw('voxels')
 
 
 def test_image():
