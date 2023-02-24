@@ -8,6 +8,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 from skimage import measure
 from skimage.draw import ellipsoid
+from scipy import ndimage 
 
 
 def findcrossover(array,low,high,value):
