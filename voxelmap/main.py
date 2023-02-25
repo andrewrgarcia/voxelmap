@@ -235,7 +235,7 @@ class Model:
         set_axes_equal(ax)
         plt.show()
 
-    def draw(self, coloring='none', scalars='', background_color='#cccccc', window_size=[1024, 768]):
+    def draw(self, coloring='none', scalars='', background_color='#cccccc', wireframe=False, window_size=[1024, 768]):
         '''Draws voxel model after building it with the provided `array` with PYVISTA
 
         Parameters
@@ -271,12 +271,12 @@ class Model:
 
             if coloring == 'voxels':
                 voxel_color, voxel_alpha = self.hashblocks[voxid[i]]
-                pl.add_mesh(voxel, color=voxel_color, opacity=voxel_alpha)
+                pl.add_mesh(voxel, color=voxel_color, opacity=voxel_alpha,show_edges=True if wireframe else False)
             elif coloring == 'none':
-                pl.add_mesh(voxel)
+                pl.add_mesh(voxel,show_edges=True if wireframe else False)
             else:
                 pl.add_mesh(voxel, scalars=[i for i in range(
-                    8)] if scalars == '' else scalars, cmap=coloring)
+                    8)] if scalars == '' else scalars,show_edges=True if wireframe else False, cmap=coloring)
 
         pl.isometric_view_interactive()
         pl.show(interactive=True)
