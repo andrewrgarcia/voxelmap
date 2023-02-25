@@ -9,7 +9,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from skimage import measure
 from skimage.draw import ellipsoid
 from scipy import ndimage 
-
+import pyvista as pv
 
 def findcrossover(array,low,high,value):
     'finds crossover index of array for `value` value'
@@ -349,39 +349,44 @@ def MarchingMesh(
     # Display resulting triangular mesh using Matplotlib. This can also be done
     # with mayavi (see skimage.measure.marching_cubes_lewiner docstring).
     if plot:
-        fig = plt.figure(figsize=figsize)
-        ax = fig.add_subplot(111, projection='3d')
+        # fig = plt.figure(figsize=figsize)
+        # ax = fig.add_subplot(111, projection='3d')
 
-        # Fancy indexing: `verts[faces]` to generate a collection of triangles
-        print(verts[faces-1])
-        mesh = Poly3DCollection(verts[faces-1])
-        mesh.set_edgecolor('k')
-        ax.add_collection3d(mesh)
+        # # Fancy indexing: `verts[faces]` to generate a collection of triangles
+        # print(verts[faces-1])
+        # mesh = Poly3DCollection(verts[faces-1])
+        # mesh.set_edgecolor('k')
+        # ax.add_collection3d(mesh)
 
-        def maxmin(arr): return np.min(arr), np.max(arr)
+        # def maxmin(arr): return np.min(arr), np.max(arr)
 
-        ax.set_xlim(*maxmin(verts.T[0]))  
-        ax.set_ylim(*maxmin(verts.T[1])) 
-        ax.set_zlim(*maxmin(verts.T[2])) 
+        # ax.set_xlim(*maxmin(verts.T[0]))  
+        # ax.set_ylim(*maxmin(verts.T[1])) 
+        # ax.set_zlim(*maxmin(verts.T[2])) 
 
-        plt.tight_layout()
-        plt.show()
+        # plt.tight_layout()
+        # plt.show()
+
+        MeshView(out_file)
 
 
-
-import voxelmap.objviewer as viewer
-
-def MeshView(objfile='model.obj', wireframe=False, viewport=(2048, 1152)):
+def MeshView(objfile='model.obj',wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
     '''[GLOBAL_METHOD] 
-    MeshView: triangulated mesh view with OpenGL [ uses pygame ]
-
+    MeshView: triangulated mesh view with PyVista 
     Parameters
     ----------
     objfile: string
         .obj file to process with MeshView [in GLOBAL function only]
     wireframe: bool
         Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
+    color : string / hexadecimal
+        mesh color. default: 'pink'
+    alpha : float
+        opacity transparency range: 0 - 1.0. Default: 0.5
+    background_color : string / hexadecimal
+        color of background. default: 'pink'
     viewport : (int,int)
         viewport / screen (width, height) for display window (default: 80% your screen's width & height)
     '''
-    viewer.objview(objfile, wireframe=wireframe, usemtl=False, viewport=viewport)
+    mesh = pv.read(objfile)
+    mesh.plot(show_edges=True if wireframe else False, color=color,opacity=alpha,background=background_color,window_size = viewport)

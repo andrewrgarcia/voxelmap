@@ -2,8 +2,6 @@
 import matplotlib.image as mpimg
 import numpy as np
 import cv2
-import pygame
-
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -11,7 +9,6 @@ from scipy.spatial import ConvexHull
 # from scipy.spatial import Delaunay
 
 from voxelmap.annex import *
-import voxelmap.objviewer as viewer
 
 from scipy import ndimage 
 
@@ -32,10 +29,10 @@ def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_t
 
         hull = ConvexHull(points)
 
-        if plot: 
-            for s in hull.simplices:
-                s = np.append(s, s[0])  # Here we cycle back to the first coordinate
-                ax.plot(Y_here+points[s, 1],X_here+points[s, 0], Z_here+points[s, 2], color=color)
+        # if plot: 
+        #     for s in hull.simplices:
+        #         s = np.append(s, s[0])  # Here we cycle back to the first coordinate
+        #         ax.plot(Y_here+points[s, 1],X_here+points[s, 0], Z_here+points[s, 2], color=color)
 
         newsimplices = np.array([s + num_simplices for s in hull.simplices])
 
@@ -114,6 +111,27 @@ class Image:
 
         self.intensity = self.intensity.astype('int')  # floor-divide
 
+    def MeshView(self,wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
+        '''
+        MeshView: triangulated mesh view with PyVista 
+        Parameters
+        ----------
+        objfile: string
+            .obj file to process with MeshView [in GLOBAL function only]
+        wireframe: bool
+            Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
+        color : string / hexadecimal
+            mesh color. default: 'pink'
+        alpha : float
+            opacity transparency range: 0 - 1.0. Default: 0.5
+        background_color : string / hexadecimal
+            color of background. default: 'pink'
+        viewport : (int,int)
+            viewport / screen (width, height) for display window (default: 80% your screen's width & height)
+        '''
+        mesh = pv.read(self.objfile)
+        mesh.plot(show_edges=True if wireframe else False, color=color,opacity=alpha,background=background_color,window_size = viewport)
+
     def ImageMap(self,depth=5):
         '''Map image to 3-D array 
 
@@ -160,6 +178,7 @@ class Image:
         plot: bool
             plots a preliminary 3-D triangulated image if True
         '''
+        self.make()
 
         matrix = self.intensity
 
@@ -167,9 +186,10 @@ class Image:
         W = matrix.shape[1]
 
         ax=[]
-        if plot:
-            fig = plt.figure(figsize=figsize)
-            ax = fig.add_subplot(111, projection="3d")
+
+        # if plot:
+        #     fig = plt.figure(figsize=figsize)
+        #     ax = fig.add_subplot(111, projection="3d")
 
         "multiple sectors"
         NUM = 0
@@ -200,12 +220,15 @@ class Image:
         self.objfile = out_file 
 
         if plot:
-            ax.set_title("{} Convex Hull segments".format(L_sectors**2),color="#D3D3D3")
-            ax.set_facecolor('#3e404e')
+            # ax.set_title("{} Convex Hull segments".format(L_sectors**2),color="#D3D3D3")
+            # ax.set_facecolor('#3e404e')
 
-            set_axes_equal(ax)
-            plt.axis('off')
-            plt.show()
+            # set_axes_equal(ax)
+            # plt.axis('off')
+            # plt.show()
+
+            self.MeshView()
+
 
     def MarchingMesh(self, voxel_depth=12, level=0,
                 spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, 
@@ -265,16 +288,3 @@ class Image:
                 allow_degenerate=allow_degenerate, method=method, mask=mask,
                 plot=plot, figsize=figsize)
 
-
-    # viewport_default = (0.8*np.array(pygame.display.set_mode().get_rect()[2:]))
-    def MeshView(self, wireframe=False, viewport=(2048, 1152)):
-        '''MeshView: triangulated mesh view with OpenGL [ uses pygame ]
-
-        Parameters
-        ----------
-        wireframe: bool
-            Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
-        viewport : (int,int)
-            viewport / screen (width, height) for display window (default: 80% your screen's width & height)
-        '''
-        viewer.objview(self.objfile, wireframe=wireframe, usemtl=False, viewport=viewport)

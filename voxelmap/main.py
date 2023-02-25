@@ -62,6 +62,7 @@ class Model:
         self.alphacm = 1            # default: opaque colormap (alpha=1)
 
         # self.file = 'placeholder.txt'
+        self.objfile = 'model.obj'
         self.XYZ = []
         self.RGB = []
         self.sparsity = 10.0
@@ -324,3 +325,81 @@ class Model:
 
             else:
                 self.importdata(filename)
+
+    def MarchingMesh(self, level=0,
+            spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, 
+            allow_degenerate=True, method='lewiner', mask=None,
+            plot=False, figsize=(4.8,4.8) ):
+        '''Marching cubes on 3D-mapped image
+
+        Parameters
+        ----------
+        voxel_depth : int
+            depth of 3-D mapped image on number of voxels
+
+        --- FROM SKIMAGE.MEASURE.MARCHING_CUBES ---
+        level : float, optional
+            Contour value to search for isosurfaces in `volume`. If not
+            given or None, the average of the min and max of vol is used.
+        spacing : length-3 tuple of floats, optional
+            Voxel spacing in spatial dimensions corresponding to numpy array
+            indexing dimensions (M, N, P) as in `volume`.
+        gradient_direction : string, optional
+            Controls if the mesh was generated from an isosurface with gradient
+            descent toward objects of interest (the default), or the opposite,
+            considering the *left-hand* rule.
+            The two options are:
+            * descent : Object was greater than exterior
+            * ascent : Exterior was greater than object
+
+        step_size : int, optional
+            Step size in voxels. Default 1. Larger steps yield faster but
+            coarser results. The result will always be topologically correct
+            though.
+        allow_degenerate : bool, optional
+            Whether to allow degenerate (i.e. zero-area) triangles in the
+            end-result. Default True. If False, degenerate triangles are
+            removed, at the cost of making the algorithm slower.
+        method: str, optional
+            One of 'lewiner', 'lorensen' or '_lorensen'. Specify which of
+            Lewiner et al. or Lorensen et al. method will be used. The
+            '_lorensen' flag correspond to an old implementation that will
+            be deprecated in version 0.19.
+        mask : (M, N, P) array, optional
+            Boolean array. The marching cube algorithm will be computed only on
+            True elements. This will save computational time when interfaces
+            are located within certain region of the volume M, N, P-e.g. the top
+            half of the cube-and also allow to compute finite surfaces-i.e. open
+            surfaces that do not end at the border of the cube.
+
+        plot: bool
+            plots a preliminary 3-D triangulated image if True
+        '''
+
+        MarchingMesh(self.array, out_file=self.objfile, level=level,
+                spacing=spacing, gradient_direction=gradient_direction, step_size=step_size, 
+                allow_degenerate=allow_degenerate, method=method, mask=mask,
+                plot=plot, figsize=figsize)
+        
+        print('mesh created! saved as {}.'.format(self.objfile))
+
+    def MeshView(self,wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
+        '''
+        MeshView: triangulated mesh view with PyVista 
+        Parameters
+        ----------
+        objfile: string
+            .obj file to process with MeshView [in GLOBAL function only]
+        wireframe: bool
+            Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
+        color : string / hexadecimal
+            mesh color. default: 'pink'
+        alpha : float
+            opacity transparency range: 0 - 1.0. Default: 0.5
+        background_color : string / hexadecimal
+            color of background. default: 'pink'
+        viewport : (int,int)
+            viewport / screen (width, height) for display window (default: 80% your screen's width & height)
+        '''
+        mesh = pv.read(self.objfile)
+        mesh.plot(show_edges=True if wireframe else False, color=color,opacity=alpha,background=background_color,window_size = viewport)
