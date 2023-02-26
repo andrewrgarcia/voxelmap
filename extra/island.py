@@ -93,7 +93,8 @@ array([[[1., 1., 1., 1., 1., 1., 1., 1., 1.],
         [4., 0., 0., 0., 0., 0., 0., 0., 0.],
         [0., 0., 0., 0., 0., 0., 0., 0., 0.]]])
 
-model = vxm.Model(np.transpose(island,(2,1,0)))
+island = np.transpose(island,(2,1,0))
+model = vxm.Model(island)
                 
 model.hashblocks = {
                         1: ['#0197fd', 1], 
@@ -103,7 +104,9 @@ model.hashblocks = {
                         5: ['#ffff99', 1]
                         }
 
-model.draw('voxels',background_color='#3e404e')
+'draw in standard voxel form'
+model.draw('voxels',background_color='#3e404e',wireframe=True,window_size=[700,700])
 
-# vxm.MarchingMesh(np.transpose(island,(2,1,0)))
-# vxm.MeshView(viewport=(1152,1152))
+'to convert to mesh'
+model.MarchingMesh()
+model.MeshView(wireframe=True,background_color='#3e404e',alpha=1,color='lime',viewport=[700,700])

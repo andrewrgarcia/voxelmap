@@ -48,7 +48,7 @@ def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_t
 
 
 class Image:
-    def __init__(self,file):
+    def __init__(self,file=''):
         '''Image structure.
 
         Parameters
@@ -63,7 +63,7 @@ class Image:
             name of Wavefront (.obj) file to make from ImageMesh
         '''
         self.file = file
-        self.array = []
+        self.array = mpimg.imread(self.file) if file != '' else []     
         self.intensity = np.ones((5,5))
         self.tensor = np.ones((5,5,5))
         self.objfile = 'model.obj'
@@ -80,7 +80,7 @@ class Image:
         '''
         
         'Turn image into intensity matrix'
-        self.array = mpimg.imread(self.file)       #load image
+        # self.array = mpimg.imread(self.file)       #load image
         'Use CCIR 601 luma to convert RGB image to rel. grayscale 2-D matrix (https://en.wikipedia.org/wiki/Luma_(video)) '
         color_weights = [0.299,0.587,0.114]
         self.intensity = np.sum([self.array[:,:,i]*color_weights[i] for i in range(3)],0)*100
@@ -96,12 +96,12 @@ class Image:
     def make(self):
         '''Turn image into intensity matrix i.e. matrix with pixel intensities
         '''
-        if self.array == []:
-
-            self.array = mpimg.imread(self.file)       #load image
-            'Use CCIR 601 luma to convert RGB image to rel. grayscale 2-D matrix (https://en.wikipedia.org/wiki/Luma_(video)) '
-            color_weights = [0.299,0.587,0.114]
-            self.intensity = np.sum([self.array[:,:,i]*color_weights[i] for i in range(3)],0)*100
+        # if self.array == []:
+        #     self.array = mpimg.imread(self.file)       #load image
+        
+        'Use CCIR 601 luma to convert RGB image to rel. grayscale 2-D matrix (https://en.wikipedia.org/wiki/Luma_(video)) '
+        color_weights = [0.299,0.587,0.114]
+        self.intensity = np.sum([self.array[:,:,i]*color_weights[i] for i in range(3)],0)*100
 
         # 'if resize'
         # if res != 1.0:

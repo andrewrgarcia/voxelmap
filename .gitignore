@@ -17,3 +17,6 @@ block_a
 random-array
 *.obj
 myModel.json
+
+#confidential model(s)
+chibi.txt
