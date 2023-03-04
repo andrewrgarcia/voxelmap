@@ -140,6 +140,7 @@ class Image:
         depth : int
             depth in number of voxels (default = 5 voxels)
         '''
+        self.make()
         intensity = self.intensity
 
         length, width = np.shape(intensity)
@@ -175,8 +176,8 @@ class Image:
             relative depth of 3-D model with respect to the image's intensity magnitudes (default: 0.50)
         trace_min: int
             minimum number of points in different z-levels to triangulate per sector (default: 5)
-        plot: bool
-            plots a preliminary 3-D triangulated image if True
+        plot: bool / str
+            plots a preliminary 3-D triangulated image if True [with PyVista (& with matplotlib if plot = 'img')
         '''
         self.make()
 
@@ -220,14 +221,15 @@ class Image:
         self.objfile = out_file 
 
         if plot:
-            # ax.set_title("{} Convex Hull segments".format(L_sectors**2),color="#D3D3D3")
-            # ax.set_facecolor('#3e404e')
+            if plot == 'mpl':
+                ax.set_title("{} Convex Hull segments".format(L_sectors**2),color="#D3D3D3")
+                ax.set_facecolor('#3e404e')
 
-            # set_axes_equal(ax)
-            # plt.axis('off')
-            # plt.show()
-
-            self.MeshView()
+                set_axes_equal(ax)
+                plt.axis('off')
+                plt.show()
+            else:
+                self.MeshView()
 
 
     def MarchingMesh(self, voxel_depth=12, level=0,
