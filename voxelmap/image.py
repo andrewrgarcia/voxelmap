@@ -29,10 +29,10 @@ def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_t
 
         hull = ConvexHull(points)
 
-        # if plot: 
-        #     for s in hull.simplices:
-        #         s = np.append(s, s[0])  # Here we cycle back to the first coordinate
-        #         ax.plot(Y_here+points[s, 1],X_here+points[s, 0], Z_here+points[s, 2], color=color)
+        if plot=='mpl': 
+            for s in hull.simplices:
+                s = np.append(s, s[0])  # Here we cycle back to the first coordinate
+                ax.plot(Y_here+points[s, 1],X_here+points[s, 0], Z_here+points[s, 2], color=color)
 
         newsimplices = np.array([s + num_simplices for s in hull.simplices])
 
@@ -188,9 +188,9 @@ class Image:
 
         ax=[]
 
-        # if plot:
-        #     fig = plt.figure(figsize=figsize)
-        #     ax = fig.add_subplot(111, projection="3d")
+        if plot=='mpl':
+            fig = plt.figure(figsize=figsize)
+            ax = fig.add_subplot(111, projection="3d")
 
         "multiple sectors"
         NUM = 0

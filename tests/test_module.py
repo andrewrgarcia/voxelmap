@@ -5,10 +5,12 @@ but check online documentation
 import voxelmap as vxm
 import numpy as np
 
+import cv2
+import matplotlib.pyplot as plt
 from matplotlib import cm
 
 
-def tedst_pickle():
+def test_pickle():
     '''test pickle save and load of made-up array'''
     arr = np.random.randint(0,10,(7,7,7))
     vxm.save_array(arr,'random-array')
@@ -17,7 +19,7 @@ def tedst_pickle():
 
     print(loaded_arr)
     
-def tedst_custom_voxel_colormap_save():
+def test_custom_voxel_colormap_save():
     '''test the custom voxel colormap (dictionary) generation and drawing
     model.hashblocksAdd() adds dictionary entries to custom voxel
      colormap to draw model with `voxels` coloring scheme
@@ -35,7 +37,7 @@ def tedst_custom_voxel_colormap_save():
     model.save('myModel.json')
 
 
-def tedst_custom_voxel_colormap_load():
+def test_custom_voxel_colormap_load():
 
     model = vxm.Model()
     model.load('myModel.json')
@@ -45,7 +47,7 @@ def tedst_custom_voxel_colormap_load():
     model.draw('voxels')
 
 
-def tedst_gradient_voxel_colormap1():
+def test_gradient_voxel_colormap1():
     '''test the nuclear gradient voxel colormap (dictionary) drawing'''
 
     arr = np.random.randint(0,10,(7,7,7))
@@ -56,7 +58,7 @@ def tedst_gradient_voxel_colormap1():
 
     model.draw('cool')
 
-def tedst_gradient_voxel_colormap2():
+def test_gradient_voxel_colormap2():
     '''test the linear gradient voxel colormap (dictionary) drawing'''
 
     arr = np.random.randint(0,10,(7,7,7))
@@ -67,7 +69,7 @@ def tedst_gradient_voxel_colormap2():
 
     model.draw('fire')
 
-def tedst_voxelcrds():
+def test_voxelcrds():
 
     model= vxm.Model()
     model.XYZ = np.random.randint(-1,1,(10,3))+np.random.random((10,3))
@@ -115,7 +117,7 @@ def test_goxeldog():
 
     model.draw('none')
 
-def tedst_sphere():
+def test_sphere():
     'sphere: stress graphics'
 
     '-- MAKE SPHERE MODEL --'
@@ -152,36 +154,65 @@ def tedst_sphere():
     wedge.draw('voxels')
 
 
-def tedst_image():
+def test_image():
 
-    img = vxm.Image('extra/land.png')       # incorporate fake land topography .png file
-    # img = vxm.Image('extra/donut_lores.png')       # incorporate fake land topography .png file
+    'display original land image'
+    plt.imshow(cv2.imread('extra/land.png'))      # display fake land topography .png file as plot
+    plt.axis('off')
+    plt.show()
 
-    img.make()                             # resized to 1.0x original size i.e. not resized (default)
+    img = vxm.Image('extra/land.png')             # incorporate fake land topography .png file to voxelmap.Image class
+
+    'resize the image with cv2 tool'
+    img.array = cv2.resize(img.array, (50,50), interpolation = cv2.INTER_AREA)
+    # print(img.array.shape)
+
+    'blur the image and display output'
+    img.array = cv2.blur(img.array,(10,10))    # blur the image for realiztic topography levels
+    plt.imshow(img.array)      # display fake land topography .png file as plot
+    plt.axis('off')
+    plt.show()
+    # print(img.array.shape)
+
+    'do ImageMap on treated image'
     mapped_img = img.ImageMap(12)              # mapped to 3d with a depth of 12 voxels
-    
+
     model = vxm.Model(mapped_img)
-    
-    model.array = np.transpose(np.flip(model.array),(2,0,1))
+    model.array = np.flip(np.transpose(model.array))
 
-    # img.MarchingMesh(12)
-    # img.MeshView()
+    model.colormap = cm.terrain
+    model.alphacm = 0.5
+    model.draw_mpl('linear',figsize=(15,12))
 
 
+def test_ImageMesh0():
+    img = vxm.Image('extra/land.png')   # incorporate fake land topography .png file
 
-def tedst_ImageMesh():
+    print(img.array.shape)
+
+    # img.ImageMesh(out_file='model.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot='mpl')
+    img.ImageMesh(out_file='model.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot=False)
+
+    img.array = cv2.blur(img.array,(50,50))    # blur the image for realiztic topography levels
+    # img.ImageMesh(out_file='model.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot='mpl')
+    img.ImageMesh(out_file='modelblurred.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot=False)
+
+    img.objfile = 'modelblurred.obj'
+    img.MeshView()
+
+def test_ImageMesh():
 
     img = vxm.Image('extra/land2.png')       # incorporate fake land topography .png file
 
-    img.make()                             # resized to 1.0x original size i.e. not resized (default)
+    # img.make()                             # resized to 1.0x original size i.e. not resized (default)
 
     # img.ImageMesh('land.obj', 12, 3, 3, False, figsize=(10,10))
-    img.ImageMesh('land.obj', 12, 0.52, 1, True, verbose=True)
+    img.ImageMesh('land.obj', 12, 3, 1, True, verbose=True)
 
     # img.MeshView(wireframe=False, viewport=(1152, 1152))
 
 
-def tedst_MarchingMesh():
+def test_MarchingMesh():
 
     model = vxm.Model()
     model.load('extra/island.json')
@@ -192,3 +223,28 @@ def tedst_MarchingMesh():
 
     vxm.MarchingMesh(array,'isle.obj',True)
     vxm.MeshView('isle.obj')
+
+
+def test_extraMarch():
+
+    model = vxm.Model()
+
+    # model.load('extra/skull.txt')
+    model.load('extra/chibi.txt')
+
+    arr = model.array 
+
+
+    # model.array = vxm.resize_array(model.array , mult=(2,2,2))
+    # model.array = vxm.resize_array(model.array , mult=(0.5,0.5,0.5))
+
+    # model.hashblocks = {-1: ['#ff0000', 1], 1: ['#0197fd', 1], 2: ['#816647', 1], 3: ['#98fc66', 1], 4: ['#eeeeee', 1], 5: ['#ffff99', 1]}
+
+
+    model.array = model.array[::-1]
+    # model.draw('voxels',background_color='#c77575')
+    model.draw('voxels',wireframe=False, background_color='#3e404e',window_size=[700,700])
+
+    model.MarchingMesh(step_size=1)
+    model.MeshView(wireframe=True,alpha=1,color=True,background_color='#6a508b')
+
