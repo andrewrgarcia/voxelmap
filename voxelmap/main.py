@@ -288,8 +288,14 @@ class Model:
         ----------
         filename: string  
             name of file (e.g. 'voxeldata.json')
+            Data types:
+            .json -> voxel data represented as (DOK) JSON file 
+            .txt -> voxel data represented x,y,z,rgb matrix in .txt file (see Goxel .txt imports)
         '''
-        tojson(filename, self.array, self.hashblocks)
+        if filename[-4:] == 'json':
+            tojson(filename, self.array, self.hashblocks)
+        else:
+            toTXT(filename,self.array, self.hashblocks)
 
     def load(self, filename='voxeldata.json', coords=False):
         '''Load to Model object 

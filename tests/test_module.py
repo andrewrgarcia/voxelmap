@@ -248,3 +248,41 @@ def test_extraMarch():
     model.MarchingMesh(step_size=1)
     model.MeshView(wireframe=True,alpha=1,color=True,background_color='#6a508b')
 
+def build_checkerboard(w, h) :
+      re = np.r_[ w*[0,1] ]              # even-numbered rows
+      ro = np.r_[ w*[1,0] ]              # odd-numbered rows
+      return np.row_stack(h*(re, ro))
+
+def test_build_and_save2txt():
+
+    A = build_checkerboard(16,16)
+
+    A = A+1
+    
+    for i in range(200):
+        A[tuple(np.random.randint(0,31,2))] = 3
+
+    print(A.shape)
+    A = A.reshape(1,32,32)
+
+    model = vxm.Model(A)
+
+    model.hashblocks={
+                1: ['#000000',1],
+                2: ['#ffffff',1],
+                3: ['#BF40BF',1]
+
+    }
+
+    model.save('file.txt')
+
+def test_loadTXT():
+
+    model = vxm.Model()
+
+    model.load('extra/checkers.txt')
+
+    model.MarchingMesh(plot=True)
+
+    model.array = vxm.resize_array(model.array, (0.5,0.5,0.5))
+    model.draw('voxels',background_color='#00FF00')

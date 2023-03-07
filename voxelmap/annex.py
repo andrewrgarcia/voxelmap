@@ -188,6 +188,27 @@ def tojson(filename, array, hashblocks={}):
     f.close()
 
 
+def toTXT(filename='file.txt',array=[],hashblocks={}):
+
+    Z,Y,X = array.shape
+
+    header = ["# Goxel 0.10.4\n", "# One line per voxel\n", "# X Y Z RRGGBB\n"]
+    with open(filename, "w") as file:
+        # Writing data to a file
+        file.writelines(header)
+        for k in range(Z):
+            for j in range(Y):
+                for i in range(X): 
+                    if array[k,j,i] != 0:
+                        
+                        hexcolor = hashblocks[array[k,j,i]][0]
+                        ijk = list([-16,-16,0]+np.array([i,j,k]))
+                        file.write("{} {} {} {} \n".format(*ijk, hexcolor[1:] ))
+
+        
+
+
+
 def load_from_json(filename):
     '''Load JSON file to object'''
     with open(filename) as f:
