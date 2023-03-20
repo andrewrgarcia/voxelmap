@@ -1,7 +1,7 @@
 API
 ===
 
-.. autoclass:: Model     
+.. autoclass:: voxelmap.Model     
    :members: 
 
    .. automethod:: __init__
