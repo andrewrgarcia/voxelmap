@@ -1,7 +1,11 @@
 API
 ===
 
-.. autoclass:: voxelmap.Model
+.. autoclass:: Model     
+   :members: 
+
+   .. automethod:: __init__
+
 
 .. autosummary::
    :toctree: generated
