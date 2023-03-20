@@ -11,9 +11,11 @@ It is recommended you use voxelmap through a virtual environment. You may follow
 .. code-block:: console
    $ virtualenv venv
    $ source venv/bin/activate
+
+.. code-block:: console
    (.venv) $ pip install voxelmap
 
-To exit the virtual environment, simply type `deactivate`. To access it at any other time again, enter with the above `source` command.
+To exit the virtual environment, simply type ``deactivate``. To access it at any other time again, enter with the above ``source`` command.
 
 Creating recipes
 ----------------
