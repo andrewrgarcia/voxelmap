@@ -1,11 +1,11 @@
 API
 ===
 
-.. autoclass:: voxelmap.Model     
+.. autoclass:: voxelmap.Model
    :members: 
 
-   .. automethod:: __init__
-
+.. autoclass:: voxelmap.Image
+   :members: 
 
 .. autosummary::
    :toctree: generated

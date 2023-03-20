@@ -114,6 +114,7 @@ class Image:
     def MeshView(self,wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
         '''
         MeshView: triangulated mesh view with PyVista 
+        
         Parameters
         ----------
         objfile: string
