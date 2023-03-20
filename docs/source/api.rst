@@ -1,10 +1,10 @@
 API
 ===
 
-.. autoclass:: voxelmap.Model
+.. autoclass:: voxelmap.main.Model
    :members: 
 
-.. autoclass:: voxelmap.Image
+.. autoclass:: voxelmap.image.Image
    :members: 
 
 .. autosummary::
