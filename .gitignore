@@ -26,4 +26,5 @@ file.txt
 mars.png
 
 #docs make latexpdf
-build
+docs/build
+docs/img
