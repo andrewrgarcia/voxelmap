@@ -24,3 +24,6 @@ icon_lock.py
 
 file.txt
 mars.png
+
+#docs make latexpdf
+build

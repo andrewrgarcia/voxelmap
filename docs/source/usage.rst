@@ -18,7 +18,7 @@ To exit the virtual environment, simply type ``deactivate``. To access it at any
 
 
 Draw voxels from an integer array
-----------------
+-------------------------------------
 
 
 **Voxelmap** was originally made to handle third-order integer arrays of the form ``np.array((int,int,int))`` as blueprints to 3-D voxel models. 
@@ -29,8 +29,6 @@ internal to the ``voxelmap.Model`` class called ``hashblocks``.
 
 The voxel color and transparencies may be added or modified to the 
 ``hashblocks`` map with the ``hashblocksAdd`` method.
-
-.. autofunction:: voxelmap.hashblocksAdd
 
 .. code-block:: python
 
@@ -53,21 +51,8 @@ The voxel color and transparencies may be added or modified to the
    model.draw_mpl('voxels')
 
 
-Creating recipes
-----------------
+.. autofunction:: voxelmap.resize_array
 
-To retrieve a list of random ingredients,
-you can use the ``lumache.get_random_ingredients()`` function:
-
-.. autofunction:: lumache.get_random_ingredients
-
-The ``kind`` parameter should be either ``"meat"``, ``"fish"``,
-or ``"veggies"``. Otherwise, :py:func:`lumache.get_random_ingredients`
-will raise an exception.
-
-.. autoexception:: lumache.InvalidKindError
-
-For example:
 
 >>> import lumache
 >>> lumache.get_random_ingredients()
