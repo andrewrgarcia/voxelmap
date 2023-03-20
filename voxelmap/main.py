@@ -235,7 +235,7 @@ class Model:
         set_axes_equal(ax)
         plt.show()
 
-    def draw(self, coloring='none', scalars='', background_color='#cccccc', wireframe=False, window_size=[1024, 768]):
+    def draw(self, coloring='none', scalars='', background_color='#cccccc', wireframe=False, window_size=[1024, 768],voxel_spacing=(1,1,1)):
         '''Draws voxel model after building it with the provided `array` with PYVISTA
 
         Parameters
@@ -254,6 +254,8 @@ class Model:
             background color of pyvista plot
         window_size : (float,float)
             defines plot window dimensions. Defaults to [1024, 768], unless set differently in the relevant theme’s window_size property [pyvista.Plotter]
+        voxel_spacing : (float,float,float)
+            changes voxel spacing by defining length scales of x y and z directions (default:(1,1,1)).
         '''
 
         xx, yy, zz, voxid = arr2crds(self.array, -1).T
@@ -267,7 +269,9 @@ class Model:
 
         for i in range(len(centers)):
 
-            voxel = pyvista.Cube(center=centers[i])
+            x_len,y_len,z_len = voxel_spacing
+
+            voxel = pyvista.Cube(center=centers[i],x_length=x_len, y_length=y_len, z_length=z_len)
 
             if coloring == 'voxels':
                 voxel_color, voxel_alpha = self.hashblocks[voxid[i]]
