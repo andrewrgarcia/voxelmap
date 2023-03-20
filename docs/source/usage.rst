@@ -9,10 +9,6 @@ Installation
 It is recommended you use voxelmap through a virtual environment. You may follow the below simple protocol to create the virtual environment, run it, and install the package there:
 
 .. code-block:: console
-   $ virtualenv venv
-   $ source venv/bin/activate
-
-.. code-block:: console
    (.venv) $ pip install voxelmap
 
 To exit the virtual environment, simply type ``deactivate``. To access it at any other time again, enter with the above ``source`` command.
