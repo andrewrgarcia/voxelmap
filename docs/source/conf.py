@@ -2,12 +2,12 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'voxelmap'
+copyright = '2023, Andrew Garcia'
+author = 'Andrew Garcia, Ph.D.'
 
-release = '0.1'
-version = '0.1.0'
+release = '3.4'
+version = '3.4.5'
 
 # -- General configuration
 

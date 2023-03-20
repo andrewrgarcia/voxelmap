@@ -6,11 +6,14 @@ Usage
 Installation
 ------------
 
-To use Lumache, first install it using pip:
+It is recommended you use voxelmap through a virtual environment. You may follow the below simple protocol to create the virtual environment, run it, and install the package there:
 
 .. code-block:: console
+   $ virtualenv venv
+   $ source venv/bin/activate
+   (.venv) $ pip install voxelmap
 
-   (.venv) $ pip install lumache
+To exit the virtual environment, simply type `deactivate`. To access it at any other time again, enter with the above `source` command.
 
 Creating recipes
 ----------------
