@@ -112,8 +112,7 @@ class Image:
         self.intensity = self.intensity.astype('int')  # floor-divide
 
     def MeshView(self,wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
-        '''
-        MeshView: triangulated mesh view with PyVista 
+        '''MeshView: triangulated mesh view with PyVista
         
         Parameters
         ----------
@@ -134,10 +133,10 @@ class Image:
         mesh.plot(show_edges=True if wireframe else False, color=color,opacity=alpha,background=background_color,window_size = viewport)
 
     def ImageMap(self,depth=5):
-        '''Map image to 3-D array 
-
+        '''Map image to 3-D array
+        
         Parameters
-        ----------
+        -----------
         depth : int
             depth in number of voxels (default = 5 voxels)
         '''
@@ -162,13 +161,11 @@ class Image:
 
         return model
 
-    def ImageMesh(self, out_file='model.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 5,\
-                        plot = True, figsize=(4.8,4.8), verbose=False ):
-        '''3-D triangulation of 2-D images with a Convex Hull algorithm
-        Andrew Garcia, 2022
+    def ImageMesh(self, out_file='model.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 5, plot = True, figsize=(4.8,4.8), verbose=False )
+        '''3-D triangulation of 2-D images with a Convex Hull algorithm (Andrew Garcia, 2022)
 
         Parameters
-        ----------
+        ------------
         out_file : str
             name and/or path for Wavefront .obj file output. This is the common format for OpenGL 3-D model files (default: model.obj) 
         L_sectors: int
@@ -233,18 +230,13 @@ class Image:
                 self.MeshView()
 
 
-    def MarchingMesh(self, voxel_depth=12, level=0,
-                spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, 
-                allow_degenerate=True, method='lewiner', mask=None,
-                plot=False, figsize=(4.8,4.8) ):
+    def MarchingMesh(self, voxel_depth=12, level=0, spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, allow_degenerate=True, method='lewiner', mask=None, plot=False, figsize=(4.8,4.8) ):
         '''Marching cubes on 3D-mapped image
 
         Parameters
         ----------
         voxel_depth : int
             depth of 3-D mapped image on number of voxels
-
-        --- FROM SKIMAGE.MEASURE.MARCHING_CUBES ---
         level : float, optional
             Contour value to search for isosurfaces in `volume`. If not
             given or None, the average of the min and max of vol is used.
@@ -278,7 +270,6 @@ class Image:
             are located within certain region of the volume M, N, P-e.g. the top
             half of the cube-and also allow to compute finite surfaces-i.e. open
             surfaces that do not end at the border of the cube.
-
         plot: bool
             plots a preliminary 3-D triangulated image if True
         '''

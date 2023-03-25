@@ -337,30 +337,22 @@ class Model:
             else:
                 self.importdata(filename)
 
-    def MarchingMesh(self, level=0,
-            spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, 
-            allow_degenerate=True, method='lewiner', mask=None,
-            plot=False, figsize=(4.8,4.8) ):
-        '''Marching cubes on 3D-mapped image
-
+    def MarchingMesh(self, level=0,spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, allow_degenerate=True, method='lewiner', mask=None,plot=False, figsize=(4.8,4.8) ):
+        '''Marching cubes on 3D-mapped image 
+        
         Parameters
         ----------
         voxel_depth : int
             depth of 3-D mapped image on number of voxels
-
-        --- FROM SKIMAGE.MEASURE.MARCHING_CUBES ---
-
         level : float, optional
             Contour value to search for isosurfaces in `volume`. If not given or None, the average of the min and max of vol is used.
         spacing : length-3 tuple of floats, optional
             Voxel spacing in spatial dimensions corresponding to numpy array indexing dimensions (M, N, P) as in `volume`.
         gradient_direction : string, optional
-
             Controls if the mesh was generated from an isosurface with gradient descent toward objects of interest (the default), or the opposite, considering the *left-hand* rule.
             The two options are:
             * descent : Object was greater than exterior
             * ascent : Exterior was greater than object
-
         step_size : int, optional
             Step size in voxels. Default 1. Larger steps yield faster but coarser results. The result will always be topologically correct though.
         allow_degenerate : bool, optional
@@ -373,19 +365,15 @@ class Model:
             plots a preliminary 3-D triangulated image if True
         '''
 
-        MarchingMesh(self.array, out_file=self.objfile, level=level,
-                spacing=spacing, gradient_direction=gradient_direction, step_size=step_size, 
-                allow_degenerate=allow_degenerate, method=method, mask=mask,
-                plot=plot, figsize=figsize)
+        MarchingMesh(self.array, out_file=self.objfile, level=level,spacing=spacing, gradient_direction=gradient_direction, step_size=step_size, allow_degenerate=allow_degenerate, method=method, mask=mask, plot=plot, figsize=figsize)
         
         print('mesh created! saved as {}.'.format(self.objfile))
 
     def MeshView(self,wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
-        '''
-        MeshView: triangulated mesh view with PyVista 
+        '''MeshView: triangulated mesh view with PyVista 
 
         Parameters
-        ----------
+        -----------
         objfile: string
             .obj file to process with MeshView [in GLOBAL function only]
         wireframe: bool
