@@ -1,5 +1,8 @@
 # voxelmap
 
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
+[![Documentation Status](https://readthedocs.org/projects/voxelmap/badge/?version=latest)](https://voxelmap.readthedocs.io/en/latest/?badge=latest)
+
 A Python library for making voxel and three-dimensional models from NumPy arrays. [[  Web  ]](https://andrewatcloud.com/voxelmap/)
 <!-- <center><a href="https://andrewatcloud.com/voxelmap/"><img src="https://github.com/andrewrgarcia/voxelmap/blob/main/extra/voxeldog.png?raw=true" width="450"></a></center> -->
 <a href="https://andrewatcloud.com/voxelmap/">
@@ -30,7 +33,5 @@ To exit the virtual environment, simply type `deactivate`. To access it at any o
 ## Disclaimer: Use At Your Own Risk
 
 This program is free software. It comes without any warranty, to the extent permitted by applicable law. You can redistribute it and/or modify it under the terms of the MIT LICENSE, as published by Andrew Garcia. See LICENSE below for more details.
-
-[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
 
 **[MIT license](./LICENSE)** Copyright 2022 © <a href="https://github.com/andrewrgarcia" target="_blank">Andrew Garcia</a>.
