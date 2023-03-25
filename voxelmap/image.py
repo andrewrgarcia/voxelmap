@@ -161,7 +161,7 @@ class Image:
 
         return model
 
-    def ImageMesh(self, out_file='model.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 5, plot = True, figsize=(4.8,4.8), verbose=False )
+    def ImageMesh(self, out_file='model.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 5, plot = True, figsize=(4.8,4.8), verbose=False ):
         '''3-D triangulation of 2-D images with a Convex Hull algorithm (Andrew Garcia, 2022)
 
         Parameters

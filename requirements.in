@@ -8,3 +8,4 @@ scikit-image
 pyvista
 colorcet 
 sphinx 
+sphinx-rtd-theme

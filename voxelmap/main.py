@@ -302,21 +302,19 @@ class Model:
         else:
             toTXT(filename,self.array, self.hashblocks)
 
+        return None
+    
     def load(self, filename='voxeldata.json', coords=False):
-        '''Load to Model object 
-        Data types:
-            .json -> voxel data represented as (DOK) JSON file 
-            .txt -> voxel data represented x,y,z,rgb matrix in .txt file (see Goxel .txt imports)
+        """
+        Load to Model object.
 
         Parameters
         ----------
         filename: string (.json or .txt extensions (see above))
             name of file to be loaded (e.g 'voxeldata.json')
         coords: bool
-            loads and processes  
-            self.XYZ, self.RGB, and self.sparsity = 10.0 (see Model class desc above) to Model if True. 
-            This boolean overrides filename loader option. 
-        '''
+            loads and processes self.XYZ, self.RGB, and self.sparsity = 10.0 (see Model class desc above) to Model if True. This boolean overrides filename loader option. 
+        """
         if coords:
             self.importdata(filename='')
         else:
@@ -338,10 +336,11 @@ class Model:
                 self.importdata(filename)
 
     def MarchingMesh(self, level=0,spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, allow_degenerate=True, method='lewiner', mask=None,plot=False, figsize=(4.8,4.8) ):
-        '''Marching cubes on 3D-mapped image 
-        
+        """
+        Marching cubes on 3D mapped image
+
         Parameters
-        ----------
+        ---------------
         voxel_depth : int
             depth of 3-D mapped image on number of voxels
         level : float, optional
@@ -350,9 +349,7 @@ class Model:
             Voxel spacing in spatial dimensions corresponding to numpy array indexing dimensions (M, N, P) as in `volume`.
         gradient_direction : string, optional
             Controls if the mesh was generated from an isosurface with gradient descent toward objects of interest (the default), or the opposite, considering the *left-hand* rule.
-            The two options are:
-            * descent : Object was greater than exterior
-            * ascent : Exterior was greater than object
+            The two options are: -- descent : Object was greater than exterior -- ascent : Exterior was greater than object
         step_size : int, optional
             Step size in voxels. Default 1. Larger steps yield faster but coarser results. The result will always be topologically correct though.
         allow_degenerate : bool, optional
@@ -363,17 +360,17 @@ class Model:
             Boolean array. The marching cube algorithm will be computed only on True elements. This will save computational time when interfaces are located within certain region of the volume M, N, P-e.g. the top half of the cube-and also allow to compute finite surfaces-i.e. open surfaces that do not end at the border of the cube.
         plot: bool
             plots a preliminary 3-D triangulated image if True
-        '''
-
+        """
         MarchingMesh(self.array, out_file=self.objfile, level=level,spacing=spacing, gradient_direction=gradient_direction, step_size=step_size, allow_degenerate=allow_degenerate, method=method, mask=mask, plot=plot, figsize=figsize)
         
         print('mesh created! saved as {}.'.format(self.objfile))
 
     def MeshView(self,wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
-        '''MeshView: triangulated mesh view with PyVista 
+        """
+        Triangulated mesh view with PyVista
 
         Parameters
-        -----------
+        --------------
         objfile: string
             .obj file to process with MeshView [in GLOBAL function only]
         wireframe: bool
@@ -386,6 +383,6 @@ class Model:
             color of background. default: 'pink'
         viewport : (int,int)
             viewport / screen (width, height) for display window (default: 80% your screen's width & height)
-        '''
+        """
         mesh = pv.read(self.objfile)
         mesh.plot(show_edges=True if wireframe else False, color=color,opacity=alpha,background=background_color,window_size = viewport)

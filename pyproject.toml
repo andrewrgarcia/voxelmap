@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "voxelmap"
-version = "3.4.5"
+version = "3.4.6"
 description = "A Python library for making voxel and 3D models from NumPy arrays."
 authors = ["andrewrgarcia <garcia.gtr@gmail.com>"]
 license = "MIT"
