@@ -1,7 +1,5 @@
 API
-===
-
-See the below classes. 
+====
 
 .. autoclass:: voxelmap.Model
    :members: 

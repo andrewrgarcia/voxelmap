@@ -124,3 +124,141 @@ The `sparsity` variable will extend the distance from all voxels at the expense 
 .. image:: ../img/voxcoords_sparse.png
   :width: 2000
   :alt: Alternative text
+
+
+Get images for below examples 
+--------------------------------
+
+Click on the links below to save the images in the same directory you are running these examples:
+
+`land.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/extra/land.png>`_
+`dog.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/extra/dog.png>`_
+`argisle.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/extra/argisle.png>`_
+
+
+
+3-D Mapping of an Image
+--------------------------------
+
+Here we map the synthetic topography image `land.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/extra/land.png>`_ we just downloaded to 3-D using the ``map3d`` method from the ``voxelmap.Image`` class.
+
+
+.. code-block:: python
+
+
+   #import packages
+   import cv2
+   import matplotlib.pyplot as plt
+
+   plt.imshow(cv2.imread('land.png'))      # display fake land topography .png file as plot
+   plt.axis('off')
+   plt.show()
+
+   #import packages
+   import numpy as np
+   from matplotlib import cm
+
+   img = vxm.Image('land.png')             # incorporate fake land topography .png file to voxelmap.Image class
+   print(img.array.shape)
+
+.. image:: ../img/land_small.png
+  :width: 200
+  :alt: Alternative text
+
+
+The image is then resized for the voxel draw with the matplotlib method i.e. ``Model().draw_mpl``. This is done with ``cv2.resize``, resizing the image from 1060x1060 to 50x50. After resizing, we convolve the image to obtain a less sharp color shift between the different gray regions with the ``cv2.blur`` method:
+
+.. code-block:: python
+
+   img.array = cv2.resize(img.array, (50,50), interpolation = cv2.INTER_AREA)
+   print(img.array.shape)
+
+   img.array = cv2.blur(img.array,(10,10))    # blur the image for realiztic topography levels
+   plt.imshow(img.array)      # display fake land topography .png file as plot
+   plt.axis('off')
+   plt.show()
+
+
+.. image:: ../img/land_blurred.png
+  :width: 200
+  :alt: Alternative text
+
+After this treatment, the resized and blurred image is mapped to a 3-D voxel model using the `ImageMap` method from the `Image` class:
+
+.. code-block:: python
+
+   mapped_img = img.ImageMap(12)              # mapped to 3d with a depth of 12 voxels
+   print(mapped_img.shape)
+   model = vxm.Model(mapped_img)
+   model.array = np.flip(np.transpose(model.array))
+
+   model.colormap = cm.terrain
+   model.alphacm = 0.5
+   model.draw_mpl('linear',figsize=(15,12))
+
+.. image:: ../img/land_imagemap.png
+  :width: 350
+  :alt: Alternative text
+
+
+ImageMesh : 3-D Mesh Mapping from Image
+-----------------------------------------
+
+This method creates a low-poly mesh model from an Image using an algorithm developed by Andrew Garcia where 3-D convex hull is performed on separate "cuts" or sectors from the image. 
+
+This can decrease the size of the 3-D model and the runtime to generate it significantly, making the runtime proportional to the number of sectors rather than the number of pixels. Sectors are quantified with the L_sectors kwarg, which is the length scale for the number of sectors in the grid. 
+
+We can see that the mesh model can be calculated and drawn with matplotlib ``plot=mpl`` option even from a large image of 1060x1060 without resizing:
+
+
+.. code-block:: python
+
+   import voxelmap as vxm
+   import cv2 
+
+   img = vxm.Image('land.png')   # incorporate fake land topography .png file
+
+   print(img.array.shape)
+
+   img.ImageMesh(out_file='model.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
+
+
+.. image:: ../img/land_imagemesh.png
+  :width: 350
+  :alt: Alternative text
+
+This ``ImageMesh`` transformation is also tested with a blurred version of the image with ``cv2.blur``. A more smooth low-poly 3-D mesh is generated with this additional treatment. The topography seems more realistic:
+
+.. code-block:: python
+
+   img.array = cv2.blur(img.array,(60,60))    # blur the image for realiztic topography levels
+   img.ImageMesh(out_file='model.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
+
+
+.. image:: ../img/land_imagemesh_blur.png
+  :width: 350
+  :alt: Alternative text
+
+
+For a more customizable OpenGL rendering, ``img.MeshView()`` may be used on the above image:
+
+.. code-block:: python
+
+   import voxelmap as vxm
+   import numpy as np
+   import cv2 as cv
+
+   img = vxm.Image('land.png')           # incorporate fake land topography .png file
+   img.array = cv.blur(img.array,(100,100))    # blur the image for realistic topography levels
+
+   img.make()                                  # resized to 1.0x original size i.e. not resized (default)
+
+   img.ImageMesh('land.obj',  12, 14, 1, False, figsize=(10,10))
+
+   img.MeshView( alpha=0.7,background_color='#3e404e',color='white',viewport=(700, 700))
+
+
+.. image:: ../img/land_meshview.png
+  :width: 350
+  :alt: Alternative text
+
