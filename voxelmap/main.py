@@ -169,7 +169,7 @@ class Model:
             voxel coloring scheme
                 'nuclear'  colors model radially, from center to exterior
                 'linear'   colors voxel model vertically, top to bottom. 
-                'voxels'   colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
+                'custom'   colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
         edgecolors: string/hex
             edge color of voxels (default: None)
         figsize : (float,float)
@@ -223,7 +223,7 @@ class Model:
 
         [gradient_nuclear_coloring() if coloring == 'nuclear'
          else gradient_linear_coloring() if coloring == 'linear'
-         else voxel_coloring() if coloring == 'voxels' else None]
+         else voxel_coloring() if coloring == 'custom' else None]
 
         fig = plt.figure(figsize=figsize)
 
@@ -236,19 +236,21 @@ class Model:
         set_axes_equal(ax)
         plt.show()
 
-    def draw(self, coloring='none', scalars='', background_color='#cccccc', wireframe=False, window_size=[1024, 768],voxel_spacing=(1,1,1)):
+    def draw(self, coloring='none', geometry = 'voxels', scalars='', background_color='#cccccc', wireframe=False, window_size=[1024, 768],voxel_spacing=(1,1,1)):
         '''Draws voxel model after building it with the provided `array` with PYVISTA
 
         Parameters
         ----------
         coloring: string  
             voxel coloring scheme
-                'voxels' --> colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
+                'custom' --> colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
                 'none'   --> no coloring
                 ELSE:  coloring == cmap (colormap)
                 'cool'      cool colormap
                 'fire'      fire colormap
                 and so on...
+        geometry: string  
+            voxel geometry. Choose voxels to have a box geometry with geometry='voxels' or spherical one with geometry='particles'
         scalars : list
             list of scalars for cmap coloring scheme
         background_color : string / hex
@@ -272,16 +274,21 @@ class Model:
 
             x_len,y_len,z_len = voxel_spacing
 
-            voxel = pyvista.Cube(center=centers[i],x_length=x_len, y_length=y_len, z_length=z_len)
+            if geometry == 'particles':
+                voxel = pyvista.Sphere(center=centers[i],radius=0.5)
+                smooth = True
+            else:
+                voxel = pyvista.Cube(center=centers[i],x_length=x_len, y_length=y_len, z_length=z_len)
+                smooth= None
 
-            if coloring == 'voxels':
+            if coloring == 'custom' :
                 voxel_color, voxel_alpha = self.hashblocks[voxid[i]]
-                pl.add_mesh(voxel, color=voxel_color, opacity=voxel_alpha,show_edges=True if wireframe else False)
+                pl.add_mesh(voxel, color=voxel_color, smooth_shading=smooth, opacity=voxel_alpha,show_edges=True if wireframe else False)
             elif coloring == 'none':
-                pl.add_mesh(voxel,show_edges=True if wireframe else False)
+                pl.add_mesh(voxel,smooth_shading=smooth, show_edges=True if wireframe else False)
             else:
                 pl.add_mesh(voxel, scalars=[i for i in range(
-                    8)] if scalars == '' else scalars,show_edges=True if wireframe else False, cmap=coloring)
+                    8)] if scalars == '' else scalars,smooth_shading=smooth, show_edges=True if wireframe else False, cmap=coloring)
 
         pl.isometric_view_interactive()
         pl.show(interactive=True)

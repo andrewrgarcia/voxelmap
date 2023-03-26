@@ -36,19 +36,20 @@ The voxel color and transparencies may be added or modified to the
    import numpy as np
 
    #make a 3x3x3 integer array with random values between 0 and 9
-   array = np.random.randint(0,10,(3,3,3))
+   array = np.random.randint(0, 10, (3, 3, 3))
    print(array)
 
    #incorporate array to Model structure
    model = vxm.Model(array)
 
-   #add voxel colors and alpha-transparency for integer values 0 - 9 (needed for `voxels` coloring)
-   colors = ['#ffffff','black','#ffffff','k','yellow','#000000','white','k','#c745f8']
+   #add voxel colors and alpha-transparency for integer values 0 - 9 (needed for `custom` coloring)
+   colors = ['#ffffff', 'black', '#ffffff', 'k',
+            'yellow', '#000000', 'white', 'k', '#c745f8']
    for i in range(9):
-   model.hashblocksAdd(i+1,colors[i])
+      model.hashblocksAdd(i+1, colors[i])
 
-   #draw array as a voxel model with `voxels` coloring scheme
-   model.draw_mpl('voxels')
+   #draw array as a voxel model with `custom` coloring scheme
+   model.draw('custom', background_color='#ffffff')
    
 >>> [Out]
 [[[3 8 5]
@@ -66,6 +67,20 @@ The voxel color and transparencies may be added or modified to the
   :width: 200
   :alt: Alternative text
 
+With particles geometry and user-defined ``alpha`` transparencies
+...........................................................................
+The new version of voxelmap now has a ``geometry`` kwarg for the ``Model.draw()`` method where the voxel geometry can be chosen between `voxels` and `particles` form. Below we change it to `particles` to represent the voxels above as spherical objects. In addition, we declare different transparencies of the different voxel-item types:
+
+.. code-block:: python
+
+   alphas = [0.8,1,0.5,1,0.75,0.5,1.0,0.8,0.6]
+   for i in range(9):
+   model.hashblocksAdd(i+1,colors[i],alphas[i])
+   model.draw('custom', geometry='particles', background_color='#ffffff')
+
+.. image:: ../img/voxels_alpha.png
+  :width: 200
+  :alt: Alternative text
 
 
 Draw voxels from coordinate arrays 
@@ -94,16 +109,18 @@ The algorithm will also work for negative coordinates, as it is shown in the exa
 
    for i in cubes.hashblocks:
       cubes.hashblocks[i][1] = 0.30     # update all voxel alphas (transparency) to 0.3
-   
+
    # print(cubes.XYZ)                               # print the xyz coordinate data
-   cubes.draw_mpl('voxels',figsize=(5,5))                            # draw the model from that data
+   cubes.draw('custom',geometry='particles', background_color='#ffffff',window_size=[416, 416])                            # draw the model from that data
+
+
 
 >>> [Out]
 Color list built from file!
 Model().hashblocks =
  {1: ['#4db692', 1], 2: ['#564bfb', 1], 3: ['#5915c1', 1], 4: ['#6283df', 1], 5: ['#6e5722', 1], 6: ['#6eebc3', 1], 7: ['#70cffa', 1], 8: ['#787ea7', 1], 9: ['#813c5b', 1], 10: ['#8906d7', 1], 11: ['#8a871d', 1], 12: ['#8ba24f', 1], 13: ['#930979', 1], 14: ['#932fde', 1], 15: ['#964c67', 1], 16: ['#9bafea', 1], 17: ['#9c248b', 1], 18: ['#9e5fff', 1], 19: ['#a2183b', 1], 20: ['#a248a6', 1], 21: ['#a63265', 1], 22: ['#a6c6a1', 1], 23: ['#aa381b', 1], 24: ['#ae9c6a', 1], 25: ['#b58c2c', 1], 26: ['#c114a1', 1], 27: ['#c618df', 1], 28: ['#d15d6e', 1], 29: ['#da6f7d', 1], 30: ['#e36ff6', 1]}
 
-.. image:: ../img/voxcoords.png
+.. image:: ../img/coords.png
   :width: 200
   :alt: Alternative text
 
@@ -118,10 +135,11 @@ The `sparsity` variable will extend the distance from all voxels at the expense 
    cubes.load(coords=True)
    for i in cubes.hashblocks:
       cubes.hashblocks[i][1] = 0.30     # update all voxel alphas (transparency) to 0.3
-   
-   cubes.draw_mpl('voxels',figsize=(12,12))                            # draw the model from that data
 
-.. image:: ../img/voxcoords_sparse.png
+   cubes.draw('custom', geometry='particles', background_color='#ffffff',window_size=[1000, 1000])                            # draw the model from that data
+
+
+.. image:: ../img/coords_sparse.png
   :width: 2000
   :alt: Alternative text
 
@@ -192,9 +210,10 @@ After this treatment, the resized and blurred image is mapped to a 3-D voxel mod
    model = vxm.Model(mapped_img)
    model.array = np.flip(np.transpose(model.array))
 
-   model.colormap = cm.terrain
    model.alphacm = 0.5
-   model.draw_mpl('linear',figsize=(15,12))
+   model.draw('none',background_color='#ffffff')
+
+
 
 .. image:: ../img/land_imagemap.png
   :width: 350
@@ -262,3 +281,161 @@ For a more customizable OpenGL rendering, ``img.MeshView()`` may be used on the 
   :width: 350
   :alt: Alternative text
 
+Process a 3-D Model .txt file
+-----------------------------------------
+
+The downloaded dog.txt file is a 3-D Model .txt file which was exported from a Goxel project, where a simple dog was drawn. Here we process that file to an np.array using the importdata method from the voxelmap.Data class and then draw it on 3-D voxels with the draw method from the voxelmap.Model class.
+
+.. image:: ../img/goxel.png
+  :width:  200
+  :alt: Alternative text
+  :target: https://goxel.xyz/
+
+In addition, an argisle.txt file was also processed to draw a Goxel-made model of an island in Python
+
+.. code-block:: python
+
+   import voxelmap as vxm
+   import numpy as np
+
+   '''process dog.txt from Goxel'''
+   Dog = vxm.Model()
+   Dog.load('dog.txt')
+   Dog.array = np.transpose(Dog.array,(2,1,0))     #rotate dog
+   Dog.draw_mpl('voxels',figsize=(5,5))
+
+   '''process argisle.txt from Goxel'''
+   theIsland = vxm.Model()
+   theIsland.load('argisle.txt')
+   theIsland.array = np.transpose(theIsland.array,(2,1,0))     #rotate dog
+   theIsland.draw_mpl('voxels',figsize=(5,5))
+
+.. image:: ../img/fromgoxel_1.png
+  :width:  200
+  :alt: Alternative text
+  :target: https://goxel.xyz/
+
+.. image:: ../img/fromgoxel_2.png
+  :width:  200
+  :alt: Alternative text
+  :target: https://goxel.xyz/
+
+
+
+Re-color with custom colors
+................................
+
+using the ``hashblocksAdd()`` method
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   theIsland.hashblocksAdd(1,'yellow',1)
+   theIsland.hashblocksAdd(2,'#333333',0.2)
+   theIsland.hashblocksAdd(3,'cyan',0.75)
+   theIsland.hashblocksAdd(4,'#000000')
+
+   theIsland.draw_mpl('voxels',figsize=(5,5))
+
+   Dog.hashblocks = theIsland.hashblocks
+   print('black dog, yellow eyes, cyan tongue')
+   Dog.draw_mpl('voxels',figsize=(5,5))
+
+
+.. image:: ../img/fromgoxel_3.png
+  :width:  200
+  :alt: Alternative text
+  :target: https://goxel.xyz/
+
+.. image:: ../img/fromgoxel_4.png
+  :width:  200
+  :alt: Alternative text
+  :target: https://goxel.xyz/
+
+
+defining them directly in the hashblocks dictionary
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. code-block:: python
+
+   theIsland.hashblocks = {
+         1: ['cyan', 1], 
+         2: ['#0197fd', 0.25], 
+         3: ['#98fc66', 0.78], 
+         4: ['#eeeeee', 1],
+         5: ['red', 1]}
+
+   theIsland.draw_mpl('voxels',figsize=(7,7))
+
+
+.. image:: ../img/fromgoxel_5.png
+  :width:  200
+  :alt: Alternative text
+  :target: https://goxel.xyz/
+
+
+Re-color with the rainbow colormap
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   from matplotlib import cm
+
+   'draw with nuclear fill and rainbow colormap'
+   theIsland.colormap = cm.rainbow
+   theIsland.alphacm = 0.7
+
+   print('rainbow island')
+   theIsland.draw_mpl('linear',figsize=(7,7))
+
+
+.. image:: ../img/fromgoxel_6.png
+  :width: 200
+  :alt: Alternative text
+  :target: https://goxel.xyz/
+
+
+Save and Load Methods for voxelmap Model objects
+...................................................
+
+Save the ghost dog model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you'd like to save an array with customized color assignments, you may do so now with the ``Model().save()`` method. This method saves the array data as a DOK hashmap and integrates this DOK hashmap with the Model.hashblocks color information in a higher-order JSON file format:
+
+.. code-block:: python
+
+
+   #re-define colors for a ghost dog
+   Dog.hashblocks = {
+         1: ['cyan', 1], 
+         2: ['#0197fd', 0.25], 
+         3: ['#98fc66', 0.78], 
+         4: ['#eeeeee', 1]}
+         
+   #save
+   Dog.save('ghostdog.json')  
+
+
+Load ghost dog model
+^^^^^^^^^^^^^^^^^^^^^^
+
+The ``Model().load()`` method processes the array and color information to a blank Model object. To load this data into a "blank slate" and re-draw it, type the following:
+
+.. code-block:: python
+
+   # defines a blank model
+   blank = vxm.Model()
+   print(blank.array)
+   print(blank.hashblocks)
+
+   blank.load('ghostdog.json')
+
+   print(blank.array[0].shape)
+   print(blank.hashblocks)
+   blank.draw_mpl('voxels',figsize=(7,7))
+
+
+.. image:: ../img/fromgoxel_7.png
+  :width: 200
+  :alt: Alternative text
+  :target: https://goxel.xyz/

@@ -11,6 +11,7 @@ imgui.ini
 extra/amorph*
 imagemesh_concept/
 __old__
+_old
 
 #files created during tests
 block_a
@@ -27,3 +28,5 @@ mars.png
 
 #docs make latexpdf
 docs/build
+usage.py
+
