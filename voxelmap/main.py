@@ -349,7 +349,7 @@ class Model:
             Voxel spacing in spatial dimensions corresponding to numpy array indexing dimensions (M, N, P) as in `volume`.
         gradient_direction : string, optional
             Controls if the mesh was generated from an isosurface with gradient descent toward objects of interest (the default), or the opposite, considering the *left-hand* rule.
-            The two options are: -- descent : Object was greater than exterior -- ascent : Exterior was greater than object
+            The two options are: -- 'descent' : Object was greater than exterior -- 'ascent' : Exterior was greater than object
         step_size : int, optional
             Step size in voxels. Default 1. Larger steps yield faster but coarser results. The result will always be topologically correct though.
         allow_degenerate : bool, optional
