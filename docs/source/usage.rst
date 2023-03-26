@@ -125,7 +125,8 @@ Model().hashblocks =
   :alt: Alternative text
 
 Increase sparsity
-^^^^^^^^^^^^^^^^^^^
+....................
+
 
 The `sparsity` variable will extend the distance from all voxels at the expense of increased memory. 
 
@@ -144,15 +145,16 @@ The `sparsity` variable will extend the distance from all voxels at the expense 
   :alt: Alternative text
 
 
-Get images for below examples 
+Get files for below examples 
 --------------------------------
 
-Click on the links below to save the images in the same directory you are running these examples:
+Click on the links below to save the files in the same directory you are running these examples:
 
-`land.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/extra/land.png>`_
-`dog.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/extra/dog.png>`_
-`argisle.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/extra/argisle.png>`_
+`LAND IMAGE (.png) <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/docs/img/land.png>`_
 
+`DOG MODEL (.txt) <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/model_files/dog.txt>`_
+
+`ISLAND MODEL (.txt) <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/model_files/argisle.txt>`_
 
 
 3-D Mapping of an Image
