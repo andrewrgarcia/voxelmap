@@ -110,7 +110,7 @@ class Model:
             for i in range(len(model_colors)):
                 # self.hashblocks.update({i+1: model_colors[i] })
                 self.hashblocks[i+1] = ['#'+model_colors[i], 1]
-            print('Color list built from file!\nModel().hashblocks =\n',self.hashblocks)
+            print('Color list built from file!\nself.hashblocks =\n',self.hashblocks)
 
         'write array from .txt file voxel color values and locs'
         for i in range(len(elems.T)):
@@ -159,24 +159,26 @@ class Model:
 
         return voxels
 
-    def draw_mpl(self, coloring='nuclear', edgecolors=None, figsize=(6.4, 4.8), axis3don=False):
-        ''' DRAW MATPLOTLIB.VOXELS
-        Draws voxel model after building it with the provided `array`. 
+    def draw_mpl(self, coloring='custom', edgecolors=None, figsize=(6.4, 4.8), axis3don=False):
+        """
+        Draws voxel model after building it with the provided `array` (Matplotlib version. For faster graphics, try the ``draw()`` method (uses PyVista)). 
 
         Parameters
         ----------
         coloring: string  
             voxel coloring scheme
-                'nuclear'  colors model radially, from center to exterior
-                'linear'   colors voxel model vertically, top to bottom. 
-                'custom'   colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
+                * 'custom' --> colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
+                * 'custom: #8599A6' -->  color all voxel types with the #8599A6 hex color (bluish dark gray) and an alpha transparency of 1.0 (default)
+                * 'custom: red, alpha: 0.24' --> color all voxel types red and with an alpha transparency of 0.2
+                * 'nuclear'  colors model radially, from center to exterior
+                * 'linear'   colors voxel model vertically, top to bottom. 
         edgecolors: string/hex
             edge color of voxels (default: None)
         figsize : (float,float)
             defines plot window dimensions. From matplotlib.pyplot.figure(figsize) kwarg. 
         axis3don: bool
             defines presence of 3D axis in voxel model plot (Default: False)
-        '''
+        """
 
         Z, X, Y = np.shape(self.array)
 
@@ -209,6 +211,21 @@ class Model:
 
         def voxel_coloring():
 
+            color_details= coloring.split(':')
+
+            if len(color_details) > 1:
+                if len(color_details) > 2:
+                    color_all = color_details[1].split(',')[0].strip()
+                    alpha_all  = float(color_details[2])
+                else: 
+                    color_all = color_details[1].strip()
+                    alpha_all  = 1.0
+
+                for i in self.hashblocks.keys():
+                    self.hashblocks[i] = [color_all,alpha_all] 
+                    
+            print('Voxelmap draw. Using custom colors:\nself.hashblocks =\n',self.hashblocks)
+
             voxel_colmap = self.hashblocks
             # print(voxel_colmap)
 
@@ -222,8 +239,8 @@ class Model:
                             voxcolors[k][i][j] = vxc_rgba
 
         [gradient_nuclear_coloring() if coloring == 'nuclear'
-         else gradient_linear_coloring() if coloring == 'linear'
-         else voxel_coloring() if coloring == 'custom' else None]
+        else gradient_linear_coloring() if coloring == 'linear'
+        else voxel_coloring() if coloring[:6] == 'custom' else None]
 
         fig = plt.figure(figsize=figsize)
 
@@ -237,18 +254,19 @@ class Model:
         plt.show()
 
     def draw(self, coloring='none', geometry = 'voxels', scalars='', background_color='#cccccc', wireframe=False, window_size=[1024, 768],voxel_spacing=(1,1,1)):
-        '''Draws voxel model after building it with the provided `array` with PYVISTA
+        '''Draws voxel model after building it with the provided `array` with PyVista library
 
         Parameters
         ----------
         coloring: string  
             voxel coloring scheme
-                'custom' --> colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
-                'none'   --> no coloring
-                ELSE:  coloring == cmap (colormap)
-                'cool'      cool colormap
-                'fire'      fire colormap
-                and so on...
+                * 'custom' --> colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
+                * 'custom: #8599A6' -->  color all voxel types with the #8599A6 hex color (bluish dark gray) and an alpha transparency of 1.0 (default)
+                * 'custom: red, alpha: 0.24' --> color all voxel types red and with an alpha transparency of 0.24
+                * 'none'   --> no coloring 
+                * 'cool'      cool colormap
+                * 'fire'      fire colormap
+                * and so on...
         geometry: string  
             voxel geometry. Choose voxels to have a box geometry with geometry='voxels' or spherical one with geometry='particles'
         scalars : list
@@ -270,6 +288,22 @@ class Model:
         if background_color != "":
             pl.background_color = background_color
 
+        if coloring[:6] == 'custom':
+            color_details= coloring.split(':')
+
+            if len(color_details) > 1:
+                if len(color_details) > 2:
+                    color_all = color_details[1].split(',')[0].strip()
+                    alpha_all  = float(color_details[2])
+                else: 
+                    color_all = color_details[1].strip()
+                    alpha_all  = 1.0
+
+                for i in self.hashblocks.keys():
+                    self.hashblocks[i] = [color_all,alpha_all] 
+                    
+            print('Voxelmap draw. Using custom colors:\nself.hashblocks =\n',self.hashblocks)
+
         for i in range(len(centers)):
 
             x_len,y_len,z_len = voxel_spacing
@@ -281,7 +315,8 @@ class Model:
                 voxel = pyvista.Cube(center=centers[i],x_length=x_len, y_length=y_len, z_length=z_len)
                 smooth= None
 
-            if coloring == 'custom' :
+            if coloring[:6] == 'custom' :
+
                 voxel_color, voxel_alpha = self.hashblocks[voxid[i]]
                 pl.add_mesh(voxel, color=voxel_color, smooth_shading=smooth, opacity=voxel_alpha,show_edges=True if wireframe else False)
             elif coloring == 'none':

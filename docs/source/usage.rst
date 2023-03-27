@@ -283,46 +283,82 @@ For a more customizable OpenGL rendering, ``img.MeshView()`` may be used on the 
   :width: 350
   :alt: Alternative text
 
-Process a 3-D Model .txt file
------------------------------------------
 
-The downloaded dog.txt file is a 3-D Model .txt file which was exported from a Goxel project, where a simple dog was drawn. Here we process that file to an np.array using the importdata method from the voxelmap.Data class and then draw it on 3-D voxels with the draw method from the voxelmap.Model class.
+
+MarchingMesh : Turning Voxel Models to 3-D Mesh Representations
+-------------------------------------------------------------------
+
+The ``.txt`` files you downloaded were exported from Goxel projects. Goxel is an open-source and cross-platform voxel editor which facilitates the graphical creation of voxel models. More information by clicking the icon link below.  
 
 .. image:: ../img/goxel.png
-  :width:  200
+  :width:  300
   :alt: Alternative text
   :target: https://goxel.xyz/
 
-In addition, an argisle.txt file was also processed to draw a Goxel-made model of an island in Python
+We first load those ``.txt`` files with the below voxelmap methods: 
 
 .. code-block:: python
 
    import voxelmap as vxm
    import numpy as np
 
+   '''process argisle.txt from Goxel'''
+   theIsland = vxm.Model()
+   theIsland.load('argisle.txt')
+   theIsland.array = np.transpose(theIsland.array,(2,1,0))    #rotate island
+   theIsland.draw('custom',background_color='white')
+
    '''process dog.txt from Goxel'''
    Dog = vxm.Model()
    Dog.load('dog.txt')
    Dog.array = np.transpose(Dog.array,(2,1,0))     #rotate dog
-   Dog.draw_mpl('voxels',figsize=(5,5))
+   Dog.draw('custom',background_color='white')
 
-   '''process argisle.txt from Goxel'''
-   theIsland = vxm.Model()
-   theIsland.load('argisle.txt')
-   theIsland.array = np.transpose(theIsland.array,(2,1,0))     #rotate dog
-   theIsland.draw_mpl('voxels',figsize=(5,5))
 
-.. image:: ../img/fromgoxel_1.png
-  :width:  200
+.. |voxisland| image:: ../img/fromgoxel_1.png
+  :width:  300
   :alt: Alternative text
-  :target: https://goxel.xyz/
 
-.. image:: ../img/fromgoxel_2.png
-  :width:  200
+.. |voxdog| image:: ../img/fromgoxel_2.png
+  :width:  300
   :alt: Alternative text
-  :target: https://goxel.xyz/
+
+|voxisland|           |voxdog|
+
+The voxel models can be transformed to 3D mesh representations with voxelmap's ``Model().MarchingMesh`` method, which uses `Marching Cubes` from the ``scikit-image`` Python library. 
+
+.. code-block:: python
+
+   '''MarchingMesh on island model'''
+   theIsland.array = vxm.resize_array(theIsland.array,(5,5,5)) #make array larger before mesh transformation
+   theIsland.MarchingMesh()
+   theIsland.MeshView(color='lime',wireframe=False,background_color='white',alpha=1,viewport=[700,700])
+
+   '''MarchingMesh on dog model'''
+   Dog.array = vxm.resize_array(Dog.array,(20,20,20)) #make array larger before mesh transformation
+   Dog.MarchingMesh()
+   Dog.MeshView(color='brown',wireframe=False,background_color='white',alpha=1,viewport=[700,700])
+
+.. |meshisland| image:: ../img/fromgoxel_1MM.png
+  :width:  300
+  :alt: Alternative text
+
+.. |meshdog| image:: ../img/fromgoxel_2MM.png
+  :width:  300
+  :alt: Alternative text
+
+|meshisland|          |meshdog|
+
+Notice the ``self.array`` arrays were resized in both objects with the global ``voxelmap.resize_array`` method. This was done to avoid the formation of voids that you still see on the dog mesh above.
+The ``MarchingMesh`` method has a current limitation on small voxel models with low detail. It is not perfect, but this is an open-source package and it can always be developed further by 
+the maintainer and/or other collaborators. 
 
 
+3-D Voxel Model Reprocessing
+-----------------------------------------
+
+Here we do some reprocessing of the above `voxel` models. Note that here we use the ``draw_mpl`` method, which is ``voxelmap``'s legacy method for voxel modeling and not its state-of-the-art. For faster
+and higher quality graphics with more kwargs / drawing options, use ``voxelmap``'s ``draw`` method instead.  
 
 Re-color with custom colors
 ................................
@@ -337,20 +373,20 @@ using the ``hashblocksAdd()`` method
    theIsland.hashblocksAdd(3,'cyan',0.75)
    theIsland.hashblocksAdd(4,'#000000')
 
-   theIsland.draw_mpl('voxels',figsize=(5,5))
+   theIsland.draw_mpl('custom',figsize=(5,5))
 
    Dog.hashblocks = theIsland.hashblocks
    print('black dog, yellow eyes, cyan tongue')
-   Dog.draw_mpl('voxels',figsize=(5,5))
+   Dog.draw_mpl('custom',figsize=(5,5))
 
 
 .. image:: ../img/fromgoxel_3.png
-  :width:  200
+  :width:  300
   :alt: Alternative text
   :target: https://goxel.xyz/
 
 .. image:: ../img/fromgoxel_4.png
-  :width:  200
+  :width:  300
   :alt: Alternative text
   :target: https://goxel.xyz/
 
@@ -366,11 +402,11 @@ defining them directly in the hashblocks dictionary
          4: ['#eeeeee', 1],
          5: ['red', 1]}
 
-   theIsland.draw_mpl('voxels',figsize=(7,7))
+   theIsland.draw_mpl('custom',figsize=(7,7))
 
 
 .. image:: ../img/fromgoxel_5.png
-  :width:  200
+  :width:  300
   :alt: Alternative text
   :target: https://goxel.xyz/
 
@@ -391,7 +427,7 @@ Re-color with the rainbow colormap
 
 
 .. image:: ../img/fromgoxel_6.png
-  :width: 200
+  :width: 300
   :alt: Alternative text
   :target: https://goxel.xyz/
 
@@ -434,10 +470,10 @@ The ``Model().load()`` method processes the array and color information to a bla
 
    print(blank.array[0].shape)
    print(blank.hashblocks)
-   blank.draw_mpl('voxels',figsize=(7,7))
+   blank.draw_mpl('custom',figsize=(7,7))
 
 
 .. image:: ../img/fromgoxel_7.png
-  :width: 200
+  :width: 300
   :alt: Alternative text
   :target: https://goxel.xyz/

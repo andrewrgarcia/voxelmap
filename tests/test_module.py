@@ -32,7 +32,7 @@ def test_custom_voxel_colormap_save():
     model.hashblocksAdd(5,'lime',0.75) ;  model.hashblocksAdd(6,'k',) ;  model.hashblocksAdd(7,'#e10af2',0.3)
     model.hashblocksAdd(8,'red',0.3); model.hashblocksAdd(9,'orange',0.2)
 
-    model.draw('voxels')
+    model.draw('custom')
 
     model.save('myModel.json')
 
@@ -44,7 +44,7 @@ def test_custom_voxel_colormap_load():
 
     print(model.array)
     print(model.hashblocks)
-    model.draw('voxels')
+    model.draw('custom')
 
 
 def test_gradient_voxel_colormap1():
@@ -79,7 +79,7 @@ def test_voxelcrds():
     model.load(coords=True)
 
     model.array = np.transpose(model.array,(2,1,0))
-    model.draw('voxels')
+    model.draw('custom')
 
     'defined rgb voxel colors'
     model2= vxm.Model()
@@ -90,7 +90,7 @@ def test_voxelcrds():
     model2.load(coords=True)
     model2.array = np.transpose(model2.array,(2,1,0))
 
-    model2.draw('voxels')
+    model2.draw('custom')
 
 
 
@@ -103,14 +103,14 @@ def test_goxeldog():
 
     model.array = np.transpose(model.array,(2,1,0))
 
-    model.draw('voxels')
+    model.draw('custom')
 
     model.hashblocksAdd(1,'yellow',1)
     model.hashblocksAdd(2,'black',0.4)
     model.hashblocksAdd(3,'cyan',0.75)
     model.hashblocksAdd(4,'#000000')
 
-    model.draw('voxels')
+    model.draw('custom')
 
     model.colormap = cm.rainbow
     model.alphacm = 0.8
@@ -143,7 +143,7 @@ def test_sphere():
 
     savedhash = sphere.hashblocks        # save created hashmap of voxel colors (lines above this one)
     sphere.array = vxm.resize_array(sphere.array,(0.5,0.5,0.5))     #resize sphere (make smaller)
-    sphere.draw('voxels')            
+    sphere.draw('custom')            
 
     '-- MAKE WEDGE MODEL --'
     mid = sphere.array.shape[2]//2
@@ -151,7 +151,7 @@ def test_sphere():
 
     wedge = vxm.Model(wedge_array)
     wedge.hashblocks = savedhash       # used the hashmap from model 1
-    wedge.draw('voxels')
+    wedge.draw('custom')
 
 
 def test_image():
@@ -242,8 +242,8 @@ def test_extraMarch():
 
 
     model.array = model.array[::-1]
-    # model.draw('voxels',background_color='#c77575')
-    model.draw('voxels',wireframe=False, background_color='#3e404e',window_size=[700,700])
+    # model.draw('custom',background_color='#c77575')
+    model.draw('custom',wireframe=False, background_color='#3e404e',window_size=[700,700])
 
     model.MarchingMesh(step_size=1)
     model.MeshView(wireframe=True,alpha=1,color=True,background_color='#6a508b')
@@ -285,4 +285,4 @@ def test_loadTXT():
     model.MarchingMesh(plot=True)
 
     model.array = vxm.resize_array(model.array, (0.5,0.5,0.5))
-    model.draw('voxels',background_color='#00FF00')
+    model.draw('custom',background_color='#00FF00')

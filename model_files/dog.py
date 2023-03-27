@@ -128,5 +128,5 @@ model.hashblocks = {
         3: ['#98fc66', 1], 
         4: ['#eeeeee', 1]}
 
-model.draw('voxels',wireframe=False, background_color='#3e404e',window_size=[700,700])
+model.draw('custom',wireframe=False, background_color='#3e404e',window_size=[700,700])
 

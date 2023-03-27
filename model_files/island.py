@@ -105,7 +105,7 @@ model.hashblocks = {
                         }
 
 'draw in standard voxel form'
-model.draw('voxels',background_color='#3e404e',wireframe=True,window_size=[700,700])
+model.draw('custom',background_color='#3e404e',wireframe=True,window_size=[700,700])
 
 'to convert to mesh'
 model.MarchingMesh()

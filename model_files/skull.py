@@ -10,7 +10,7 @@ arr = model.array
 model.array = model.array[::-1]
 
 'draw in standard voxel form'
-model.draw('voxels',wireframe=True, background_color='#3e404e',window_size=[700,700])
+model.draw('custom',wireframe=True, background_color='#3e404e',window_size=[700,700])
 
 'to convert to mesh'
 model.MarchingMesh()

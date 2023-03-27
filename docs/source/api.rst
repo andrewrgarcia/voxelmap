@@ -34,12 +34,12 @@ Mapping
 
 
 
-Local Methods (to Model class)
+Local Methods to Model class
 -------------------------------
 .. autoclass:: voxelmap.Model
    :members: 
 
-Local Methods (to Image class)
+Local Methods to Image class
 -------------------------------
 
 .. autoclass:: voxelmap.Image
