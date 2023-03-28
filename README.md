@@ -4,6 +4,7 @@
 [![Documentation Status](https://readthedocs.org/projects/voxelmap/badge/?version=latest)](https://voxelmap.readthedocs.io/en/latest/?badge=latest)
 
 A Python library for making voxel and three-dimensional models from NumPy arrays. 
+
 <a href="https://voxelmap.readthedocs.io/en/latest/">
 <img src="https://github.com/andrewrgarcia/voxelmap/blob/main/voxelmap.svg?raw=true" width="250"></a>
 
