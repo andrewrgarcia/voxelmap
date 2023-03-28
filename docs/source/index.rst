@@ -4,7 +4,7 @@ Welcome to voxelmap's documentation!
 Let's make 3-D models with Python!
 -----------------------------------
 
-.. |icon| image:: ../img/voxelmap.png
+.. |icon| image:: ../img/icon_vxm.png
   :width: 200
   :alt: Alternative text
   :target: https://github.com/andrewrgarcia/voxelmap

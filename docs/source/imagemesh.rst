@@ -5,6 +5,10 @@ ImageMesh : A Convex Hull based 3D Reconstruction Method
 
 garcia.gtr@gmail.com
 
+.. 
+  last web revision: Dec 2022
+  revised as whitepaper: Mar 2023
+
 Abstract:
 -------------------------------
 

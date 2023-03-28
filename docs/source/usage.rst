@@ -63,7 +63,7 @@ The voxel color and transparencies may be added or modified to the
   [8 9 8]]]
 
 
-.. image:: ../img/voxels_solid.png
+.. image:: ../img/solid_voxels.png
   :width: 200
   :alt: Alternative text
 
@@ -78,7 +78,7 @@ The new version of voxelmap now has a ``geometry`` kwarg for the ``Model.draw()`
    model.hashblocksAdd(i+1,colors[i],alphas[i])
    model.draw('custom', geometry='particles', background_color='#ffffff')
 
-.. image:: ../img/voxels_alpha.png
+.. image:: ../img/alpha_voxels.png
   :width: 200
   :alt: Alternative text
 
