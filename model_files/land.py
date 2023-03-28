@@ -3,7 +3,7 @@ import voxelmap as vxm
 import numpy as np
 import cv2 as cv
 
-img = vxm.Image('./land.png')           # incorporate fake land topography .png file
+img = vxm.Image('../docs/img/land.png')           # incorporate fake land topography .png file
 img.array = cv.blur(img.array,(100,100))    # blur the image for realiztic topography levels
 
 img.make()                                  # resized to 1.0x original size i.e. not resized (default)
