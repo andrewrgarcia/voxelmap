@@ -7,7 +7,7 @@ copyright = '2023, Andrew Garcia'
 author = 'Andrew Garcia, Ph.D.'
 
 release = '3.5'
-version = '3.5.0'
+version = '3.5.1'
 
 # -- General configuration
 
