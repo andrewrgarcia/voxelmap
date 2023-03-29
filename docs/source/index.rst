@@ -17,8 +17,11 @@ Let's make 3-D models with Python!
   :width: 200
   :alt: Alternative text
 
+.. 
+  |mars| |icon| |art| 
 
-|mars| |icon| |art| 
+|icon|
+
 
 Ever wanted to make simple 3-D models from numpy arrays? Now you can do that with voxelmap ! **Voxelmap** is a Python library for 
 making voxel and three-dimensional models from NumPy arrays. It was initially made to streamline 3-D voxel modeling by assigning each
@@ -27,33 +30,30 @@ integer in an array to a voxel. Now, methods are being developed for mesh repres
 
 Check out the :doc:`usage` section for further information, including how to :ref:`installation` the project. For some quick examples / templates, check out the next section. 
 
-Clickable examples
+Examples
 ..............................
-Click on the images below for their source code.
 
-.. |island| image:: ../img/island.png
+.. |islandmesh| image:: ../img/argisle.png
   :width: 200
   :alt: Alternative text
-  :target: https://andrewatcloud.com/voxelmap/island.html
-
-
-.. |islandmesh| image:: ../img/island_mesh.png
-  :width: 200
-  :alt: Alternative text
-  :target: https://andrewatcloud.com/voxelmap/island.html
 
 .. |skullmesh| image:: ../img/skull_mesh.png
   :width: 200
   :alt: Alternative text
-  :target: https://andrewatcloud.com/voxelmap/skull.html
 
 .. |galactic| image:: ../img/galactic_mesh.png
   :width: 200
   :alt: Alternative text
-  :target: https://andrewatcloud.com/voxelmap/galactic.html
 
+  
++-------------------------+-----------------------+--------------------------+
+| |islandmesh|            | |skullmesh|           | |galactic|               |
++-------------------------+-----------------------+--------------------------+
+| :doc:`examples/island`  | :doc:`examples/skull` | :doc:`examples/galactic` |
++-------------------------+-----------------------+--------------------------+
 
-|island| |skullmesh| |galactic| 
+.. 
+  |islandmesh| |skullmesh| |galactic|
 
 
 Colab Notebook
@@ -78,6 +78,15 @@ Contents
 
    usage
    api
+
+Examples
+-----------------------
+
+.. toctree::
+
+   examples/island
+   examples/skull
+   examples/galactic
 
 Whitepapers
 -----------------------

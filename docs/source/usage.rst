@@ -411,25 +411,26 @@ defining them directly in the hashblocks dictionary
   :target: https://goxel.xyz/
 
 
-Re-color with the rainbow colormap
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. 
+   Re-color with the rainbow colormap
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: python
+   .. code-block:: python
 
-   from matplotlib import cm
+      from matplotlib import cm
 
-   'draw with nuclear fill and rainbow colormap'
-   theIsland.colormap = cm.rainbow
-   theIsland.alphacm = 0.7
+      'draw with nuclear fill and rainbow colormap'
+      theIsland.colormap = cm.rainbow
+      theIsland.alphacm = 0.7
 
-   print('rainbow island')
-   theIsland.draw_mpl('linear',figsize=(7,7))
+      print('rainbow island')
+      theIsland.draw_mpl('linear',figsize=(7,7))
 
 
-.. image:: ../img/fromgoxel_6.png
-  :width: 300
-  :alt: Alternative text
-  :target: https://goxel.xyz/
+   .. image:: ../img/fromgoxel_6.png
+   :width: 300
+   :alt: Alternative text
+   :target: https://goxel.xyz/
 
 
 Save and Load Methods for voxelmap Model objects
