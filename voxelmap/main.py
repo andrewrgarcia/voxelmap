@@ -221,7 +221,9 @@ class Model:
                     color_all = color_details[1].strip()
                     alpha_all  = 1.0
 
-                for i in self.hashblocks.keys():
+                iterlist = np.unique(self.array[self.array!=0]) if len(self.hashblocks)==0 else self.hashblocks.keys()      #iterate list over all non-zero integer types 
+
+                for i in iterlist:
                     self.hashblocks[i] = [color_all,alpha_all] 
                     
             print('Voxelmap draw. Using custom colors:\nself.hashblocks =\n',self.hashblocks)
@@ -299,9 +301,11 @@ class Model:
                     color_all = color_details[1].strip()
                     alpha_all  = 1.0
 
-                for i in self.hashblocks.keys():
+                iterlist = np.unique(self.array[self.array!=0]) if len(self.hashblocks)==0 else self.hashblocks.keys()      #iterate list over all non-zero integer types 
+
+                for i in iterlist:
                     self.hashblocks[i] = [color_all,alpha_all] 
-                    
+                        
             print('Voxelmap draw. Using custom colors:\nself.hashblocks =\n',self.hashblocks)
 
         for i in range(len(centers)):
