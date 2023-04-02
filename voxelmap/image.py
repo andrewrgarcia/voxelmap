@@ -1,16 +1,17 @@
 
-import matplotlib.image as mpimg
-import numpy as np
 import cv2
-
+import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
+from scipy import ndimage
 from scipy.spatial import ConvexHull
-# from scipy.spatial import Delaunay
 
 from voxelmap.annex import *
 
-from scipy import ndimage 
+# from scipy.spatial import Delaunay
+
+
 
 
 def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_there,  
@@ -132,13 +133,17 @@ class Image:
         mesh = pv.read(self.objfile)
         mesh.plot(show_edges=True if wireframe else False, color=color,opacity=alpha,background=background_color,window_size = viewport)
 
-    def ImageMap(self,depth=5):
+    def ImageMap(self,depth=5,out_file='model.obj',plot = False):
         '''Map image to 3-D array
         
         Parameters
         -----------
         depth : int
             depth in number of voxels (default = 5 voxels)
+        out_file : str
+            name and/or path for Wavefront .obj file output. This is the common format for OpenGL 3-D model files (default: model.obj) 
+        plot: bool / str
+            plots a preliminary 3-D triangulated image if True with PyVista. For more plotting options, plot by calling MeshView separately.
         '''
         self.make()
         intensity = self.intensity
@@ -159,8 +164,14 @@ class Image:
                 k = findclosest(intensities, pixel_intensity)
                 model[k][j][ i ] = 1
 
-        return model
+        voxelwrite(model, filename =out_file)
+        self.objfile = out_file 
 
+        if plot:
+            self.MeshView()
+
+        return model
+    
     def ImageMesh(self, out_file='model.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 5, plot = True, figsize=(4.8,4.8), verbose=False ):
         '''3-D triangulation of 2-D images with a Convex Hull algorithm (Andrew Garcia, 2022)
 
@@ -175,7 +186,7 @@ class Image:
         trace_min: int
             minimum number of points in different z-levels to triangulate per sector (default: 5)
         plot: bool / str
-            plots a preliminary 3-D triangulated image if True [with PyVista (& with matplotlib if plot = 'img')
+            plots a preliminary 3-D triangulated image if True [with PyVista (& with matplotlib if plot = 'img'). For more plotting options, plot with Meshview instead. 
         '''
         self.make()
 
