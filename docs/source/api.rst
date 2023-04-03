@@ -7,6 +7,13 @@ As the methods are several, below are only listed the most pertinent global meth
 in order of the lowest level to highest level of applications to 3-D modeling operations.and classified in
 sub-sections:
 
+Special 
+..................
+.. autoclass:: voxelmap.voxelwrite
+
+.. autoclass:: voxelmap.objdraw
+
+
 Load and Save 
 .................
 .. autoclass:: voxelmap.load_array
