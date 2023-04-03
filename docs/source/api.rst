@@ -39,11 +39,7 @@ Local Methods to Model class
 .. autoclass:: voxelmap.Model
    :members: 
 
-Local Methods to Image class
--------------------------------
 
-.. autoclass:: voxelmap.Image
-   :members: 
 
 .. autosummary::
    :toctree: generated

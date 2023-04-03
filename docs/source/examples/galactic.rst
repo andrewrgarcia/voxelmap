@@ -11,10 +11,10 @@ or viewed with ``voxelmap`` i.e. adding ``img.MeshView()`` after the last line
     #galactic.py
     import voxelmap as vxm
 
-    img = vxm.Image('galactic.png')       # load image 
-    img.objfile = 'galactic.obj'          # set name of 3-D model file (.obj) to be made
-    img.resize(0.25)                      # resize image to 25% its original size for feasible file size rendering
-    img.MarchingMesh(25)                  # make 3-D model from image. 
+    model = vxm.Model(file='galactic.png')       # load image 
+    model.objfile = 'galactic.obj'          # set name of 3-D model file (.obj) to be made
+    model.resize_intensity(0.25)                      # resize image to 25% its original size for feasible file size rendering
+    model.MarchingMesh(25)                  # make 3-D model from image. 
 
 
 .. |gal| image:: ../../img/galactic.png

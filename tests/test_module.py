@@ -21,16 +21,16 @@ def test_pickle():
     
 def test_custom_voxel_colormap_save():
     '''test the custom voxel colormap (dictionary) generation and drawing
-    model.hashblocksAdd() adds dictionary entries to custom voxel
+    model.hashblocks_add() adds dictionary entries to custom voxel
      colormap to draw model with `voxels` coloring scheme
     '''
 
     arr = np.random.randint(0,10,(7,7,7))
     model = vxm.Model(arr)
 
-    model.hashblocksAdd(1,'#84f348',0.8); model.hashblocksAdd(2,'#4874f3'); model.hashblocksAdd(3,'#32CD32') ;  model.hashblocksAdd(4,'#653c77',0.90)
-    model.hashblocksAdd(5,'lime',0.75) ;  model.hashblocksAdd(6,'k',) ;  model.hashblocksAdd(7,'#e10af2',0.3)
-    model.hashblocksAdd(8,'red',0.3); model.hashblocksAdd(9,'orange',0.2)
+    model.hashblocks_add(1,'#84f348',0.8); model.hashblocks_add(2,'#4874f3'); model.hashblocks_add(3,'#32CD32') ;  model.hashblocks_add(4,'#653c77',0.90)
+    model.hashblocks_add(5,'lime',0.75) ;  model.hashblocks_add(6,'k',) ;  model.hashblocks_add(7,'#e10af2',0.3)
+    model.hashblocks_add(8,'red',0.3); model.hashblocks_add(9,'orange',0.2)
 
     model.draw('custom')
 
@@ -96,7 +96,7 @@ def test_voxelcrds():
 
 def test_goxeldog():
     'process dog.txt from Goxel'
-    path = 'extra/dog.txt'
+    path = 'model_files/dog.txt'
 
     model = vxm.Model()
     model.load(path)
@@ -105,10 +105,10 @@ def test_goxeldog():
 
     model.draw('custom')
 
-    model.hashblocksAdd(1,'yellow',1)
-    model.hashblocksAdd(2,'black',0.4)
-    model.hashblocksAdd(3,'cyan',0.75)
-    model.hashblocksAdd(4,'#000000')
+    model.hashblocks_add(1,'yellow',1)
+    model.hashblocks_add(2,'black',0.4)
+    model.hashblocks_add(3,'cyan',0.75)
+    model.hashblocks_add(4,'#000000')
 
     model.draw('custom')
 
@@ -121,7 +121,7 @@ def test_sphere():
     'sphere: stress graphics'
 
     '-- MAKE SPHERE MODEL --'
-    path = 'extra/sphere.txt'
+    path = 'model_files/sphere.txt'
     sphere = vxm.Model()
     sphere.load(path)
 
@@ -131,15 +131,15 @@ def test_sphere():
         sphere.array[tuple(i)] = color
 
     'create hashmap of voxel colors'
-    sphere.hashblocksAdd(1,'#84f348',0.8)
-    sphere.hashblocksAdd(2,'#4874f3')
-    sphere.hashblocksAdd(3,'#32CD32')
-    sphere.hashblocksAdd(4,'#653c77',0.90)
-    sphere.hashblocksAdd(5,'lime',0.75)
-    sphere.hashblocksAdd(6,'k',)
-    sphere.hashblocksAdd(7,'#e10af2',0.3)
-    sphere.hashblocksAdd(8,'red',0.3)
-    sphere.hashblocksAdd(9,'orange',0.2)
+    sphere.hashblocks_add(1,'#84f348',0.8)
+    sphere.hashblocks_add(2,'#4874f3')
+    sphere.hashblocks_add(3,'#32CD32')
+    sphere.hashblocks_add(4,'#653c77',0.90)
+    sphere.hashblocks_add(5,'lime',0.75)
+    sphere.hashblocks_add(6,'k',)
+    sphere.hashblocks_add(7,'#e10af2',0.3)
+    sphere.hashblocks_add(8,'red',0.3)
+    sphere.hashblocks_add(9,'orange',0.2)
 
     savedhash = sphere.hashblocks        # save created hashmap of voxel colors (lines above this one)
     sphere.array = vxm.resize_array(sphere.array,(0.5,0.5,0.5))     #resize sphere (make smaller)
@@ -157,65 +157,64 @@ def test_sphere():
 def test_image():
 
     'display original land image'
-    plt.imshow(cv2.imread('extra/land.png'))      # display fake land topography .png file as plot
+    plt.imshow(cv2.imread('docs/img/land.png'))      # display fake land topography .png file as plot
     plt.axis('off')
     plt.show()
 
-    img = vxm.Image('extra/land.png')             # incorporate fake land topography .png file to voxelmap.Image class
+    model = vxm.Model(file='docs/img/land.png')             # incorporate fake land topography .png file to voxelmap.Image class
 
     'resize the image with cv2 tool'
-    img.array = cv2.resize(img.array, (50,50), interpolation = cv2.INTER_AREA)
-    # print(img.array.shape)
+    model.array = cv2.resize(model.array, (50,50), interpolation = cv2.INTER_AREA)
+    # print(model.array.shape)
 
     'blur the image and display output'
-    img.array = cv2.blur(img.array,(10,10))    # blur the image for realiztic topography levels
-    plt.imshow(img.array)      # display fake land topography .png file as plot
+    model.array = cv2.blur(model.array,(10,10))    # blur the image for realiztic topography levels
+    plt.imshow(model.array)      # display fake land topography .png file as plot
     plt.axis('off')
     plt.show()
-    # print(img.array.shape)
+    # print(model.array.shape)
 
     'do ImageMap on treated image'
-    mapped_img = img.ImageMap(12)              # mapped to 3d with a depth of 12 voxels
+    # mapped_model = model.ImageMap(12)              # mapped to 3d with a depth of 12 voxels
+    # model = vxm.Model(mapped_model)
+    # model.array = np.flip(np.transpose(model.array))
 
-    model = vxm.Model(mapped_img)
-    model.array = np.flip(np.transpose(model.array))
+    model.array  = model.ImageMap(12)              # mapped to 3d with a depth of 12 voxels
 
     model.colormap = cm.terrain
     model.alphacm = 0.5
     model.draw_mpl('linear',figsize=(15,12))
 
-
 def test_ImageMesh0():
-    img = vxm.Image('extra/land.png')   # incorporate fake land topography .png file
+    model = vxm.Model(file='docs/img/land.png')   # incorporate fake land topography .png file
 
-    print(img.array.shape)
+    print(model.array.shape)
 
-    # img.ImageMesh(out_file='model.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot='mpl')
-    img.ImageMesh(out_file='model.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot=False)
+    # model.ImageMesh(out_file='model.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot='mpl')
+    model.ImageMesh(out_file='model.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot=False)
 
-    img.array = cv2.blur(img.array,(50,50))    # blur the image for realiztic topography levels
-    # img.ImageMesh(out_file='model.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot='mpl')
-    img.ImageMesh(out_file='modelblurred.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot=False)
+    model.array = cv2.blur(model.array,(50,50))    # blur the image for realiztic topography levels
+    # model.ImageMesh(out_file='model.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot='mpl')
+    model.ImageMesh(out_file='modelblurred.obj', L_sectors = 20, trace_min=1, rel_depth = 20, figsize=(15,12), plot=False)
 
-    img.objfile = 'modelblurred.obj'
-    img.MeshView()
+    model.objfile = 'modelblurred.obj'
+    model.MeshView()
 
 def test_ImageMesh():
 
-    img = vxm.Image('extra/land2.png')       # incorporate fake land topography .png file
+    model = vxm.Model(file='docs/img/galactic.png')       # incorporate fake land topography .png file
 
-    # img.make()                             # resized to 1.0x original size i.e. not resized (default)
 
-    # img.ImageMesh('land.obj', 12, 3, 3, False, figsize=(10,10))
-    img.ImageMesh('land.obj', 12, 3, 1, True, verbose=True)
+    # model.ImageMesh('land.obj', 12, 3, 3, False, figsize=(10,10))
+    model.ImageMesh('land.obj', 12, 3, 1, True, verbose=True)
 
-    # img.MeshView(wireframe=False, viewport=(1152, 1152))
+    # model.MeshView(wireframe=False, viewport=(1152, 1152))
 
 
 def test_MarchingMesh():
 
     model = vxm.Model()
-    model.load('extra/island.json')
+    model.load('model_files/island.json')
     model.draw('none')
 
     array = model.array
@@ -229,8 +228,8 @@ def test_extraMarch():
 
     model = vxm.Model()
 
-    # model.load('extra/skull.txt')
-    model.load('extra/chibi.txt')
+    # model.load('model_files/skull.txt')
+    model.load('model_files/chibi.txt')
 
     arr = model.array 
 
@@ -280,7 +279,7 @@ def test_loadTXT():
 
     model = vxm.Model()
 
-    model.load('extra/checkers.txt')
+    model.load('model_files/checkers.txt')
 
     model.MarchingMesh(plot=True)
 

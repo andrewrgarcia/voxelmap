@@ -28,7 +28,7 @@ they are used as keys for such voxel type to be mapped to a specific color and `
 internal to the ``voxelmap.Model`` class called ``hashblocks``. 
 
 The voxel color and transparencies may be added or modified to the 
-``hashblocks`` map with the ``hashblocksAdd`` method.
+``hashblocks`` map with the ``hashblocks_add`` method.
 
 .. code-block:: python
 
@@ -46,7 +46,7 @@ The voxel color and transparencies may be added or modified to the
    colors = ['#ffffff', 'black', '#ffffff', 'k',
             'yellow', '#000000', 'white', 'k', '#c745f8']
    for i in range(9):
-      model.hashblocksAdd(i+1, colors[i])
+      model.hashblocks_add(i+1, colors[i])
 
    #draw array as a voxel model with `custom` coloring scheme
    model.draw('custom', background_color='#ffffff')
@@ -75,7 +75,7 @@ The new version of voxelmap now has a ``geometry`` kwarg for the ``Model.draw()`
 
    alphas = [0.8,1,0.5,1,0.75,0.5,1.0,0.8,0.6]
    for i in range(9):
-   model.hashblocksAdd(i+1,colors[i],alphas[i])
+   model.hashblocks_add(i+1,colors[i],alphas[i])
    model.draw('custom', geometry='particles', background_color='#ffffff')
 
 .. image:: ../img/alpha_voxels.png
@@ -160,17 +160,17 @@ Click on the links below to save the files in the same directory you are running
 3-D Mapping of an Image
 --------------------------------
 
-Here we map the synthetic topography image `land.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/extra/land.png>`_ we just downloaded to 3-D using the ``map3d`` method from the ``voxelmap.Image`` class.
+Here we map the synthetic topography image `land.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/docs/img/land.png>`_ that we just downloaded to a 
+3-D model using the ``ImageMap`` method from the ``voxelmap.Model`` class.
 
 
 .. code-block:: python
-
 
    #import packages
    import cv2
    import matplotlib.pyplot as plt
 
-   plt.imshow(cv2.imread('land.png'))      # display fake land topography .png file as plot
+   plt.imshow(cv2.imread('docs/img/land.png'))      # display fake land topography .png file as plot
    plt.axis('off')
    plt.show()
 
@@ -178,23 +178,25 @@ Here we map the synthetic topography image `land.png <https://raw.githubusercont
    import numpy as np
    from matplotlib import cm
 
-   img = vxm.Image('land.png')             # incorporate fake land topography .png file to voxelmap.Image class
-   print(img.array.shape)
+   model = vxm.Model(file='docs/img/land.png')             # incorporate fake land topography .png file to voxelmap.Image class
+   print(model.array.shape)
+
 
 .. image:: ../img/land_small.png
   :width: 200
   :alt: Alternative text
 
 
-The image is then resized for the voxel draw with the matplotlib method i.e. ``Model().draw_mpl``. This is done with ``cv2.resize``, resizing the image from 1060x1060 to 50x50. After resizing, we convolve the image to obtain a less sharp color shift between the different gray regions with the ``cv2.blur`` method:
+The image is then resized for the voxel draw with the matplotlib method i.e. ``Model().draw_mpl``. This is done with ``cv2.resize``, resizing the image from 1060x1060 to 50x50. 
+After resizing, we convolve the image to obtain a less sharp color shift between the different gray regions with the ``cv2.blur`` method:
 
 .. code-block:: python
 
-   img.array = cv2.resize(img.array, (50,50), interpolation = cv2.INTER_AREA)
-   print(img.array.shape)
+   model.array = cv2.resize(model.array, (50,50), interpolation = cv2.INTER_AREA)
+   print(model.array.shape)
 
-   img.array = cv2.blur(img.array,(10,10))    # blur the image for realiztic topography levels
-   plt.imshow(img.array)      # display fake land topography .png file as plot
+   model.array = cv2.blur(model.array,(10,10))    # blur the image for realiztic topography levels
+   plt.imshow(model.array)      # display fake land topography .png file as plot
    plt.axis('off')
    plt.show()
 
@@ -203,18 +205,14 @@ The image is then resized for the voxel draw with the matplotlib method i.e. ``M
   :width: 200
   :alt: Alternative text
 
-After this treatment, the resized and blurred image is mapped to a 3-D voxel model using the `ImageMap` method from the `Image` class:
+After this treatment, the resized and blurred image is mapped to a 3-D voxel model using the `ImageMap` method from the `Model` class:
 
 .. code-block:: python
 
-   mapped_img = img.ImageMap(12)              # mapped to 3d with a depth of 12 voxels
-   print(mapped_img.shape)
-   model = vxm.Model(mapped_img)
-   model.array = np.flip(np.transpose(model.array))
+   model.array = model.ImageMap(12)              # mapped to 3d with a depth of 12 voxels
+   print(model.array.shape)
 
-   model.alphacm = 0.5
    model.draw('none',background_color='#ffffff')
-
 
 
 .. image:: ../img/land_imagemap.png
@@ -237,11 +235,11 @@ We can see that the mesh model can be calculated and drawn with matplotlib ``plo
    import voxelmap as vxm
    import cv2 
 
-   img = vxm.Image('land.png')   # incorporate fake land topography .png file
+   model = vxm.Model(file='docs/img/land.png')   # incorporate fake land topography .png file
 
-   print(img.array.shape)
+   print(model.array.shape)
 
-   img.ImageMesh(out_file='model.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
+   model.ImageMesh(out_file='model.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
 
 
 .. image:: ../img/land_imagemesh.png
@@ -252,9 +250,8 @@ This ``ImageMesh`` transformation is also tested with a blurred version of the i
 
 .. code-block:: python
 
-   img.array = cv2.blur(img.array,(60,60))    # blur the image for realiztic topography levels
-   img.ImageMesh(out_file='model.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
-
+   model.array = cv2.blur(model.array,(60,60))    # blur the image for realiztic topography levels
+   model.ImageMesh(out_file='model.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
 
 .. image:: ../img/land_imagemesh_blur.png
   :width: 350
@@ -269,14 +266,14 @@ For a more customizable OpenGL rendering, ``img.MeshView()`` may be used on the 
    import numpy as np
    import cv2 as cv
 
-   img = vxm.Image('land.png')           # incorporate fake land topography .png file
-   img.array = cv.blur(img.array,(100,100))    # blur the image for realistic topography levels
+   model = vxm.Model(file='docs/img/land.png')           # incorporate fake land topography .png file
+   model.array = cv.blur(model.array,(100,100))    # blur the image for realistic topography levels
 
-   img.make()                                  # resized to 1.0x original size i.e. not resized (default)
+   # model.make()                                  # resized to 1.0x original size i.e. not resized (default)
 
-   img.ImageMesh('land.obj',  12, 14, 1, False, figsize=(10,10))
+   model.ImageMesh('land.obj',  12, 14, 1, False, figsize=(10,10))
 
-   img.MeshView( alpha=0.7,background_color='#3e404e',color='white',viewport=(700, 700))
+   model.MeshView( alpha=0.7,background_color='#3e404e',color='white',viewport=(700, 700))
 
 
 .. image:: ../img/land_meshview.png
@@ -363,15 +360,15 @@ and higher quality graphics with more kwargs / drawing options, use ``voxelmap``
 Re-color with custom colors
 ................................
 
-using the ``hashblocksAdd()`` method
+using the ``hashblocks_add()`` method
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
-   theIsland.hashblocksAdd(1,'yellow',1)
-   theIsland.hashblocksAdd(2,'#333333',0.2)
-   theIsland.hashblocksAdd(3,'cyan',0.75)
-   theIsland.hashblocksAdd(4,'#000000')
+   theIsland.hashblocks_add(1,'yellow',1)
+   theIsland.hashblocks_add(2,'#333333',0.2)
+   theIsland.hashblocks_add(3,'cyan',0.75)
+   theIsland.hashblocks_add(4,'#000000')
 
    theIsland.draw_mpl('custom',figsize=(5,5))
 

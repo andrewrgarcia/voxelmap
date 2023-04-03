@@ -1,7 +1,7 @@
 '''
 VOXELMAP 
 A Python library for making voxel models from NumPy arrays.
-Andrew Garcia, 2022
+Andrew Garcia, 2022 - beyond
 
 '''
 import numpy as np
@@ -15,7 +15,51 @@ import pandas
 
 import pyvista
 
+import cv2
+import matplotlib.image as mpimg
+from mpl_toolkits.mplot3d import Axes3D
+from scipy import ndimage
+from scipy.spatial import ConvexHull
+
 from voxelmap.annex import *
+
+# from scipy.spatial import Delaunay
+
+
+
+def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_there,  
+                num_simplices, rel_depth, color='orange', trace_min=1, plot=True, ax=[]):
+    '''SectorHull does ConvexHull on a specific 2-D sector of the selected image
+    adapted [ significantly ] from 
+    https://stackoverflow.com/questions/27270477/3d-convex-hull-from-point-cloud'''
+
+    sector = array[Y_here:Y_there, X_here:X_there] if sector_dims == 2 else \
+             array[Z_here:Z_there, Y_here:Y_there, X_here:X_there]
+
+
+    if len(np.unique(sector)) > trace_min:
+        
+        points = arr2crds(sector, rel_depth) if sector_dims == 2 else tensor2crds(array, rel_depth)
+
+        hull = ConvexHull(points)
+
+        if plot=='mpl': 
+            for s in hull.simplices:
+                s = np.append(s, s[0])  # Here we cycle back to the first coordinate
+                ax.plot(Y_here+points[s, 1],X_here+points[s, 0], Z_here+points[s, 2], color=color)
+
+        newsimplices = np.array([s + num_simplices for s in hull.simplices])
+
+
+        newpoints = np.array([ i+[Y_here,X_here,Z_here] for i in points]) if sector_dims == 2 else \
+                    np.array([ i+[Z_here,Y_here,X_here] for i in points]) 
+
+
+        return newpoints, newsimplices
+
+    else:
+        return np.empty(0), np.empty(0)
+
 
 
 def binarize(array, colorindex=1):
@@ -29,13 +73,15 @@ def binarize(array, colorindex=1):
 
 class Model:
 
-    def __init__(self, array=[]):
+    def __init__(self, array=[],file=''):
         '''Model structure. Calls `3-D` array to process into 3-D model.
 
         Parameters
         ----------
         array : np.array(int)
             array of the third-order populated with discrete, non-zero integers which may represent a voxel block type
+        file : str
+            file name and/or path for image file
         hashblocks : dict[int]{str, float }
             a dictionary for which the keys are the integer values on the discrete arrays (above) an the values are the color (str) for the specific key and the alpha for the voxel object (float)
         colormap : < matplotlib.cm object >
@@ -57,7 +103,10 @@ class Model:
         sparsity : float
             a factor to separate the relative distance between each voxel (default:10.0 [> 50.0 may have memory limitations])
         '''
-        self.array = array          # array of third-order (3-D)
+        self.file = file
+        self.array = mpimg.imread(self.file) if file != '' else array   # array of third-order (3-D)
+        self.make_intensity() if file != '' else None
+
         self.hashblocks = {}        # start with empty voxel-color dictionary
         self.colormap = cm.cool     # default: cool colormap
         self.alphacm = 1            # default: opaque colormap (alpha=1)
@@ -67,6 +116,51 @@ class Model:
         self.XYZ = []
         self.RGB = []
         self.sparsity = 10.0
+        
+
+    def resize_intensity(self, res = 1.0, res_interp = cv2.INTER_AREA):
+        '''Resize the intensity matrix of the provided image.
+
+        Parameters
+        ----------
+        res : float, optional
+            relative resizing percentage as `x` times the original (default 1.0 [1.0x original dimensions])
+        res_interp: object, optional 
+            cv2 interpolation function for resizing (default cv2.INTER_AREA)
+        '''
+        
+        'Turn image into intensity matrix'
+        # self.array = mpimg.imread(self.file)       #load image
+        'Use CCIR 601 luma to convert RGB image to rel. grayscale 2-D matrix (https://en.wikipedia.org/wiki/Luma_(video)) '
+        color_weights = [0.299,0.587,0.114]
+        intensity = np.sum([self.array[:,:,i]*color_weights[i] for i in range(3)],0)*100
+
+        'resize_intensity'
+        x,y = intensity.shape
+        x,y = int(x*res),int(y*res)
+        intensity = cv2.resize(intensity, (x,y), interpolation = res_interp )
+
+        self.array = intensity.astype('float')  # floor-divide
+
+
+    def make_intensity(self):
+        '''Turn image into intensity matrix i.e. matrix with pixel intensities. Outputs self.array as mutable matrix to contain relative pixel intensities in int levels [for file if specified]
+        '''
+        # if self.array == []:
+        #     self.array = mpimg.imread(self.file)       #load image
+        
+        'Use CCIR 601 luma to convert RGB image to rel. grayscale 2-D matrix (https://en.wikipedia.org/wiki/Luma_(video)) '
+        color_weights = [0.299,0.587,0.114]
+        intensity = np.sum([self.array[:,:,i]*color_weights[i] for i in range(3)],0)*100
+
+        # 'if resize'
+        # if res != 1.0:
+        #     x,y = intensity.shape
+        #     x,y = int(x*res),int(y*res)
+        #     self.array = cv2.resize(intensity, (x,y), interpolation = res_interp )
+
+        self.array = intensity.astype('float')  # floor-divide
+
 
     def importdata(self, filename=''):
 
@@ -125,7 +219,7 @@ class Model:
 
         return self.array
 
-    def hashblocksAdd(self, key, color, alpha=1):
+    def hashblocks_add(self, key, color, alpha=1):
         '''Make your own 3-D colormap option. Adds to hashblocks dictionary.
 
         Parameters
@@ -381,14 +475,125 @@ class Model:
             else:
                 self.importdata(filename)
 
-    def MarchingMesh(self, level=0,spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, allow_degenerate=True, method='lewiner', mask=None,plot=False, figsize=(4.8,4.8) ):
+
+
+    def ImageMap(self,depth=5,out_file='model.obj',plot = False):
+        '''Map image or 2-D array (matrix) to 3-D array
+        
+        Parameters
+        -----------
+        depth : int
+            depth in number of voxels (default = 5 voxels)
+        out_file : str
+            name and/or path for Wavefront .obj file output. This is the common format for OpenGL 3-D model files (default: model.obj) 
+        plot: bool / str
+            plots a preliminary 3-D triangulated image if True with PyVista. For more plotting options, plot by calling MeshView separately.
+        '''
+        matrix = self.array
+
+        length, width = np.shape(matrix)
+
+        low, high = np.min(matrix),np.max(matrix)
+        intensities = np.linspace(low,high,depth).astype('int')
+        
+        model = np.zeros((depth,length,width))      # model (3D array)
+
+
+        for j in range(length):
+            for i in range(width):
+                pixel_intensity = matrix[j,i]
+                # k = findcrossover(intensities,0,depth-1, pixel_intensity)
+                # model[k-1][j][ i ] = 1
+                k = findclosest(intensities, pixel_intensity)
+                model[k][j][ i ] = 1
+
+        voxelwrite(model, filename =out_file)
+        self.objfile = out_file 
+
+        if plot:
+            self.MeshView()
+
+        return model
+    
+    def ImageMesh(self, out_file='model.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 1, plot = True, figsize=(4.8,4.8), verbose=False ):
+        '''
+        3-D triangulation of 2-D images / 2-D arrays (matrices) with a Convex Hull algorithm (Andrew Garcia, 2022)
+
+        Parameters
+        ------------
+        out_file : str
+            name and/or path for Wavefront .obj file output. This is the common format for OpenGL 3-D model files (default: model.obj) 
+        L_sectors: int
+            length scale of Convex Hull segments in sector grid, e.g. L_sectors = 4 makes a triangulation of 4 x 4 Convex Hull segments
+        rel_depth: float
+            relative depth of 3-D model with respect to the image's intensity magnitudes (default: 0.50)
+        trace_min: int
+            minimum number of points in different z-levels to triangulate per sector (default: 1)
+        plot: bool / str
+            plots a preliminary 3-D triangulated image if True [with PyVista (& with matplotlib if plot = 'img'). For more plotting options, plot with Meshview instead. 
+        '''
+
+        matrix = self.array
+
+        print(matrix)
+        L = matrix.shape[0]
+        W = matrix.shape[1]
+        print(L,W)
+
+        ax=[]
+
+        if plot=='mpl':
+            fig = plt.figure(figsize=figsize)
+            ax = fig.add_subplot(111, projection="3d")
+
+        "multiple sectors"
+        NUM = 0
+        ls = np.linspace(0,1,L_sectors+1)
+        ws = np.linspace(0,1,L_sectors+1)
+        k=0
+        for i in range(L_sectors):
+            for j in range(L_sectors):
+
+                newpts, newsmpls = SectorHull(matrix, 2, 0, 0, int(ls[i]*L),int(ls[i+1]*L),\
+                                    int(ws[j]*W),int(ws[j+1]*W),NUM,rel_depth,'lime',trace_min, plot,ax)
+                NUM+=len(newpts)
+                if verbose:
+                    print(NUM)
+                    print(newpts.shape, newsmpls.shape)
+                if newpts.shape[0]:
+                    points2 = np.concatenate((points2,newpts)) if k!=0 else newpts
+                    hullsimplices2 = np.concatenate((hullsimplices2,newsmpls)) if k!=0 else newsmpls
+                    k+=1
+
+        if verbose:    
+            print('points shape',points2.shape)
+            print('simplices shape',hullsimplices2.shape)
+
+        points2n=points2*5/np.max(points2)
+        writeobj_CH(points2n,hullsimplices2,out_file)
+
+        self.objfile = out_file 
+
+        if plot:
+            if plot == 'mpl':
+                ax.set_title("{} Convex Hull segments".format(L_sectors**2),color="#D3D3D3")
+                ax.set_facecolor('#3e404e')
+
+                set_axes_equal(ax)
+                plt.axis('off')
+                plt.show()
+            else:
+                self.MeshView()
+
+
+    def MarchingMesh(self, voxel_depth=12, level=0, spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, allow_degenerate=True, method='lewiner', mask=None,plot=False, figsize=(4.8,4.8) ):
         """
-        Marching cubes on 3D mapped image
+        Marching cubes on 3-D mapped image or 3-D array
 
         Parameters
         ---------------
-        voxel_depth : int
-            depth of 3-D mapped image on number of voxels
+        voxel_depth : int (optional)
+            depth of 3-D mapped image on number of voxels (if file [image] is to be processed / i.e. specified)
         level : float, optional
             Contour value to search for isosurfaces in `volume`. If not given or None, the average of the min and max of vol is used.
         spacing : length-3 tuple of floats, optional
@@ -407,7 +612,11 @@ class Model:
         plot: bool
             plots a preliminary 3-D triangulated image if True
         """
-        MarchingMesh(self.array, out_file=self.objfile, level=level,spacing=spacing, gradient_direction=gradient_direction, step_size=step_size, allow_degenerate=allow_degenerate, method=method, mask=mask, plot=plot, figsize=figsize)
+
+        # image in self.file mapped to 3d if self.file image specified else it takes the 3-D array defined in self.array
+        array = self.ImageMap(voxel_depth) if self.file != '' else self.array              
+
+        MarchingMesh(array, out_file=self.objfile, level=level,spacing=spacing, gradient_direction=gradient_direction, step_size=step_size, allow_degenerate=allow_degenerate, method=method, mask=mask, plot=plot, figsize=figsize)
         
         print('mesh created! saved as {}.'.format(self.objfile))
 
