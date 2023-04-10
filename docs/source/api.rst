@@ -45,7 +45,8 @@ Local Methods to Model class
 -------------------------------
 .. autoclass:: voxelmap.Model
    :members: 
-
+   
+   .. automethod:: __init__
 
 
 .. autosummary::
