@@ -4,10 +4,12 @@ Welcome to voxelmap's documentation!
 Let's make 3-D models with Python!
 -----------------------------------
 
-.. |icon| image:: ../img/icon_vxm.png
+.. figure:: ../img/icon_vxm.png
   :width: 200
   :alt: Alternative text
   :target: https://github.com/andrewrgarcia/voxelmap
+
+  `Check out voxelmap's open-source on GitHub <https://github.com/andrewrgarcia/voxelmap>`_
 
 .. |mars| image:: ../img/mars_imagemesh.png
   :width: 200
@@ -20,7 +22,7 @@ Let's make 3-D models with Python!
 .. 
   |mars| |icon| |art| 
 
-|icon|
+
 
 
 Ever wanted to make simple 3-D models from numpy arrays? Now you can do that with voxelmap ! **Voxelmap** is a Python library for 
