@@ -1,9 +1,10 @@
-ImageMesh Portrait
-======================
+3-D Reconstruction
+=======================
 
-This script makes the 3-D model file (.obj format) from the below image.
-The .obj file made in the last line may then be imported to a graphic editing software such as Blender
-or viewed with ``voxelmap`` i.e. adding ``img.MeshView()`` after the last line
+
+You can easily create stunning 3D models from images with voxelmap! By adapting the below script with an image of your choice, you can generate high-quality 3D models in the widely-used .obj format. With just a few lines of code, you can transform 2D images into immersive 3D worlds. 
+Once you have the .obj file, you can import it into popular graphic editing software like Blender for further customization and rendering. 
+
 
 
 .. code-block:: python
@@ -33,6 +34,8 @@ or viewed with ``voxelmap`` i.e. adding ``img.MeshView()`` after the last line
 
 |gal| |gal_blender| |gal_mesh| 
 
+Alternatively, you can quickly visualize the 3D model using the voxelmap library by adding **img.MeshView()** after the last line of the script. 
+Unleash your creativity with this user-friendly protocol for 3D reconstruction from images
 
 
 \*Photo used with permission from the `@galacticeffect <https://www.instagram.com/galacticeffect/>`_.

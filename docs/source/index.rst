@@ -51,7 +51,7 @@ Examples
 +-------------------------+-----------------------+--------------------------+
 | |islandmesh|            | |skullmesh|           | |galactic|               |
 +-------------------------+-----------------------+--------------------------+
-| :doc:`examples/island`  | :doc:`examples/skull` | :doc:`examples/galactic` |
+| :doc:`examples/island`  | :doc:`examples/skull` | :doc:`examples/meshrec`  |
 +-------------------------+-----------------------+--------------------------+
 
 .. 
@@ -88,7 +88,7 @@ Examples
 
    examples/island
    examples/skull
-   examples/galactic
+   examples/meshrec
 
 Whitepapers
 -----------------------
