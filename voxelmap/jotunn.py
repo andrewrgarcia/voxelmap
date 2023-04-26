@@ -356,9 +356,12 @@ class Model:
         ----------
         coloring: string  
             voxel coloring scheme
-                * 'custom' --> colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
-                * 'custom: #8599A6' -->  color all voxel types with the #8599A6 hex color (bluish dark gray) and an alpha transparency of 1.0 (default)
-                * 'custom: red, alpha: 0.24' --> color all voxel types red and with an alpha transparency of 0.24
+                * 'custom'                      --> colors voxel model based on the provided keys to its array integers, defined in the `hashblocks` variable from the `Model` class
+                * 'custom: #8599A6'             -->  color all voxel types with the #8599A6 hex color (bluish dark gray) and an alpha transparency of 1.0 (default)
+                * 'custom: red, alpha: 0.24'    --> color all voxel types red and with an alpha transparency of 0.24
+                * 'cmap : {colormap name}' :        colors voxel model based on a colormap; assigns colors from the chosen colormap to the defined array integers
+                * 'cmap : viridis'              --> colormap voxel assignment with the viridis colormap
+                * 'cmap : hot', alpha: 0.56     --> voxel assignment with the hot colormap with an alpha transparency of 0.56
                 * 'none'   --> no coloring 
                 * 'cool'      cool colormap
                 * 'fire'      fire colormap
@@ -374,7 +377,6 @@ class Model:
         voxel_spacing : (float,float,float)
             changes voxel spacing by defining length scales of x y and z directions (default:(1,1,1)).
         '''
-
         xx, yy, zz, voxid = arr2crds(self.array, -1).T
 
         centers = np.vstack((xx.ravel(), yy.ravel(), zz.ravel())).T
@@ -384,6 +386,7 @@ class Model:
         if background_color != "":
             pl.background_color = background_color
 
+        # Custom Coloring Code Block
         if coloring[:6] == 'custom':
             color_details= coloring.split(':')
 
@@ -395,17 +398,63 @@ class Model:
                     color_all = color_details[1].strip()
                     alpha_all  = 1.0
 
-                iterlist = np.unique(self.array[self.array!=0]) if len(self.hashblocks)==0 else self.hashblocks.keys()      #iterate list over all non-zero integer types 
+                # iterate list over all non-zero integer types 
+                voxel_types = np.unique(self.array[self.array!=0]) if len(self.hashblocks)==0 else self.hashblocks.keys()      
 
-                for i in iterlist:
+                for i in voxel_types:
                     self.hashblocks[i] = [color_all,alpha_all] 
                         
             print('Voxelmap draw. Using custom colors:\nself.hashblocks =\n',self.hashblocks)
+
+        # Colormap Coloring Code Block
+        if coloring[:4] == 'cmap':
+            color_details= coloring.split(':')
+
+            if len(color_details) > 1:
+                if len(color_details) > 2:
+                    colormap = color_details[1].split(',')[0].strip()
+                    alpha_all  = float(color_details[2])
+                else: 
+                    colormap = color_details[1].strip()
+                    alpha_all  = 1.0
+
+                # iterate list over all non-zero integer types 
+                voxel_types = np.unique(self.array[self.array!=0]) 
+
+                try:
+                    memory_blocks = False
+                    if len(self.hashblocks)!=0:
+                        #keep defined hashblocks in memory
+                        memory_blocks = self.hashblocks.copy()
+                        for j in memory_blocks.keys():
+                            voxel_types = voxel_types[voxel_types != j]
+
+                    cmap = eval('plt.cm.'+colormap)
+                    norm = plt.Normalize(vmin=voxel_types.min(), vmax=voxel_types.max())  # data normalization (0,1)
+                    colorlist = cmap(norm(voxel_types))
+                    hex_colors = [colors.rgb2hex(color) for color in colorlist]
+
+                    for i in range(len(voxel_types)):
+                        k = voxel_types[i]
+                        col = hex_colors[i]
+                        self.hashblocks[k] = [col,alpha_all] 
+
+                    if memory_blocks:
+                        #add custom hashblocks from memory here
+                        for j in memory_blocks.keys():
+                            self.hashblocks[j] = memory_blocks[j]                            
+                    
+                    print('Voxelmap draw. Using custom colormap: ',colormap)
+
+                except: 
+                    print('ERROR: colormap {} does not exist / is not available ',colormap)
+
 
         for i in range(len(centers)):
 
             x_len,y_len,z_len = voxel_spacing
 
+            # Voxel Geometry
             if geometry == 'particles':
                 voxel = pyvista.Sphere(center=centers[i],radius=0.5)
                 smooth = True
@@ -413,8 +462,8 @@ class Model:
                 voxel = pyvista.Cube(center=centers[i],x_length=x_len, y_length=y_len, z_length=z_len)
                 smooth= None
 
-            if coloring[:6] == 'custom' :
-
+            # Mesh creation and coloring
+            if coloring[:6] == 'custom' or coloring[:4] == 'cmap' :
                 voxel_color, voxel_alpha = self.hashblocks[voxid[i]]
                 pl.add_mesh(voxel, color=voxel_color, smooth_shading=smooth, opacity=voxel_alpha,show_edges=True if wireframe else False)
             elif coloring == 'none':
