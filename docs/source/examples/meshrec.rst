@@ -14,7 +14,6 @@ Once you have the .obj file, you can import it into popular graphic editing soft
 
     model = vxm.Model(file='galactic.png')       # load image 
     model.objfile = 'galactic.obj'          # set name of 3-D model file (.obj) to be made
-    model.resize_intensity(0.25)                      # resize image to 25% its original size for feasible file size rendering
     model.MarchingMesh(25)                  # make 3-D model from image. 
 
 

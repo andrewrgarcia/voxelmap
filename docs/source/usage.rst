@@ -17,15 +17,38 @@ It is recommended you use voxelmap through a virtual environment. You may follow
 To exit the virtual environment, simply type ``deactivate``. To access it at any other time again, enter with the above ``source`` command.
 
 
-Draw voxels from an integer array
--------------------------------------
-
+The ``hashblocks`` Constructor Variable
+-------------------------------------------
 
 **Voxelmap** was originally made to handle third-order integer arrays of the form ``np.array((int,int,int))`` as blueprints to 3-D voxel models. 
 
-While **"0"** integers are used to represent empty space, the non-zero integer values are used to define a distinct voxel type and thus, 
+While **"0"** integers are used to represent empty space, **non-zero integers** are used to define a distinct voxel type and thus, 
 they are used as keys for such voxel type to be mapped to a specific color and ``alpha`` transparency. These keys are stored in a map (also known as "dictionary") 
 internal to the ``voxelmap.Model`` class called ``hashblocks``. 
+
+The ``hashblocks`` dictionary contains an entry for each integer key, 
+where the corresponding value is a list. This list contains two elements: 
+a string that represents the color in either the hex format (#rrggbb) or as a color label (e.g., 'red') 
+as the first element, and a float between 0 and 1 that represents the alpha transparency as the second element. 
+The dictionary's structure and call method are shown below:
+
+.. code-block:: python
+
+   import voxelmap as vxm
+
+   model = vxm.Model()
+
+   model.hashblocks = {
+      key_1 (int): ['#rrggbb' (string) ,alpha (float)]
+      key_2 (int): ['#rrggbb' (string) ,alpha (float)]
+      .
+      .  
+      .
+   }
+
+
+Draw voxels from an integer array
+-------------------------------------
 
 The voxel color and transparencies may be added or modified to the 
 ``hashblocks`` map with the ``hashblocks_add`` method.
@@ -145,22 +168,99 @@ The `sparsity` variable will extend the distance from all voxels at the expense 
   :alt: Alternative text
 
 
-Get files for below examples 
---------------------------------
 
-Click on the links below to save the files in the same directory you are running these examples:
+Colormap Block Coloring
+-------------------------------------
 
-`LAND IMAGE (.png) <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/docs/img/land.png>`_
+The coloring kwarg for the draw method now has a ``'cmap'`` string option to assign colors from a colormap to the defined voxel types (i.e. the 
+non-zero integers in the 3-D arrays). Download the `RANDOMWALK.JSON <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/model_files/randomwalk.json>`_ file
+and save it in the same directory where you are running these examples. If you inspect the .json file, you'll see the following structure:
 
-`DOG MODEL (.txt) <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/model_files/dog.txt>`_
+.. code-block:: python
 
-`ISLAND MODEL (.txt) <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/model_files/argisle.txt>`_
+   {
+      "hashblocks": {},
+      "size": [300, 300, 300],
+      "coords": [
+         [146, 149, 152],
+         [146, 150, 152],
+         [147, 148, 153],
+         [147, 148, 154],
+         .
+         .
+         .
+         [197, 142, 132],
+         [197, 143, 132]
+      ],
+      "val": [7, 6, 24, 25, . . ., 3182, 3183]
+   }
+
+
+The file contains information about a 3-D array, including its dimensions (specified by the ``size`` key), 
+the 3-D coordinates of its non-zero integers (specified by the ``coords`` key), and the corresponding integer values (specified by the ``val`` key). 
+It's worth noting that the hashblocks dictionary is currently empty. 
+
+When using the 'cmap:' option to color the array, 
+the **hashblocks** dictionary is built based on a linear relation between the chosen colormap and the values of the integers in the array, 
+similar to how a gradient coloring would work. In the code block below, 
+the `RANDOMWALK.JSON <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/model_files/randomwalk.json>`_ model is 
+drawn using the **gnuplot2** colormap with an **alpha** of 1. 
+
+Note that this file generates a model that requires a substantial amount of memory, which may result in a longer rendering time.
+
+
+.. code-block:: python
+
+    model = vxm.Model()
+
+    model.load('randomwalk.json')
+    model.draw(coloring='cmap: gnuplot2, alpha:1',geometry='particles',background_color='w')
+
+
+.. image:: ../img/randomwalk.png
+  :width:  900
+  :alt: Alternative text
+
+
+Colormap Block Coloring with Integer Tagging
+................................................
+
+The **hashblocks** map can be used in combination with the 'cmap' coloring option to selectively color-tag specific voxels based on their type. 
+To accomplish this, we can modify the previous code block by adding a model.hashblocks declaration after model.load(). 
+This will allow us to color the voxels represented by the integers 743, 500, and 256 in magenta, and the voxel represented by integer 2 in cyan.
+
+
+.. code-block:: python
+
+    model = vxm.Model()
+
+    model.load('randomwalk.json')
+
+    # add the hashblocks voxel assignments    
+    model.hashblocks = {
+      743: ['magenta',1],
+      500: ['magenta',1],
+      256: ['magenta',1],
+      2: ['cyan',1]
+    }
+
+    model.draw(coloring='cmap: gnuplot2, alpha:1',geometry='particles',background_color='w')
+
+
+.. image:: ../img/randomwalk_tagged.png
+  :width:  900
+  :alt: Alternative text
+
+The ability to use the hashblocks map with the 'cmap' coloring option can be a valuable feature when
+we need to represent multiple relationships simultaneously. For example, we can use a gradient of values 
+described by the colormap to color the array, while simultaneously highlighting specific voxels with hashblocks. 
+This technique can have numerous applications in fields such as 3-D modeling, medical imaging, and coarse-grained molecular modeling, among others.
 
 
 3-D Mapping of an Image
 --------------------------------
 
-Here we map the synthetic topography image `land.png <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/docs/img/land.png>`_ that we just downloaded to a 
+Here we map the synthetic topography `LAND IMAGE (.png) <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/docs/img/land.png>`_  to a 
 3-D model using the ``ImageMap`` method from the ``voxelmap.Model`` class.
 
 
@@ -285,7 +385,16 @@ For a more customizable OpenGL rendering, ``img.MeshView()`` may be used on the 
 MarchingMesh : Turning Voxel Models to 3-D Mesh Representations
 -------------------------------------------------------------------
 
-The ``.txt`` files you downloaded were exported from Goxel projects. Goxel is an open-source and cross-platform voxel editor which facilitates the graphical creation of voxel models. More information by clicking the icon link below.  
+Click on the links below to save the files in the same directory you are running these examples:
+
+`DOG MODEL (.txt) <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/model_files/dog.txt>`_
+
+`ISLAND MODEL (.txt) <https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/model_files/argisle.txt>`_
+
+
+The ``.txt`` files you downloaded were exported from Goxel projects. 
+
+Goxel is an open-source and cross-platform voxel editor which facilitates the graphical creation of voxel models. More information by clicking the icon link below.  
 
 .. image:: ../img/goxel.png
   :width:  300
