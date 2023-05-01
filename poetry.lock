@@ -1095,26 +1095,6 @@ files = [
 ]
 
 [[package]]
-name = "trimesh"
-version = "3.21.5"
-description = "Import, export, process, analyze and view triangular meshes."
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "trimesh-3.21.5-py3-none-any.whl", hash = "sha256:5ae1ca5e4f4a5f41aa79067a9c39e083e37d7148022bb150cb0e6f89ec614df3"},
-    {file = "trimesh-3.21.5.tar.gz", hash = "sha256:74741bc7f9fcb94b98951db8dc8ec8364a2ef52ac2ca0761c7ba06182ef329be"},
-]
-
-[package.dependencies]
-numpy = "*"
-
-[package.extras]
-all = ["chardet", "colorlog", "glooey", "jsonschema", "lxml", "mapbox-earcut", "meshio", "networkx", "pillow", "psutil", "pycollada", "pyglet (<2)", "python-fcl", "requests", "rtree", "scikit-image", "scipy", "setuptools", "shapely", "svg.path", "sympy", "xatlas", "xxhash"]
-easy = ["chardet", "colorlog", "jsonschema", "lxml", "mapbox-earcut", "networkx", "pillow", "pycollada", "requests", "rtree", "scipy", "setuptools", "shapely", "svg.path", "sympy", "xxhash"]
-test = ["autopep8", "coveralls", "ezdxf", "pyinstrument", "pytest", "pytest-cov", "ruff"]
-
-[[package]]
 name = "urllib3"
 version = "1.26.15"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -1188,4 +1168,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "e3e418a217d6486de0217c74b99dcd7d416306a9936b9c3781718928d3a32bac"
+content-hash = "6abb5a45e72468e6ce8d0c3a9fa65c85831d8e38a9d8fab396de9471f475f12a"
