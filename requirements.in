@@ -1,7 +1,5 @@
 voxelmap
 pytest
-numpy
-setuptools
 matplotlib
 pandas
 opencv-python
@@ -9,6 +7,6 @@ scipy
 scikit-image 
 pyvista
 colorcet 
-timethis
 sphinx 
 sphinx-rtd-theme
+timethis
