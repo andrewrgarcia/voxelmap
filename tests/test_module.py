@@ -257,7 +257,7 @@ def test_extraMarch():
     model.draw('custom',wireframe=False, background_color='#3e404e',window_size=[700,700])
 
     model.MarchingMesh(step_size=1)
-    model.MeshView(wireframe=True,alpha=1,color=True,background_color='#6a508b')
+    model.MeshView(wireframe=True,alpha=1,color='black',background_color='#6a508b')
 
 def build_checkerboard(w, h) :
       re = np.r_[ w*[0,1] ]              # even-numbered rows
