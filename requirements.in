@@ -6,7 +6,6 @@ opencv-python
 scipy
 scikit-image 
 pyvista
-trimesh
 colorcet 
 timethis
 sphinx 
