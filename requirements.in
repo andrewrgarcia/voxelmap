@@ -1,6 +1,7 @@
 voxelmap
 pytest
-setuptools<60.0
+numpy
+setuptools
 matplotlib
 pandas
 opencv-python
