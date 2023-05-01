@@ -3,18 +3,18 @@ API Reference
 
 Global Methods
 -----------------
-As the methods are several, below are only listed the most pertinent global methods of ``voxelmap``, 
+As the methods are several, below are only listed the most pertinent global methods of voxelmap, 
 in order of the lowest level to highest level of applications to 3-D modeling operations.and classified in
 sub-sections:
 
 Special 
 ..................
-.. autoclass:: voxelmap.voxelwrite
-
-.. autoclass:: voxelmap.objdraw
-
-.. autoclass:: voxelmap.objarray
+.. autoclass:: voxelmap.objcast
    
+.. autoclass:: voxelmap.matrix_toXY
+
+.. autoclass:: voxelmap.tensor_toXYZ
+
 
 Load and Save 
 .................

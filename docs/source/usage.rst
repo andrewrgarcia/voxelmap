@@ -339,7 +339,7 @@ We can see that the mesh model can be calculated and drawn with matplotlib ``plo
 
    print(model.array.shape)
 
-   model.ImageMesh(out_file='model.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
+   model.ImageMesh(out_file='scene.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
 
 
 .. image:: ../img/land_imagemesh.png
@@ -351,7 +351,7 @@ This ``ImageMesh`` transformation is also tested with a blurred version of the i
 .. code-block:: python
 
    model.array = cv2.blur(model.array,(60,60))    # blur the image for realiztic topography levels
-   model.ImageMesh(out_file='model.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
+   model.ImageMesh(out_file='scene.obj', L_sectors = 15, trace_min=5, rel_depth = 20, figsize=(15,12), plot='mpl')
 
 .. image:: ../img/land_imagemesh_blur.png
   :width: 350
@@ -460,10 +460,10 @@ The ``MarchingMesh`` method has a current limitation on small voxel models with 
 the maintainer and/or other collaborators. 
 
 
-Wavefront (.obj) file to 3-D Sparse Array
+Wavefront (.obj) file to 3-D Sparse Array 
 -------------------------------------------------------
 
-Voxelmap provides various features for converting Wavefront .obj files to its 3-D sparse arrays. However, the most straightforward approach is to use the global **voxelmap.objarray** method.
+Voxelmap provides various features for converting Wavefront .obj files to its 3-D sparse arrays. However, the most straightforward approach is to use the global **voxelmap.objcast** method.
 
 
 Cube Model
@@ -479,7 +479,7 @@ To determine how the spacing affects the transformation from .obj to sparse arra
 
    def draw_cube(spacing):
 
-      array = vxm.objarray('model_files/simple_cube.obj',spacing)
+      array = vxm.objcast('simple_cube.obj',spacing) # Cast obj file as a point-cloud 3-D numpy array  
       model = vxm.Model(array)
       model.draw(coloring='custom: black',wireframe=True,wireframe_color='w',background_color='#000000',voxel_spacing=(1,1,1))
 
@@ -487,15 +487,15 @@ To determine how the spacing affects the transformation from .obj to sparse arra
 >>> draw_cube(spacing=1)
 (see below)
 
-.. image:: ../img/cube_s-1.png
-  :width:  200
+.. image:: ../img/objto3d/cube_s-1.png
+  :width:  300
   :alt: Alternative text
 
 >>> draw_cube(spacing=0.5)
 (see below)
 
-.. image:: ../img/cube_s-half.png
-  :width:  200
+.. image:: ../img/objto3d/cube_s-half.png
+  :width:  300
   :alt: Alternative text
 
 We can see a fractional spacing shows a more accurate model of a 2x2x2 supercube. 
@@ -511,38 +511,30 @@ into a discrete voxel array, which can then be triangulated using the **Marching
    def sphere_ptcloud(spacing):
 
       # Draw as point cloud of voxels
-      array = vxm.objarray('model_files/sphere.obj',spacing)
+      array = vxm.objcast('sphere.obj',spacing) # Cast obj file as a point-cloud 3-D numpy array  
       model = vxm.Model(array)
       model.draw(coloring='custom: black',wireframe=True,wireframe_color='w',background_color='#000000',voxel_spacing=(1,1,1))
 
       # Draw as triangulated surface after applying Marching Cubes
+      model.objfile= f"scene_marchingmesh{spacing}.obj"
       model.MarchingMesh()
       model.MeshView(wireframe=True,background_color='k',alpha=1)
 
-The spacing parameter is crucial when working with the sphere.obj model, which has fractional coordinates between 0 and 1.
- The transformation from continuous coordinates to a discrete tensor space involves floor-dividing the coordinates, so using a spacing of 1
-  is likely to result in an unhelpful sparse 3-D tensor for voxel point cloud modeling. To address this issue, we initially set the spacing to 10 and obtained the following results.
+The spacing parameter is crucial when working with the sphere.obj model, which has fractional coordinates between 0 and 1. The transformation from continuous coordinates to a discrete tensor space involves floor-dividing the coordinates, so using a spacing of 1 is likely to result in an unhelpful sparse 3-D tensor for voxel point cloud modeling. To address this issue, we initially set the spacing to 10 and obtained the following results.
+
 
 >>> sphere_ptcloud(spacing=10)
 (see below)
 
-.. |sphere10| image:: ../img/sphere_s-10.png
+.. |sphere10| image:: ../img/objto3d/sphere_s-10.png
   :width:  300
   :alt: Alternative text
 
-.. |sphere10mesh| image:: ../img/sphere_s-10_mesh.png
+.. |sphere10mesh| image:: ../img/objto3d/sphere_s-10_mesh.png
   :width:  300
   :alt: Alternative text
 
 |sphere10| |sphere10mesh|
-
-The MarchingMesh method typically outputs a Wavefront (.obj) file named ``model.obj`` as default, but users can specify a different name by changing the 
-objfile variable in the constructor of the **voxelmap.Model** class. Once the file is generated, it can be edited in software like `Blender <https://www.blender.org/>`_ by importing it.
-
-.. image:: ../img/sphere10_blender.png
-  :width:  400
-  :alt: Alternative text
-
 
 It is important to note that the spacing parameter plays a crucial role in transforming the .obj model to a discrete tensor space, especially when the model has 
 fractional coordinates between 0 and 1. Setting a spacing value of 1 might not produce a useful sparse 3-D tensor for voxel point cloud modeling. In this example with the sphere model,
@@ -551,29 +543,78 @@ we set the spacing to 10 and obtained satisfactory results.
 >>> sphere_ptcloud(spacing=30)
 (see below)
 
-.. |sphere30| image:: ../img/sphere_s-30.png
+.. |sphere30| image:: ../img/objto3d/sphere_s-30.png
   :width:  300
   :alt: Alternative text
 
-.. |sphere30mesh| image:: ../img/sphere_s-30_mesh.png
+.. |sphere30mesh| image:: ../img/objto3d/sphere_s-30_mesh.png
   :width:  300
   :alt: Alternative text
 
 |sphere30| |sphere30mesh|
 
-The corresponding ``model.obj`` file generated by MarchingMesh when imported to `Blender <https://www.blender.org/>`_ will look like this:
+The MarchingMesh method typically output a Wavefront (.obj) file named ``scene.obj`` as default, but users can specify a different name by changing the 
+objfile variable in the constructor of the **voxelmap.Model** class. Once the file is generated, it can be edited in software like `Blender <https://www.blender.org/>`_ by importing it.
 
-.. image:: ../img/sphere30_blender.png
-  :width:  400
+The above commands generated 2 MarchingMesh .obj files, ``scene_marchingmesh10.obj`` and ``scene_marchingmesh30.obj`` for the different spacings chosen. These files can be imported simultaneously to a 
+`Blender <https://www.blender.org/>`_ project, and they look like this:
+
+.. image:: ../img/objto3d/spheres_blender.png
+  :width:  600
   :alt: Alternative text
 
+The larger spacing between voxels in a sphere can be observed to result in a larger overall size of the sphere.
 
+
+.obj Model Manipulation with Numpy
+......................................
+
+What if we wanted to make a modification to the .obj file with Numpy and then save the new modified model as an .obj file for additional treatment in other software like Blender?
+Here we show a use case for that. Let's take the above **sphere_ptcloud()** function and make the following changes:
+
+.. code-block:: python
+
+   def sphere_new():
+      
+      array = vxm.objcast('sphere.obj',30) # Cast obj file as a point-cloud 3-D numpy array  
+
+      #Numpy manipulation
+      for i in range(30):
+          x,y = np.random.randint(0,np.min(array.shape),2)
+          array[x,y,:] = 1
+
+      vxm.Model(array).save('pillars.obj')    #save the array as an .obj file
+
+      
+
+The above code block loads the ``sphere.obj`` file, and casts it as a point-cloud 3D numpy array using 
+the **objcast** method. It then makes 30 pillars in random x-y coordinates using Numpy. After this, the modified Numpy 
+array containing the voxel model can be saved back to an .obj format as a NEW FILE using the local **save** method 
+of the **voxelmap.Model** class.
+
+The new ``pillars.obj`` file can be viewed with voxelmap with the below command
+
+>>> vxm.MeshView('pillars.obj',alpha=1,wireframe=True)  # load for view with the global MeshView method
+(see below)
+
+And also with Blender using Blender's Import tool. Below are the outputs from the voxelmap (left) and the 
+Blender (right) approach:
+
+.. |pillars_vxm| image:: ../img/objto3d/pillars.png
+  :width:  300
+  :alt: Alternative text
+
+.. |pillars_blender| image:: ../img/objto3d/pillars_blender.png
+  :width:  300
+  :alt: Alternative text
+
+|pillars_vxm| |pillars_blender|
 
 3-D Voxel Model Reprocessing
 -----------------------------------------
 
-Here we do some reprocessing of the above `voxel` models. Note that here we use the ``draw_mpl`` method, which is ``voxelmap``'s legacy method for voxel modeling and not its state-of-the-art. For faster
-and higher quality graphics with more kwargs / drawing options, use ``voxelmap``'s ``draw`` method instead.  
+Here we do some reprocessing of the above `voxel` models. Note that here we use the ``draw_mpl`` method, which is voxelmap's legacy method for voxel modeling and not its state-of-the-art. For faster
+and higher quality graphics with more kwargs / drawing options, use voxelmap's ``draw`` method instead.  
 
 Re-color with custom colors
 ................................
