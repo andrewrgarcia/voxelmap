@@ -2,7 +2,7 @@
 # Read the Docs configuration file
 # See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
 
-# Projects managed with Poetry, can use the post_create_environment user-defined job to use Poetry for installing Python dependencies. Take a look at the following example:
+# Projects managed with Poetry, can use the post_create_environment user-defined job to use Poetry for installing Python dependencies. Take a look at the following example (https://docs.readthedocs.io/en/latest/build-customization.html)
 # Required
 version: 2
 
