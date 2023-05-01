@@ -2,9 +2,9 @@ voxelmap
 
 numpy
 scipy
-pandas
+# pandas
 opencv-python
-scikit-image 
+# scikit-image 
 pyvista
 colorcet
 matplotlib
