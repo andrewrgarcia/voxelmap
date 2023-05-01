@@ -453,7 +453,7 @@ The voxel models can be transformed to 3D mesh representations with voxelmap's `
   :width:  300
   :alt: Alternative text
 
-|meshisland|          |meshdog|
+|meshisland|    |meshdog|
 
 Notice the ``self.array`` arrays were resized in both objects with the global ``voxelmap.resize_array`` method. This was done to avoid the formation of voids that you still see on the dog mesh above.
 The ``MarchingMesh`` method has a current limitation on small voxel models with low detail. It is not perfect, but this is an open-source package and it can always be developed further by 
@@ -485,12 +485,14 @@ To determine how the spacing affects the transformation from .obj to sparse arra
 
 
 >>> draw_cube(spacing=1)
+(see below)
 
 .. image:: ../img/cube_s-1.png
   :width:  200
   :alt: Alternative text
 
 >>> draw_cube(spacing=0.5)
+(see below)
 
 .. image:: ../img/cube_s-half.png
   :width:  200
@@ -522,6 +524,7 @@ The spacing parameter is crucial when working with the sphere.obj model, which h
   is likely to result in an unhelpful sparse 3-D tensor for voxel point cloud modeling. To address this issue, we initially set the spacing to 10 and obtained the following results.
 
 >>> sphere_ptcloud(spacing=10)
+(see below)
 
 .. |sphere10| image:: ../img/sphere_s-10.png
   :width:  300
@@ -546,6 +549,7 @@ fractional coordinates between 0 and 1. Setting a spacing value of 1 might not p
 we set the spacing to 10 and obtained satisfactory results.
 
 >>> sphere_ptcloud(spacing=30)
+(see below)
 
 .. |sphere30| image:: ../img/sphere_s-30.png
   :width:  300
