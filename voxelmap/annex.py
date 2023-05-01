@@ -304,7 +304,7 @@ vt 0.00 0.00 0.00
 
 
 def voxelwrite(array, filename = 'voxelmodel.obj'):
-    """
+    '''
     Writes a 3-D voxel model from the provided, third-order (3-D) `array` as an .obj file
     
     Parameters
@@ -313,7 +313,7 @@ def voxelwrite(array, filename = 'voxelmodel.obj'):
             array of the third-order populated with discrete, non-zero integers which may represent a voxel block type
     filename : str
             name of .obj file to save model as. 
-    """
+    '''
 
 
     # vertices diff (diffvs) for cube writing
@@ -391,7 +391,7 @@ f {}/2/6 {}/3/6 {}/4/6
 
 
 def MarchingMesh(array, out_file='model.obj', level=0, spacing=(1., 1., 1.), gradient_direction='descent', step_size=1, allow_degenerate=True, method='lewiner', mask=None, plot=False, figsize=(4.8,4.8) ):
-    """
+    '''
     Marching cubes on sparse 3-D integer `voxelmap` arrays (GLOBAL)
 
     Parameters
@@ -417,7 +417,7 @@ def MarchingMesh(array, out_file='model.obj', level=0, spacing=(1., 1., 1.), gra
         Boolean array. The marching cube algorithm will be computed only on True elements. This will save computational time when interfaces are located within certain region of the volume M, N, P-e.g. the top half of the cube-and also allow to compute finite surfaces-i.e. open surfaces that do not end at the border of the cube.
     plot: bool
         plots a preliminary 3-D triangulated image if True
-    """
+    '''
 
     '''Adapted from: https://scikit-image.org/docs/stable/auto_examples/edges/plot_marching_cubes.html'''
     # Use marching cubes to obtain the surface mesh of these ellipsoids
@@ -455,11 +455,11 @@ def MarchingMesh(array, out_file='model.obj', level=0, spacing=(1., 1., 1.), gra
 
 
 def MeshView(objfile='model.obj',color='black',alpha=0.5,wireframe=False,wireframe_color='white',background_color='#ffffff', viewport = [1024, 768]):
-    """
+    '''
     Triangulated mesh view with PyVista (GLOBAL)
     
     Parameters
-    ----------
+    --------------
     objfile: string
         .obj file to process with MeshView [in GLOBAL function only]
     color : string / hexadecimal
@@ -474,7 +474,7 @@ def MeshView(objfile='model.obj',color='black',alpha=0.5,wireframe=False,wirefra
         color of background. default: 'pink'
     viewport : (int,int)
         viewport / screen (width, height) for display window (default: 80% your screen's width & height)
-    """
+    '''
     # Define a custom theme for the 3D plot
     my_theme = pyvista.themes.DefaultTheme()
     my_theme.color = color
@@ -489,11 +489,11 @@ def MeshView(objfile='model.obj',color='black',alpha=0.5,wireframe=False,wirefra
     
 
 def objdraw(array,filename='voxelmodel.obj',color='black',alpha=0.5,wireframe=False,wireframe_color='white',background_color='#ffffff', viewport = [1024, 768]):
-    """
+    '''
     Creates a 3-D voxel model (.obj file) from the provided, third-order (3-D) `array`. It then uses the global method MeshView to draw the .obj file and display it on screen 
     
     Parameters
-    ----------
+    ------------------
     array : np.array(int)
             array of the third-order populated with discrete, non-zero integers which may represent a voxel block type
     filename : str
@@ -510,38 +510,24 @@ def objdraw(array,filename='voxelmodel.obj',color='black',alpha=0.5,wireframe=Fa
         color of background. default: 'pink'
     viewport : (int,int)
         viewport / screen (width, height) for display window (default: 80% your screen's width & height)
-    """
+    '''
     voxelwrite(array, filename = filename)
     # MeshView(objfile=filename,wireframe=wireframe,color=color,alpha=alpha,background_color=background_color, viewport = viewport)
     MeshView(filename,color,alpha,wireframe,wireframe_color,background_color, viewport )
 
 def xyz_to_sparse_array(df,hashblocks,spacing=1):
-    """
-    Converts a pandas DataFrame df with columns 'x', 'y', 'z', and 'rgb' to a sparse 3D array.
+    '''
+    Converts a pandas DataFrame df with columns 'x', 'y', 'z', and 'rgb' to a sparse 3D array. The function returns the array and a dictionary `hashblocks` that maps voxel colors to their corresponding index values in the array.
 
-    The function returns the array and a dictionary `hashblocks` that maps voxel colors to their corresponding index values in the array.
-
-    Parameters:
-    -----------
+    Parameters
+    -------------
     df : pandas DataFrame
         The input DataFrame containing 'x', 'y', 'z', and 'rgb' columns.
-
     hashblocks : dict
         A dictionary that maps voxel colors to their corresponding index values in the array.
-    
     spacing: float
-        Determines the distance between points in a point cloud. It can be adjusted to create a denser or sparser point cloud.
-        If points are all less than 1, the sparse array will be unable to draw a model because sparse arrays have discrete dimensions, 
-        so changing them to a larger value may be necessary. Likewise, if separation is too large, this value can be set to a fractional number e.g. 0.5
-
-    Returns:
-    --------
-    array : numpy array
-        A 3D numpy array with dimensions Z x Y x X, where Z, Y, and X represent the maximum voxel values of the input DataFrame.
-
-    hashblocks : dict
-        A dictionary that maps voxel colors to their corresponding index values in the array.
-    """
+        Determines the distance between points in a point cloud. It can be adjusted to create a denser or sparser point cloud. If points are all less than 1, the sparse array will be unable to draw a model because sparse arrays have discrete dimensions, so changing them to a larger value may be necessary. Likewise, if separation is too large, this value can be set to a fractional number e.g. 0.5
+    '''
     df[['x','y','z']] = spacing*df[['x','y','z']]
 
     minx, miny, minz = df.min()[0:3]
@@ -581,16 +567,14 @@ def xyz_to_sparse_array(df,hashblocks,spacing=1):
 
 
 def wavefront_to_xyz(filename='model.obj'):
-    """
-    Converts a Wavefront .obj file into a df pandas dataframe of vertex coordinates to be represented as a point cloud, 
-    where df has columns 'z', 'y', 'x', and 'rgb'. 
+    '''
+    Converts a Wavefront .obj file into a df pandas dataframe of vertex coordinates to be represented as a point cloud, where df has columns 'z', 'y', 'x', and 'rgb'. 
 
     Parameters
-    ----------
+    ---------------
     filename : str, optional
         The path and name of the .obj file to be read. Default is 'model.obj'.
-
-    """
+    '''
 
     # Read the .obj file into a list of strings
     with open(filename) as f:
@@ -616,10 +600,16 @@ def wavefront_to_xyz(filename='model.obj'):
 
 def objarray(filename='model.obj',spacing=1):
     '''
-    Converts a Wavefront .obj file into a sparse, third-order (3-D) `array` to represent a point-cloud model. Spacing variable determines the distance between points in a point cloud. It can be adjusted to create a denser or sparser point cloud.
-    If points are all less than 1, the sparse array will be unable to draw a model because sparse arrays have discrete dimensions, 
-    so changing them to a larger value may be necessary. Likewise, if separation is too large, this value can be set to a fractional number e.g. 0.5
+    Converts a Wavefront .obj file into a sparse, third-order (3-D) NumPy array to represent a point cloud model.
+
+    Parameters
+    ---------------
+    filename : str 
+        Path to the .obj file. Defaults to 'model.obj'.
+    spacing : float
+        Distance between points in the point cloud. Can be adjusted to create a denser or sparser point cloud. Defaults to 1.
     '''
+
     df = wavefront_to_xyz(filename)
     hashblocks={}
     array, _ = xyz_to_sparse_array(df,hashblocks,spacing)
