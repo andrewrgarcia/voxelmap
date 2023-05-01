@@ -9,7 +9,9 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from skimage import measure
 from skimage.draw import ellipsoid
 from scipy import ndimage 
-import pyvista as pv
+import pyvista
+
+import pandas
 
 def findcrossover(array,low,high,value):
     'finds crossover index of array for `value` value'
@@ -452,7 +454,7 @@ def MarchingMesh(array, out_file='model.obj', level=0, spacing=(1., 1., 1.), gra
         MeshView(out_file)
 
 
-def MeshView(objfile='model.obj',wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
+def MeshView(objfile='model.obj',color='black',alpha=0.5,wireframe=False,wireframe_color='white',background_color='#ffffff', viewport = [1024, 768]):
     """
     Triangulated mesh view with PyVista (GLOBAL)
     
@@ -460,21 +462,33 @@ def MeshView(objfile='model.obj',wireframe=False,color='pink',alpha=0.5,backgrou
     ----------
     objfile: string
         .obj file to process with MeshView [in GLOBAL function only]
-    wireframe: bool
-        Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
     color : string / hexadecimal
         mesh color. default: 'pink'
     alpha : float
         opacity transparency range: 0 - 1.0. Default: 0.5
+    wireframe: bool
+        Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
+    wireframe_color: string / hex 
+        edges or wireframe colors
     background_color : string / hexadecimal
         color of background. default: 'pink'
     viewport : (int,int)
         viewport / screen (width, height) for display window (default: 80% your screen's width & height)
     """
-    mesh = pv.read(objfile)
-    mesh.plot(show_edges=True if wireframe else False, color=color,opacity=alpha,background=background_color,window_size = viewport)
+    # Define a custom theme for the 3D plot
+    my_theme = pyvista.themes.DefaultTheme()
+    my_theme.color = color
+    my_theme.lighting = True
+    my_theme.show_edges = True if wireframe else False
+    my_theme.edge_color = wireframe_color
+    my_theme.background = background_color
 
-def objdraw(array,filename='voxelmodel.obj',wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
+
+    mesh = pyvista.read(objfile)
+    mesh.plot(theme=my_theme,opacity=alpha,window_size = viewport)
+    
+
+def objdraw(array,filename='voxelmodel.obj',color='black',alpha=0.5,wireframe=False,wireframe_color='white',background_color='#ffffff', viewport = [1024, 768]):
     """
     Creates a 3-D voxel model (.obj file) from the provided, third-order (3-D) `array`. It then uses the global method MeshView to draw the .obj file and display it on screen 
     
@@ -497,6 +511,117 @@ def objdraw(array,filename='voxelmodel.obj',wireframe=False,color='pink',alpha=0
     viewport : (int,int)
         viewport / screen (width, height) for display window (default: 80% your screen's width & height)
     """
-
     voxelwrite(array, filename = filename)
-    MeshView(objfile=filename,wireframe=wireframe,color=color,alpha=alpha,background_color=background_color, viewport = viewport)
+    # MeshView(objfile=filename,wireframe=wireframe,color=color,alpha=alpha,background_color=background_color, viewport = viewport)
+    MeshView(filename,color,alpha,wireframe,wireframe_color,background_color, viewport )
+
+def xyz_to_sparse_array(df,hashblocks,spacing=1):
+    """
+    Converts a pandas DataFrame df with columns 'x', 'y', 'z', and 'rgb' to a sparse 3D array.
+
+    The function returns the array and a dictionary `hashblocks` that maps voxel colors to their corresponding index values in the array.
+
+    Parameters:
+    -----------
+    df : pandas DataFrame
+        The input DataFrame containing 'x', 'y', 'z', and 'rgb' columns.
+
+    hashblocks : dict
+        A dictionary that maps voxel colors to their corresponding index values in the array.
+    
+    spacing: float
+        Determines the distance between points in a point cloud. It can be adjusted to create a denser or sparser point cloud.
+        If points are all less than 1, the sparse array will be unable to draw a model because sparse arrays have discrete dimensions, 
+        so changing them to a larger value may be necessary. Likewise, if separation is too large, this value can be set to a fractional number e.g. 0.5
+
+    Returns:
+    --------
+    array : numpy array
+        A 3D numpy array with dimensions Z x Y x X, where Z, Y, and X represent the maximum voxel values of the input DataFrame.
+
+    hashblocks : dict
+        A dictionary that maps voxel colors to their corresponding index values in the array.
+    """
+    df[['x','y','z']] = spacing*df[['x','y','z']]
+
+    minx, miny, minz = df.min()[0:3]
+    maxx, maxy, maxz = df.max()[0:3]
+
+    df['z'] += (-minz)
+    df['y'] += (-miny)
+    df['x'] += (-minx)
+
+    Z, Y, X = int(maxz-minz+1), int(maxy-miny+1), int(maxx-minx+1)
+
+    array =  np.zeros((Z, Y, X))
+
+    elems = df.T
+
+    'define voxel hashblocks dict from colors present in voxel file'
+    model_colors = sorted(list(set(df['rgb'])))
+
+    if isinstance(model_colors[0], str):
+        for i in range(len(model_colors)):
+            # hashblocks.update({i+1: model_colors[i] })
+            hashblocks[i+1] = ['#'+model_colors[i], 1]
+        print('Color list built from file!\nhashblocks =\n',hashblocks)
+
+    'write array from .txt file voxel color values and locs'
+    for i in range(len(elems.T)):
+        x, y, z = elems[i][0:3].astype('int')
+
+        if isinstance(model_colors[0], str):
+            rgb = '#'+elems[i][3]
+            array[z, y, x] = [
+                i for i in hashblocks if hashblocks[i][0] == rgb][0]
+        else:
+            array[z, y, x] = elems[i][3]
+
+    return array, hashblocks
+
+
+def wavefront_to_xyz(filename='model.obj'):
+    """
+    Converts a Wavefront .obj file into a df pandas dataframe of vertex coordinates to be represented as a point cloud, 
+    where df has columns 'z', 'y', 'x', and 'rgb'. 
+
+    Parameters
+    ----------
+    filename : str, optional
+        The path and name of the .obj file to be read. Default is 'model.obj'.
+
+    """
+
+    # Read the .obj file into a list of strings
+    with open(filename) as f:
+        lines = f.readlines()
+
+    # Initialize an empty list to hold the vertex coordinates
+    vertices = []
+
+    # Iterate over each line in the .obj file
+    for line in lines:
+        # Check if the line starts with 'v' and contains 3 coordinates
+        if line.startswith('v ') and len(line.split()) == 4:
+            # Extract the x, y, and z coordinates as floats
+            x, y, z = [float(coord) for coord in line.split()[1:]]
+            # Append the coordinates to the vertices list
+            vertices.append([z, y, x, "#ffffff"])  # placeholder for the rgb value
+
+    # Convert the vertices list to a pandas dataframe with headers z, y, x, rgb
+    df = pandas.DataFrame(vertices, columns=['z', 'y', 'x', 'rgb'])
+
+    return df
+
+
+def objarray(filename='model.obj',spacing=1):
+    '''
+    Converts a Wavefront .obj file into a sparse, third-order (3-D) `array` to represent a point-cloud model. Spacing variable determines the distance between points in a point cloud. It can be adjusted to create a denser or sparser point cloud.
+    If points are all less than 1, the sparse array will be unable to draw a model because sparse arrays have discrete dimensions, 
+    so changing them to a larger value may be necessary. Likewise, if separation is too large, this value can be set to a fractional number e.g. 0.5
+    '''
+    df = wavefront_to_xyz(filename)
+    hashblocks={}
+    array, _ = xyz_to_sparse_array(df,hashblocks,spacing)
+
+    return array

@@ -10,6 +10,18 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 
 
+def test_arrays_from_obj():
+
+    array = vxm.objarray('model_files/sphere.obj',10)
+    sphere_model = vxm.Model(array)
+    sphere_model.draw(wireframe=True,voxel_spacing=(1,1,1))
+    sphere_model.MarchingMesh()
+    sphere_model.MeshView(wireframe=True,color='w',alpha=1)
+
+    array = vxm.objarray('model_files/simple_cube.obj',0.5)
+    cube_model = vxm.Model(array)
+    cube_model.draw(wireframe=True,voxel_spacing=(1,1,1))
+
 def test_pickle():
     '''test pickle save and load of made-up array'''
     arr = np.random.randint(0,10,(7,7,7))

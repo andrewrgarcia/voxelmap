@@ -1,9 +1,9 @@
-'''
+"""
 VOXELMAP 
 A Python library for making voxel models from NumPy arrays.
 Andrew Garcia, 2022 - beyond
 
-'''
+"""
 import numpy as np
 import random as ran
 import matplotlib.pyplot as plt
@@ -29,9 +29,9 @@ from voxelmap.annex import *
 
 def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_there,  
                 num_simplices, rel_depth, color='orange', trace_min=1, plot=True, ax=[]):
-    '''SectorHull does ConvexHull on a specific 2-D sector of the selected image
+    """SectorHull does ConvexHull on a specific 2-D sector of the selected image
     adapted [ significantly ] from 
-    https://stackoverflow.com/questions/27270477/3d-convex-hull-from-point-cloud'''
+    https://stackoverflow.com/questions/27270477/3d-convex-hull-from-point-cloud"""
 
     sector = array[Y_here:Y_there, X_here:X_there] if sector_dims == 2 else \
              array[Z_here:Z_there, Y_here:Y_there, X_here:X_there]
@@ -63,7 +63,7 @@ def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_t
 
 
 def binarize(array, colorindex=1):
-    '''converts an array with integer entries to either 0 if 0 or 1 if !=0'''
+    """converts an array with integer entries to either 0 if 0 or 1 if !=0"""
     arrayv = np.zeros((array.shape))
     for i in np.argwhere(array != 0):
         arrayv[tuple(i)] = colorindex
@@ -74,7 +74,7 @@ def binarize(array, colorindex=1):
 class Model:
 
     def __init__(self, array=[],file=''):
-        '''Model structure. Calls `3-D` array to process into 3-D model.
+        """Model structure. Calls `3-D` array to process into 3-D model.
 
         Parameters
         ----------
@@ -102,7 +102,7 @@ class Model:
             a list for the colors of every voxels in xyz array (length: `number_voxel-locations`)
         sparsity : float
             a factor to separate the relative distance between each voxel (default:10.0 [> 50.0 may have memory limitations])
-        '''
+        """
         self.file = file
         self.array = mpimg.imread(self.file) if file != '' else array   # array of third-order (3-D)
         self.make_intensity() if file != '' else None
@@ -119,7 +119,7 @@ class Model:
         
 
     def resize_intensity(self, res = 1.0, res_interp = cv2.INTER_AREA):
-        '''Resize the intensity matrix of the provided image.
+        """Resize the intensity matrix of the provided image.
 
         Parameters
         ----------
@@ -127,7 +127,7 @@ class Model:
             relative resizing percentage as `x` times the original (default 1.0 [1.0x original dimensions])
         res_interp: object, optional 
             cv2 interpolation function for resizing (default cv2.INTER_AREA)
-        '''
+        """
         
         'Turn image into intensity matrix'
         # self.array = mpimg.imread(self.file)       #load image
@@ -144,8 +144,8 @@ class Model:
 
 
     def make_intensity(self):
-        '''Turn image into intensity matrix i.e. matrix with pixel intensities. Outputs self.array as mutable matrix to contain relative pixel intensities in int levels [for file if specified]
-        '''
+        """Turn image into intensity matrix i.e. matrix with pixel intensities. Outputs self.array as mutable matrix to contain relative pixel intensities in int levels [for file if specified]
+        """
         # if self.array == []:
         #     self.array = mpimg.imread(self.file)       #load image
         
@@ -165,16 +165,16 @@ class Model:
     def importdata(self, filename=''):
 
         def dfgox(file):
-            '''Import Goxel file and convert to numpy array
-            '''
+            """Import Goxel file and convert to numpy array
+            """
             df = pandas.read_csv(file,
                                  sep=' ', skiprows=(0, 1, 2), names=['x', 'y', 'z', 'rgb', 'none'])
 
             return df
 
         def dfXYZ():
-            '''Import Goxel file and convert to numpy array
-            '''
+            """Import Goxel file and convert to numpy array
+            """
             df = pandas.DataFrame(self.sparsity*self.XYZ,
                                   columns=['x', 'y', 'z'])
 
@@ -184,43 +184,12 @@ class Model:
 
         df = dfgox(filename) if len(filename) != 0 else dfXYZ()
 
-        minx, miny, minz = df.min()[0:3]
-        maxx, maxy, maxz = df.max()[0:3]
-
-        df['z'] += (-minz)
-        df['y'] += (-miny)
-        df['x'] += (-minx)
-
-        Z, Y, X = int(maxz-minz+1), int(maxy-miny+1), int(maxx-minx+1)
-
-        self.array = np.zeros((Z, Y, X))
-
-        elems = df.T
-
-        'define voxel hashblocks dict from colors present in voxel file'
-        model_colors = sorted(list(set(df['rgb'])))
-
-        if isinstance(model_colors[0], str):
-            for i in range(len(model_colors)):
-                # self.hashblocks.update({i+1: model_colors[i] })
-                self.hashblocks[i+1] = ['#'+model_colors[i], 1]
-            print('Color list built from file!\nself.hashblocks =\n',self.hashblocks)
-
-        'write array from .txt file voxel color values and locs'
-        for i in range(len(elems.T)):
-            x, y, z = elems[i][0:3].astype('int')
-
-            if isinstance(model_colors[0], str):
-                rgb = '#'+elems[i][3]
-                self.array[z, y, x] = [
-                    i for i in self.hashblocks if self.hashblocks[i][0] == rgb][0]
-            else:
-                self.array[z, y, x] = elems[i][3]
+        self.array, self.hashblocks = xyz_to_sparse_array(df,self.hashblocks)
 
         return self.array
 
     def hashblocks_add(self, key, color, alpha=1):
-        '''Make your own 3-D colormap option. Adds to hashblocks dictionary.
+        """Make your own 3-D colormap option. Adds to hashblocks dictionary.
 
         Parameters
         ----------
@@ -230,11 +199,11 @@ class Model:
             color of voxel with corresponding `key` index (either in hexanumerical # format  or default python color string)
         alpha : float, optional
             transparency index (0 -> transparent; 1 -> opaque; default = 1.0)
-        '''
+        """
         self.hashblocks[key] = [color, alpha]
 
     def build(self):
-        '''Builds voxel model structure from python numpy array'''
+        """Builds voxel model structure from python numpy array"""
         binarray = binarize(self.array)   # `binarize` array
         Z, X, Y = np.shape(self.array)
 
@@ -349,8 +318,8 @@ class Model:
         set_axes_equal(ax)
         plt.show()
 
-    def draw(self, coloring='none', geometry = 'voxels', scalars='', background_color='#cccccc', wireframe=False, window_size=[1024, 768],voxel_spacing=(1,1,1)):
-        '''Draws voxel model after building it with the provided `array` with PyVista library
+    def draw(self, coloring='none', geometry = 'voxels', scalars='', background_color='#cccccc', wireframe=False, wireframe_color='k', window_size=[1024, 768],voxel_spacing=(1,1,1)):
+        """Draws voxel model after building it with the provided `array` with PyVista library
 
         Parameters
         ----------
@@ -372,11 +341,16 @@ class Model:
             list of scalars for cmap coloring scheme
         background_color : string / hex
             background color of pyvista plot
+        wireframe: bool
+            Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
+        wireframe_color: string / hex 
+            edges or wireframe colors
         window_size : (float,float)
             defines plot window dimensions. Defaults to [1024, 768], unless set differently in the relevant theme’s window_size property [pyvista.Plotter]
         voxel_spacing : (float,float,float)
             changes voxel spacing by defining length scales of x y and z directions (default:(1,1,1)).
-        '''
+        """
+
         xx, yy, zz, voxid = arr2crds(self.array, -1).T
 
         centers = np.vstack((xx.ravel(), yy.ravel(), zz.ravel())).T
@@ -465,18 +439,18 @@ class Model:
             # Mesh creation and coloring
             if coloring[:6] == 'custom' or coloring[:4] == 'cmap' :
                 voxel_color, voxel_alpha = self.hashblocks[voxid[i]]
-                pl.add_mesh(voxel, color=voxel_color, smooth_shading=smooth, opacity=voxel_alpha,show_edges=True if wireframe else False)
+                pl.add_mesh(voxel, color=voxel_color, smooth_shading=smooth, opacity=voxel_alpha,show_edges=True if wireframe else False, edge_color=wireframe_color)
             elif coloring == 'none':
-                pl.add_mesh(voxel,smooth_shading=smooth, show_edges=True if wireframe else False)
+                pl.add_mesh(voxel,smooth_shading=smooth, show_edges=True if wireframe else False, edge_color=wireframe_color)
             else:
                 pl.add_mesh(voxel, scalars=[i for i in range(
-                    8)] if scalars == '' else scalars,smooth_shading=smooth, show_edges=True if wireframe else False, cmap=coloring)
+                    8)] if scalars == '' else scalars,smooth_shading=smooth, show_edges=True if wireframe else False, edge_color=wireframe_color, cmap=coloring)
 
         pl.isometric_view_interactive()
         pl.show(interactive=True)
 
     def save(self, filename='voxeldata.json'):
-        '''Save sparse array + color assignments Model data as a dictionary of keys (DOK) JSON file
+        """Save sparse array + color assignments Model data as a dictionary of keys (DOK) JSON file
 
         Parameters
         ----------
@@ -485,7 +459,7 @@ class Model:
             Data types:
             .json -> voxel data represented as (DOK) JSON file 
             .txt -> voxel data represented x,y,z,rgb matrix in .txt file (see Goxel .txt imports)
-        '''
+        """
         if filename[-4:] == 'json':
             tojson(filename, self.array, self.hashblocks)
         else:
@@ -527,7 +501,7 @@ class Model:
 
 
     def ImageMap(self,depth=5,out_file='model.obj',plot = False):
-        '''Map image or 2-D array (matrix) to 3-D array
+        """Map image or 2-D array (matrix) to 3-D array
         
         Parameters
         -----------
@@ -537,7 +511,7 @@ class Model:
             name and/or path for Wavefront .obj file output. This is the common format for OpenGL 3-D model files (default: model.obj) 
         plot: bool / str
             plots a preliminary 3-D triangulated image if True with PyVista. For more plotting options, plot by calling MeshView separately.
-        '''
+        """
         matrix = self.array
 
         length, width = np.shape(matrix)
@@ -565,7 +539,7 @@ class Model:
         return model
     
     def ImageMesh(self, out_file='model.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 1, plot = True, figsize=(4.8,4.8), verbose=False ):
-        '''
+        """
         3-D triangulation of 2-D images / 2-D arrays (matrices) with a Convex Hull algorithm (Andrew Garcia, 2022)
 
         Parameters
@@ -580,7 +554,7 @@ class Model:
             minimum number of points in different z-levels to triangulate per sector (default: 1)
         plot: bool / str
             plots a preliminary 3-D triangulated image if True [with PyVista (& with matplotlib if plot = 'img'). For more plotting options, plot with Meshview instead. 
-        '''
+        """
 
         matrix = self.array
 
@@ -669,7 +643,7 @@ class Model:
         
         print('mesh created! saved as {}.'.format(self.objfile))
 
-    def MeshView(self,wireframe=False,color='pink',alpha=0.5,background_color='#333333', viewport = [1024, 768]):
+    def MeshView(self,color='black',alpha=0.5,wireframe=False,wireframe_color='white',background_color='#ffffff', viewport = [1024, 768]):
         """
         Triangulated mesh view with PyVista
 
@@ -677,16 +651,29 @@ class Model:
         --------------
         objfile: string
             .obj file to process with MeshView [in GLOBAL function only]
-        wireframe: bool
-            Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
         color : string / hexadecimal
             mesh color. default: 'pink'
         alpha : float
             opacity transparency range: 0 - 1.0. Default: 0.5
+        wireframe: bool
+            Represent mesh as wireframe instead of solid polyhedron if True (default: False). 
+        wireframe_color: string / hex 
+            edges or wireframe colors
         background_color : string / hexadecimal
             color of background. default: 'pink'
         viewport : (int,int)
             viewport / screen (width, height) for display window (default: 80% your screen's width & height)
         """
-        mesh = pv.read(self.objfile)
-        mesh.plot(show_edges=True if wireframe else False, color=color,opacity=alpha,background=background_color,window_size = viewport)
+        # Define a custom theme for the 3D plot
+        my_theme = pyvista.themes.DefaultTheme()
+        my_theme.color = color
+        my_theme.lighting = True
+        my_theme.show_edges = True if wireframe else False
+        my_theme.edge_color = wireframe_color
+        my_theme.background = background_color
+
+
+        mesh = pyvista.read(self.objfile)
+        # mesh.plot(show_edges=True if wireframe else False, color=color,opacity=alpha,background=background_color,window_size = viewport)
+        mesh.plot(theme=my_theme,opacity=alpha,window_size = viewport)
+

@@ -33,5 +33,6 @@ usage.py
 
 model_files/more_models
 
+voxelize.py
 voxelwrite_imesh_tests.py
 RW3D*

@@ -13,6 +13,8 @@ Special
 
 .. autoclass:: voxelmap.objdraw
 
+.. autoclass:: voxelmap.objarray
+   
 
 Load and Save 
 .................

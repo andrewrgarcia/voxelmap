@@ -1,12 +1,13 @@
-voxelmap
 pytest
+voxelmap
 matplotlib
 pandas
 opencv-python
 scipy
 scikit-image 
 pyvista
+trimesh
 colorcet 
+timethis
 sphinx 
 sphinx-rtd-theme
-timethis
