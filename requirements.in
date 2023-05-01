@@ -1,6 +1,6 @@
 voxelmap
 pytest
-setuptools
+setuptools>=60.0
 matplotlib
 pandas
 opencv-python
