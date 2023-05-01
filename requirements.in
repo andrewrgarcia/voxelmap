@@ -8,6 +8,5 @@ scikit-image
 pyvista
 colorcet
 matplotlib
-timethis
 sphinx 
 sphinx-rtd-theme
