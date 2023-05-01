@@ -16,8 +16,12 @@ _old
 #files created during tests
 block_a
 random-array
-*.obj
 myModel.json
+
+*.obj
+#except
+!model_files/simple_cube.obj
+!model_files/sphere.obj
 
 #confidential model(s)
 chibi.txt
