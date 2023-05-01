@@ -19,6 +19,7 @@ random-array
 myModel.json
 
 *.obj
+*.mtl
 #except
 !model_files/simple_cube.obj
 !model_files/sphere.obj

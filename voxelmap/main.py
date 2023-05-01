@@ -25,8 +25,6 @@ from voxelmap.annex import *
 
 # from scipy.spatial import Delaunay
 
-
-
 def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_there,  
                 num_simplices, rel_depth, color='orange', trace_min=1, plot=True, ax=[]):
     '''SectorHull does ConvexHull on a specific 2-D sector of the selected image
@@ -39,7 +37,7 @@ def SectorHull(array, sector_dims, Z_here, Z_there, Y_here, Y_there, X_here, X_t
 
     if len(np.unique(sector)) > trace_min:
         
-        points = arr2crds(sector, rel_depth) if sector_dims == 2 else tensor2crds(array, rel_depth)
+        points = matrix_toXY(sector, -rel_depth) if sector_dims == 2 else tensor_toXYZ(array, rel_depth)
 
         hull = ConvexHull(points)
 
@@ -112,7 +110,7 @@ class Model:
         self.alphacm = 1            # default: opaque colormap (alpha=1)
 
         # self.file = 'placeholder.txt'
-        self.objfile = 'model.obj'
+        self.objfile = 'scene.obj'
         self.XYZ = []
         self.RGB = []
         self.sparsity = 10.0
@@ -318,8 +316,8 @@ class Model:
         set_axes_equal(ax)
         plt.show()
 
-    def draw(self, coloring='none', geometry = 'voxels', scalars='', background_color='#cccccc', wireframe=False, wireframe_color='k', window_size=[1024, 768],voxel_spacing=(1,1,1)):
-        '''Draws voxel model after building it with the provided `array` with PyVista library
+    def draw(self, coloring='none', geometry = 'voxels', scalars='', background_color='#cccccc', wireframe=False, wireframe_color='k', window_size=[1024, 768],voxel_spacing=(1,1,1),show=True):
+        '''Draws voxel model after building it with the provided `array` with PyVista library 
 
         Parameters
         ----------
@@ -349,9 +347,11 @@ class Model:
             defines plot window dimensions. Defaults to [1024, 768], unless set differently in the relevant theme’s window_size property [pyvista.Plotter]
         voxel_spacing : (float,float,float)
             changes voxel spacing by defining length scales of x y and z directions (default:(1,1,1)).
+        show : bool
+            Display Pyvista 3-D render of drawn 3-D model if True (default: True)
         '''
 
-        xx, yy, zz, voxid = arr2crds(self.array, -1).T
+        xx, yy, zz, voxid = matrix_toXY(self.array, 1).T
 
         centers = np.vstack((xx.ravel(), yy.ravel(), zz.ravel())).T
 
@@ -446,35 +446,44 @@ class Model:
                 pl.add_mesh(voxel, scalars=[i for i in range(
                     8)] if scalars == '' else scalars,smooth_shading=smooth, show_edges=True if wireframe else False, edge_color=wireframe_color, cmap=coloring)
 
-        pl.isometric_view_interactive()
-        pl.show(interactive=True)
 
-    def save(self, filename='voxeldata.json'):
+        if show:
+            pl.isometric_view_interactive()
+            pl.show(interactive=True)
+
+        else:
+            return pl
+        
+
+    def save(self, filename='scene.json'):
         '''Save sparse array + color assignments Model data as a dictionary of keys (DOK) JSON file
 
         Parameters
         ----------
         filename: string  
-            name of file (e.g. 'voxeldata.json')
+            name of file (e.g. 'scene.json')
             Data types:
             .json -> voxel data represented as (DOK) JSON file 
             .txt -> voxel data represented x,y,z,rgb matrix in .txt file (see Goxel .txt imports)
         '''
         if filename[-4:] == 'json':
             tojson(filename, self.array, self.hashblocks)
+        elif filename[-4:] == '.obj':
+            pl = self.draw(show=False) 
+            pl.export_obj(filename)  
         else:
             toTXT(filename,self.array, self.hashblocks)
 
         return None
     
-    def load(self, filename='voxeldata.json', coords=False):
+    def load(self, filename='scene.json', coords=False):
         '''
         Load to Model object.
 
         Parameters
         ----------
         filename: string (.json or .txt extensions (see above))
-            name of file to be loaded (e.g 'voxeldata.json')
+            name of file to be loaded (e.g 'scene.json')
         coords: bool
             loads and processes self.XYZ, self.RGB, and self.sparsity = 10.0 (see Model class desc above) to Model if True. This boolean overrides filename loader option. 
         '''
@@ -500,7 +509,7 @@ class Model:
 
 
 
-    def ImageMap(self,depth=5,out_file='model.obj',plot = False):
+    def ImageMap(self,depth=5,out_file='scene.obj',plot = False):
         '''Map image or 2-D array (matrix) to 3-D array
         
         Parameters
@@ -530,7 +539,9 @@ class Model:
                 k = findclosest(intensities, pixel_intensity)
                 model[k][j][ i ] = 1
 
-        voxelwrite(model, filename =out_file)
+        # voxelwrite(model, filename =out_file)
+        self.array = model
+        self.save(filename=out_file)
         self.objfile = out_file 
 
         if plot:
@@ -538,7 +549,7 @@ class Model:
 
         return model
     
-    def ImageMesh(self, out_file='model.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 1, plot = True, figsize=(4.8,4.8), verbose=False ):
+    def ImageMesh(self, out_file='scene.obj', L_sectors = 4, rel_depth = 0.50, trace_min = 1, plot = True, figsize=(4.8,4.8), verbose=False ):
         '''
         3-D triangulation of 2-D images / 2-D arrays (matrices) with a Convex Hull algorithm (Andrew Garcia, 2022)
 
@@ -643,7 +654,7 @@ class Model:
         
         print('mesh created! saved as {}.'.format(self.objfile))
 
-    def MeshView(self,color='black',alpha=0.5,wireframe=False,wireframe_color='white',background_color='#ffffff', viewport = [1024, 768]):
+    def MeshView(self,color='black',alpha=1,wireframe=True,wireframe_color='white',background_color='#ffffff', viewport = [1024, 768]):
         '''
         Triangulated mesh view with PyVista
 

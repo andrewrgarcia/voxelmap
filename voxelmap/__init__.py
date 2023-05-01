@@ -1,2 +1,3 @@
+from voxelmap.legacy import *
 from voxelmap.annex import *
-from voxelmap.jotunn import *
+from voxelmap.main import *
