@@ -316,7 +316,7 @@ class Model:
         set_axes_equal(ax)
         plt.show()
 
-    def draw(self, coloring='none', geometry = 'voxels', scalars='', background_color='#cccccc', wireframe=False, wireframe_color='k', window_size=[1024, 768],voxel_spacing=(1,1,1),show=True):
+    def draw(self, coloring='none', geometry = 'voxels', scalars='', background_color='#cccccc', wireframe=False, wireframe_color='k', window_size=[1024, 768],len_voxel=1,show=True):
         '''Draws voxel model after building it with the provided `array` with PyVista library 
 
         Parameters
@@ -345,8 +345,8 @@ class Model:
             edges or wireframe colors
         window_size : (float,float)
             defines plot window dimensions. Defaults to [1024, 768], unless set differently in the relevant theme’s window_size property [pyvista.Plotter]
-        voxel_spacing : (float,float,float)
-            changes voxel spacing by defining length scales of x y and z directions (default:(1,1,1)).
+        len_voxel : float [for geometry='voxels' or 'particles'] / (float,float,float) [for geometry='voxels']
+            The characteristic side length (or lengths) of the voxel. For 'voxels' geometry, the x,y,z side lengths may be set by defining them in a tuple i.e. len_voxel=(x_len,y_len,z_len); if the len_voxel is set to a singular value, it assumes all box side lengths are the same. For 'particles' geometry, len_voxel=radius (default=1) 
         show : bool
             Display Pyvista 3-D render of drawn 3-D model if True (default: True)
         '''
@@ -420,17 +420,17 @@ class Model:
                     
                     print('Voxelmap draw. Using custom colormap: ',colormap)
 
-                except: 
+                except Exception as e: 
                     print('ERROR: colormap {} does not exist / is not available ',colormap)
-
+                    print(e)
 
         for i in range(len(centers)):
 
-            x_len,y_len,z_len = voxel_spacing
+            x_len,y_len,z_len = tuple(3*[len_voxel]) if type(len_voxel) == int or float else len_voxel
 
             # Voxel Geometry
             if geometry == 'particles':
-                voxel = pyvista.Sphere(center=centers[i],radius=0.5)
+                voxel = pyvista.Sphere(center=centers[i],radius=len_voxel)
                 smooth = True
             else:
                 voxel = pyvista.Cube(center=centers[i],x_length=x_len, y_length=y_len, z_length=z_len)
