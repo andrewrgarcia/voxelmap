@@ -59,24 +59,16 @@ With voxelmap, we are committed to continually improving our project with the la
 As part of our ongoing development, we are planning to introduce more advanced methods for 3-D reconstruction using artificial intelligence in a future release, version 5.0.
 
 
-.. |o3dgal1| image:: ../../img/o3d_galactic1.png
-  :width: 340
-  :alt: Alternative text
-
 .. |o3dgal2| image:: ../../img/o3d_galactic2.png
   :width: 340
   :alt: Alternative text
+  :target: https://www.youtube.com/watch?v=UlZmtAqZEmQ
 
 
-|o3dgal1| |o3dgal2|
-
+|o3dgal2|
 
 
 These new method(s) will provide higher quality 3-D reconstruction, and enable users to go from image to 3-D model with just one line of code. Our aim is to democratize the 3-D modeling process and make it more accessible to everyone.
 
-
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/watch?v=UlZmtAqZEmQ" frameborder="0" allowfullscreen></iframe>
 
 

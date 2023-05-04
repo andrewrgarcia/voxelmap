@@ -49,124 +49,101 @@ The dictionary's structure and call method are shown below:
 
 .. _voxeldraw_array:
 
-Draw voxels from an integer array
+Draw voxels from integer arrays
 -------------------------------------
 
-The voxel color and transparencies may be added or modified to the 
-``hashblocks`` map with the ``hashblocks_add`` method.
+We present the creation of two models using arrays A and B, with the first code block dedicated to the generation of the first model (array A) containing thorough comments for better understanding of the voxelmap functions.
 
 .. code-block:: python
 
-   import voxelmap as vxm
-   import numpy as np
+  '''Array A'''
 
-   #make a 3x3x3 integer array with random values between 0 and 9
-   array = np.random.randint(0, 10, (3, 3, 3))
-   print(array)
+  #make a 10x10x10 integer array with values between 0 and 3 with sampling probabilities "p"
+  freqs = [300,20,40,20]    
+  A = np.random.choice([0,1,2,3],p=freqs/np.sum(freqs),size=(10, 10, 10))
 
-   #incorporate array to Model structure
-   model = vxm.Model(array)
+  #incorporate array to Model structure
+  model = vxm.Model(A)
 
-   #add voxel colors and alpha-transparency for integer values 0 - 9 (needed for `custom` coloring)
-   colors = ['#ffffff', 'black', '#ffffff', 'k',
-            'yellow', '#000000', 'white', 'k', '#c745f8']
-   for i in range(9):
-      model.hashblocks_add(i+1, colors[i])
+  #add voxel colors and alpha-transparency for integer values 0 - 9 (needed for `custom` coloring)
+  colors = ['#ff000ff', 'yellow', 'lime']
 
-   #draw array as a voxel model with `custom` coloring scheme
-   model.draw('custom', background_color='#ffffff')
-   
->>> [Out]
-[[[3 8 5]
-  [0 2 6]
-  [2 2 7]]
- [[8 3 6]
-  [7 2 0]
-  [2 2 1]]
- [[9 2 4]
-  [8 5 7]
-  [8 9 8]]]
+  alpha_yellow=0.4    # define alpha transparency for yellow colored voxels
+
+  #assign colors and alpha to integers
+  k=1
+  for i in colors:
+      model.hashblocks[k] = [i,1] if i != 'yellow' else [i,alpha_yellow]
+      k+=1
+
+  model.draw(coloring='custom',len_voxel=0.9, background_color='#ffffff')
+
+  '''Array B'''
+
+  B = np.random.randint(1,30,(7,7,7))
+  vxm.Model(B).draw(coloring='cmap: cool, alpha:1.0',geometry='particles',len_voxel=1,background_color='w')
 
 
 .. image:: ../img/solid_voxels.png
-  :width: 200
+  :width: 300
   :alt: Alternative text
 
-With particles geometry and user-defined ``alpha`` transparencies
-...........................................................................
-The new version of voxelmap now has a ``geometry`` kwarg for the ``Model.draw()`` method where the voxel geometry can be chosen between `voxels` and `particles` form. Below we change it to `particles` to represent the voxels above as spherical objects. In addition, we declare different transparencies of the different voxel-item types:
-
-.. code-block:: python
-
-   alphas = [0.8,1,0.5,1,0.75,0.5,1.0,0.8,0.6]
-   for i in range(9):
-   model.hashblocks_add(i+1,colors[i],alphas[i])
-   model.draw('custom', geometry='particles', background_color='#ffffff')
-
-.. image:: ../img/alpha_voxels.png
-  :width: 200
+.. image:: ../img/solid_voxels_B.png
+  :width: 300
   :alt: Alternative text
+
+
+It's worth noting the versatility of voxelmap, allowing the creation of 3D models using just one line of code, as demonstrated with the generation of array B.
+
 
 
 Draw voxels from coordinate arrays 
 -------------------------------------
 
-**Voxelmap** may also draw a voxel model from an array which defines the coordinates for each of the voxels to be drawn in x y and z space. 
+Voxelmap has the capability to create a voxel model using an array that defines the coordinates of each voxel in x, y, and z space. The variable "data.xyz" takes a third-order array, where the rows represent the number of voxels and the columns contain the 3 coordinates for each axis.
 
-The internal variable ``data.xyz`` will thus take a third-order array where the rows are the number of voxels and the columns are the 3 coordinates for the x,y,z axis. Another internal input, ``data.rgb``,
-can be used to define the colors for each of the voxels in the ``data.xyz`` object in ``'xxxxxx'`` hex format (i.e. ``'ffffff'`` for white).
+Additionally, the "data.rgb" input can be used to set the color of each voxel in the "data.xyz" object using the hex format "xxxxxx" (for example, "ffffff" for white).
 
-The algorithm will also work for negative coordinates, as it is shown in the example below. 
+The algorithm works with negative coordinates as well, as demonstrated in the example below. This example showcases two cases, where the second case places the spheres farther apart by reducing the characteristic length scale of the particles (i.e., the radius) using the "len_voxel" keyword argument.
 
 .. code-block:: python
 
-   import voxelmap as vxm
-   import numpy as np
+  cubes = vxm.Model()
+  num_voxels = 30
+  cubes.XYZ = np.random.randint(-1,1,(num_voxels,3))+np.random.random((num_voxels,3))          # random x,y,z locs for 10 voxels
+  cubes.RGB = [ hex(np.random.randint(0.5e7,1.5e7))[2:] for i in range(num_voxels) ]   # define random colors for the 10 voxels
+  cubes.sparsity = 10
+                                                    # spaces out coordinates
+  cubes.load(coords=True)
+  cubes.hashblocks
 
-   cubes = vxm.Model()          
-   num_voxels = 30
-   cubes.XYZ = np.random.randint(-1,1,(num_voxels,3))+np.random.random((num_voxels,3))          # random x,y,z locs for 10 voxels
-   cubes.RGB = [ hex(np.random.randint(0.5e7,1.5e7))[2:] for i in range(num_voxels) ]   # define random colors for the 10 voxels
-   cubes.sparsity = 5
-                                                      # spaces out coordinates 
-   cubes.load(coords=True)
-   cubes.hashblocks 
+  print(cubes.hashblocks)
 
-   for i in cubes.hashblocks:
-      cubes.hashblocks[i][1] = 0.30     # update all voxel alphas (transparency) to 0.3
+  # print(cubes.XYZ)                               # print the xyz coordinate data
+  cubes.draw(coloring='custom',geometry='particles',len_voxel=1, background_color='#ffffff',window_size=[416, 416]) 
 
-   # print(cubes.XYZ)                               # print the xyz coordinate data
-   cubes.draw('custom',geometry='particles', background_color='#ffffff',window_size=[416, 416])                            # draw the model from that data
+  # increase spacing by setting the `len_voxel` characteristic side-length to a lower number. 
+  cubes.draw(coloring='custom',geometry='particles',len_voxel=0.5, background_color='#ffffff',window_size=[416, 416]) 
 
 
 
 >>> [Out]
-Color list built from file!
-Model().hashblocks =
- {1: ['#4db692', 1], 2: ['#564bfb', 1], 3: ['#5915c1', 1], 4: ['#6283df', 1], 5: ['#6e5722', 1], 6: ['#6eebc3', 1], 7: ['#70cffa', 1], 8: ['#787ea7', 1], 9: ['#813c5b', 1], 10: ['#8906d7', 1], 11: ['#8a871d', 1], 12: ['#8ba24f', 1], 13: ['#930979', 1], 14: ['#932fde', 1], 15: ['#964c67', 1], 16: ['#9bafea', 1], 17: ['#9c248b', 1], 18: ['#9e5fff', 1], 19: ['#a2183b', 1], 20: ['#a248a6', 1], 21: ['#a63265', 1], 22: ['#a6c6a1', 1], 23: ['#aa381b', 1], 24: ['#ae9c6a', 1], 25: ['#b58c2c', 1], 26: ['#c114a1', 1], 27: ['#c618df', 1], 28: ['#d15d6e', 1], 29: ['#da6f7d', 1], 30: ['#e36ff6', 1]}
+Voxelmap draw. Using custom colors:
+self.hashblocks =
+ {1: ['#4d3206', 1], 2: ['#4f29cc', 1], 3: ['#52c64a', 1], 4: ['#5c8c76', 1], 5: ['#617fc0', 1], 6: ['#6622fa', 1], 7: ['#668b58', 1], 8: ['#6cb872', 1], 9: ['#701eda', 1], 10: ['#76aa8b', 1], 11: ['#783ec3', 1], 12: ['#7b2af8', 1], 13: ['#80e30b', 1], 14: ['#8105f8', 1], 15: ['#842c4c', 1], 16: ['#89c2d5', 1], 17: ['#934959', 1], 18: ['#9a539c', 1], 19: ['#9f3fae', 1], 20: ['#a5b909', 1], 21: ['#a9f373', 1], 22: ['#b818a6', 1], 23: ['#bcf032', 1], 24: ['#bd0374', 1], 25: ['#bdd493', 1], 26: ['#c20eff', 1], 27: ['#c9c6fe', 1], 28: ['#c9ea55', 1], 29: ['#cc8e6f', 1], 30: ['#d553d4', 1]}
 
 .. image:: ../img/coords.png
-  :width: 200
+  :width: 300
   :alt: Alternative text
 
-Increase sparsity
-....................
-
-
-The `sparsity` variable will extend the distance from all voxels at the expense of increased memory. 
-
-.. code-block:: python
-
-   cubes.sparsity = 12                                                      # spaces out coordinates 
-   cubes.load(coords=True)
-   for i in cubes.hashblocks:
-      cubes.hashblocks[i][1] = 0.30     # update all voxel alphas (transparency) to 0.3
-
-   cubes.draw('custom', geometry='particles', background_color='#ffffff',window_size=[1000, 1000])                            # draw the model from that data
+>>> [Out]
+Voxelmap draw. Using custom colors:
+self.hashblocks =
+ {1: ['#4d3206', 1], 2: ['#4f29cc', 1], 3: ['#52c64a', 1], 4: ['#5c8c76', 1], 5: ['#617fc0', 1], 6: ['#6622fa', 1], 7: ['#668b58', 1], 8: ['#6cb872', 1], 9: ['#701eda', 1], 10: ['#76aa8b', 1], 11: ['#783ec3', 1], 12: ['#7b2af8', 1], 13: ['#80e30b', 1], 14: ['#8105f8', 1], 15: ['#842c4c', 1], 16: ['#89c2d5', 1], 17: ['#934959', 1], 18: ['#9a539c', 1], 19: ['#9f3fae', 1], 20: ['#a5b909', 1], 21: ['#a9f373', 1], 22: ['#b818a6', 1], 23: ['#bcf032', 1], 24: ['#bd0374', 1], 25: ['#bdd493', 1], 26: ['#c20eff', 1], 27: ['#c9c6fe', 1], 28: ['#c9ea55', 1], 29: ['#cc8e6f', 1], 30: ['#d553d4', 1]}
 
 
 .. image:: ../img/coords_sparse.png
-  :width: 2000
+  :width: 500
   :alt: Alternative text
 
 
