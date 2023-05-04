@@ -26,8 +26,8 @@ To exit the virtual environment, simply type `deactivate`. To access it at any o
 
 ## Just starting? Check out our documentation for installation and usage examples
 
-<a href="voxelmap.readthedocs.io/en/latest">
-<img src="https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/docs/img/readthedocs.png" width="500" ></a>
+<a href="https://voxelmap.readthedocs.io/en/latest">
+<img src="https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/docs/img/readthedocs.png?raw=true" width="300" ></a>
 
 
 ## Disclaimer: Use At Your Own Risk
