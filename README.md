@@ -24,10 +24,10 @@ python [your-voxelmap-script.py]
 ```
 To exit the virtual environment, simply type `deactivate`. To access it at any other time again, enter with the above `source venv...` command. 
 
-## Just starting? Remote Usage with a Colab notebook (click below)
+## Just starting? Check out our documentation for installation and usage examples
 
-<a href="https://colab.research.google.com/drive/1RMEMgZHlk_tKAzfS4QfXLJV9joDgdh8N?usp=sharing">
-<img src="https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/docs/img/colaboratory.png" width="500" ></a>
+<a href="voxelmap.readthedocs.io/en/latest">
+<img src="https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/docs/img/readthedocs.png" width="500" ></a>
 
 
 ## Disclaimer: Use At Your Own Risk
