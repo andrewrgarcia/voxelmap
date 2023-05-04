@@ -21,15 +21,25 @@ Let's make 3-D models with Python!
 
 Ever wanted to make simple 3-D models from numpy arrays? Now you can do that with voxelmap ! **Voxelmap** is a Python library for 
 making voxel and three-dimensional models from NumPy arrays. It was initially made to streamline 3-D voxel modeling by assigning each
-integer in an array to a voxel. Now, methods are being developed for mesh representations, such as ImageMesh (see: :doc:`imagemesh`), voxel-to-mesh transformation and vice-versa. 
+integer in an array to a voxel. Now, methods are being developed for mesh representations, such as **ImageMesh**, voxel-to-mesh transformation and vice-versa. 
 
 Check out the :doc:`usage` section for further information, including how to :ref:`installation` the project. For some quick examples / templates, check out the next section. 
 
-Examples
+Key Features
 ..............................
 
-.. |islandmesh| image:: ../img/argisle.png
+..
+  .. |islandmesh| image:: ../img/argisle.png
+    :width: 200
+    :alt: Alternative text
+
+.. |cmapcube| image:: ../img/cmapcube.png
   :width: 200
+  :alt: Alternative text
+
+  
+.. |randomwalk| image:: ../img/randomwalk_tagged.png
+  :width:  300
   :alt: Alternative text
 
 .. |skullmesh| image:: ../img/skull_mesh.png
@@ -40,12 +50,25 @@ Examples
   :width: 200
   :alt: Alternative text
 
-  
-+-------------------------+-----------------------+--------------------------+
-| |islandmesh|            | |skullmesh|           | |galactic|               |
-+-------------------------+-----------------------+--------------------------+
-| :doc:`examples/island`  | :doc:`examples/skull` | :doc:`examples/meshrec`  |
-+-------------------------+-----------------------+--------------------------+
+
+.. |lowpoly| image:: ../img/land_meshview.png
+  :width: 200
+  :alt: Alternative text
+
+
+.. |pillars_blender| image:: ../img/objto3d/pillars_blender.png
+  :width:  200
+  :alt: Alternative text
+
++------------------------+-----------------------+--------------------------+
+| |cmapcube|             | |randomwalk|          |  |galactic|              |
++------------------------+-----------------------+--------------------------+
+| :ref:`voxeldraw_array` |  :ref:`blockcol`      |  :doc:`examples/meshrec` | 
++------------------------+-----------------------+--------------------------+
+| |lowpoly|              | |skullmesh|           |  |pillars_blender|       |
++------------------------+-----------------------+--------------------------+
+| :ref:`lowpolyimgmesh`  | :doc:`examples/skull` | :ref:`modelobjman`       |
++------------------------+-----------------------+--------------------------+
 
 .. 
   |islandmesh| |skullmesh| |galactic|
@@ -53,7 +76,8 @@ Examples
 
 Colab Notebook
 ..............................
-We also offer an interactive tutorial through a Colab notebook, click below:
+
+While we offer an interactive tutorial via a Colab notebook, we recommend using this site as your primary guide instead. Please note that the Colab notebook is currently out-of-date and may not reflect the most recent features and functionality of Voxelmap. We are continually updating our website to ensure the latest information and resources are available to our users.
 
 .. image:: ../img/colaboratory.png
   :width: 500
@@ -78,8 +102,7 @@ Examples
 -----------------------
 
 .. toctree::
-
-   examples/island
+  
    examples/skull
    examples/meshrec
 

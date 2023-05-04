@@ -47,6 +47,8 @@ The dictionary's structure and call method are shown below:
    }
 
 
+.. _voxeldraw_array:
+
 Draw voxels from an integer array
 -------------------------------------
 
@@ -168,6 +170,7 @@ The `sparsity` variable will extend the distance from all voxels at the expense 
   :alt: Alternative text
 
 
+.. _blockcol:
 
 Colormap Block Coloring
 -------------------------------------
@@ -220,6 +223,7 @@ Note that this file generates a model that requires a substantial amount of memo
 .. image:: ../img/randomwalk.png
   :width:  900
   :alt: Alternative text
+
 
 
 Colormap Block Coloring with Integer Tagging
@@ -319,11 +323,12 @@ After this treatment, the resized and blurred image is mapped to a 3-D voxel mod
   :width: 350
   :alt: Alternative text
 
+.. _lowpolyimgmesh:
 
-ImageMesh : 3-D Mesh Mapping from Image
+Low-Poly 3-D Mesh Mapping from Image
 -----------------------------------------
 
-This method creates a low-poly mesh model from an Image using an algorithm developed by Andrew Garcia where 3-D convex hull is performed on separate "cuts" or sectors from the image (see: :doc:`imagemesh`). 
+The ImageMesh method creates a low-poly mesh model from an Image using an algorithm developed by Andrew Garcia where 3-D convex hull is performed on separate "cuts" or sectors from the image (see: :doc:`imagemesh`). 
 
 This can decrease the size of the 3-D model and the runtime to generate it significantly, making the runtime proportional to the number of sectors rather than the number of pixels. Sectors are quantified with the L_sectors kwarg, which is the length scale for the number of sectors in the grid. 
 
@@ -565,16 +570,17 @@ The above commands generated 2 MarchingMesh .obj files, ``scene_marchingmesh10.o
 
 The larger spacing between voxels in a sphere can be observed to result in a larger overall size of the sphere.
 
+.. _modelobjman:
 
-.obj Model Manipulation with Numpy
-......................................
+3-D Model Numpy Manipulation and Blender Integration 
+.........................................................
 
-What if we wanted to make a modification to the .obj file with Numpy and then save the new modified model as an .obj file for additional treatment in other software like Blender?
+What if we wanted to make a modification to the .obj file with Numpy and then save the new modified model as an .obj file for additional treatment in other software like `Blender <https://www.blender.org/>`_?
 Here we show a use case for that. Let's take the above **sphere_ptcloud()** function and make the following changes:
 
 .. code-block:: python
 
-   def sphere_new():
+   def sphere_skewer():
       
       array = vxm.objcast('sphere.obj',30) # Cast obj file as a point-cloud 3-D numpy array  
 
@@ -585,6 +591,9 @@ Here we show a use case for that. Let's take the above **sphere_ptcloud()** func
 
       vxm.Model(array).save('pillars.obj')    #save the array as an .obj file
 
+      model.objfile= f"pillars_mesh.obj"
+      model.MarchingMesh()
+      model.MeshView(wireframe=True,background_color='k',alpha=1)
       
 
 The above code block loads the ``sphere.obj`` file, and casts it as a point-cloud 3D numpy array using 
@@ -597,7 +606,7 @@ The new ``pillars.obj`` file can be viewed with voxelmap with the below command
 >>> vxm.MeshView('pillars.obj',alpha=1,wireframe=True)  # load for view with the global MeshView method
 (see below)
 
-And also with Blender using Blender's Import tool. Below are the outputs from the voxelmap (left) and the 
+And with Blender importing ``pillars_mesh.obj`` with the Import tool. Below are the outputs from the voxelmap (left) and the 
 Blender (right) approach:
 
 .. |pillars_vxm| image:: ../img/objto3d/pillars.png

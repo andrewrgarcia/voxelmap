@@ -1,5 +1,5 @@
-Skull Mesh
-=================
+Voxel Model to 3-D Mesh
+==========================
 
 .txt file source: https://raw.githubusercontent.com/andrewrgarcia/voxelmap/main/model_files/skull.txt
 

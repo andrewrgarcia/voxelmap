@@ -1,45 +1,29 @@
 __pycache__
-setup.py
 POETRY-USAGE.md
-protocol.txt
 try.py
+drafts/
+ig/
 tests/draft.py
-draft.py
 venv/
-*.egg-info/
-imgui.ini
-extra/amorph*
 imagemesh_concept/
-__old__
 _old
 
-#files created during tests
-block_a
-random-array
-myModel.json
-
-*.obj
-*.mtl
-#except
-!model_files/simple_cube.obj
-!model_files/sphere.obj
-
-#confidential model(s)
-chibi.txt
-icon_lock.py
-
-file.txt
-mars.png
+# from model_files
+#extra
+model_files/more_models
+#confidential 
+model_files/confidential
 
 #docs make latexpdf
 docs/build
 usage.py
 
+#files
+*.obj
+*.mtl
+*.mp4
+#except
+!model_files/simple_cube.obj
+!model_files/sphere.obj
 
-#extra
-model_files/more_models
-voxelize.py
-voxelwrite_imesh_tests.py
-RW3D*
-terraformed
-terraform.py
+file.txt
