@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "voxelmap"
-version = "4.2.0"
+version = "4.3.0"
 description = "A Python library for making voxel and 3D models from NumPy arrays."
 authors = ["andrewrgarcia <garcia.gtr@gmail.com>"]
 license = "MIT"
@@ -19,6 +19,11 @@ colorcet = "^3.0.1"
 pytest = "^7.3.1"
 sphinx = "^6.1.3"
 sphinx-rtd-theme = "^1.2.0"
+transformers = "^4.28.1"
+torch = "^2.0.0"
+open3d = "^0.17.0"
+scikit-learn = "^1.2.2"
+addict = "^2.4.0"
 
 [build-system]
 requires = ["poetry-core"]
