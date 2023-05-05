@@ -21,7 +21,8 @@ immersive 3D models in the widely-used .obj format.
 
 |gal| |gal_mesh| 
 
-\*Photo used with permission from the `@galacticeffect <https://www.instagram.com/galacticeffect/>`_. Check out his music `available at Spotify <https://open.spotify.com/artist/0d6aO1iQVWyxsN8UHfmHjm>`_
+\*Photo used with permission from the `@galacticeffect <https://www.instagram.com/galacticeffect/>`_. 
+Check out his music `available at Spotify <https://open.spotify.com/artist/0d6aO1iQVWyxsN8UHfmHjm>`_, also featured in `@themidnightgospel <https://www.instagram.com/themidnightgospel/>`_
 
 In the example below, the above artist portrait is loaded as a file to the Model class to create a 3-D model with the local MarchingMesh method, which generates 
 an .obj file in the process:
@@ -67,6 +68,8 @@ As part of our ongoing development, we are planning to introduce more advanced m
 
 |o3dgal2|
 
+\*Photo used with permission from the `@galacticeffect <https://www.instagram.com/galacticeffect/>`_. 
+Check out his music `available at Spotify <https://open.spotify.com/artist/0d6aO1iQVWyxsN8UHfmHjm>`_, also featured in `@themidnightgospel <https://www.instagram.com/themidnightgospel/>`_
 
 These new method(s) will provide higher quality 3-D reconstruction, and enable users to go from image to 3-D model with just one line of code. Our aim is to democratize the 3-D modeling process and make it more accessible to everyone.
 
