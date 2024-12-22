@@ -3,11 +3,11 @@
 # -- Project information
 
 project = 'voxelmap'
-copyright = '2023, Andrew Garcia'
-author = 'Andrew Garcia, Ph.D.'
+copyright = '2023, Andrew R. Garcia'
+author = 'Andrew R. Garcia, Ph.D.'
 
-release = '4.3'
-version = '4.3.0'
+release = '4.4'
+version = '4.4.0'
 
 # -- General configuration
 

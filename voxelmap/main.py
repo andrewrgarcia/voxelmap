@@ -5,22 +5,19 @@ Andrew Garcia, 2022 - beyond
 
 '''
 import numpy as np
-import random as ran
 import matplotlib.pyplot as plt
 # This import registers the 3D projection, but is otherwise unused.
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 from matplotlib import cm
 from matplotlib import colors
+import matplotlib.image as mpimg
+
 import pandas
 
 import pyvista
 
 import cv2
-import matplotlib.image as mpimg
-from mpl_toolkits.mplot3d import Axes3D
-from scipy import ndimage
 from scipy.spatial import ConvexHull
-
 from voxelmap.annex import *
 
 # from scipy.spatial import Delaunay
@@ -316,7 +313,8 @@ class Model:
         set_axes_equal(ax)
         plt.show()
 
-    def draw(self, coloring='none', geometry = 'voxels', scalars='', background_color='#cccccc', wireframe=False, wireframe_color='k', window_size=[1024, 768],len_voxel=1,show=True):
+    def draw(self, coloring='none', geometry='voxels', scalars='', background_color='#cccccc',
+            wireframe=False, wireframe_color='k', window_size=[1024, 768], len_voxel=1, show=True):
         '''Draws voxel model after building it with the provided `array` with PyVista library 
 
         Parameters
@@ -363,97 +361,118 @@ class Model:
         # Custom Coloring Code Block
         if coloring[:6] == 'custom':
             color_details= coloring.split(':')
-
-            if len(color_details) > 1:
-                if len(color_details) > 2:
-                    color_all = color_details[1].split(',')[0].strip()
-                    alpha_all  = float(color_details[2])
-                else: 
-                    color_all = color_details[1].strip()
-                    alpha_all  = 1.0
-
-                # iterate list over all non-zero integer types 
-                voxel_types = np.unique(self.array[self.array!=0]) if len(self.hashblocks)==0 else self.hashblocks.keys()      
-
-                for i in voxel_types:
-                    self.hashblocks[i] = [color_all,alpha_all] 
-                        
-            print('Voxelmap draw. Using custom colors:\nself.hashblocks =\n',self.hashblocks)
+            self.custom_coloring(color_details)
 
         # Colormap Coloring Code Block
         if coloring[:4] == 'cmap':
             color_details= coloring.split(':')
-
-            if len(color_details) > 1:
-                if len(color_details) > 2:
-                    colormap = color_details[1].split(',')[0].strip()
-                    alpha_all  = float(color_details[2])
-                else: 
-                    colormap = color_details[1].strip()
-                    alpha_all  = 1.0
-
-                # iterate list over all non-zero integer types 
-                voxel_types = np.unique(self.array[self.array!=0]) 
-
-                try:
-                    memory_blocks = False
-                    if len(self.hashblocks)!=0:
-                        #keep defined hashblocks in memory
-                        memory_blocks = self.hashblocks.copy()
-                        for j in memory_blocks.keys():
-                            voxel_types = voxel_types[voxel_types != j]
-
-                    cmap = eval('plt.cm.'+colormap)
-                    norm = plt.Normalize(vmin=voxel_types.min(), vmax=voxel_types.max())  # data normalization (0,1)
-                    colorlist = cmap(norm(voxel_types))
-                    hex_colors = [colors.rgb2hex(color) for color in colorlist]
-
-                    for i in range(len(voxel_types)):
-                        k = voxel_types[i]
-                        col = hex_colors[i]
-                        self.hashblocks[k] = [col,alpha_all] 
-
-                    if memory_blocks:
-                        #add custom hashblocks from memory here
-                        for j in memory_blocks.keys():
-                            self.hashblocks[j] = memory_blocks[j]                            
-                    
-                    print('Voxelmap draw. Using custom colormap: ',colormap)
-
-                except Exception as e: 
-                    print('ERROR: colormap {} does not exist / is not available ',colormap)
-                    print(e)
+            self.colormap_coloring(color_details)
 
         for i in range(len(centers)):
-
-            x_len,y_len,z_len = tuple(3*[len_voxel]) if type(len_voxel) == int or float else len_voxel
-
-            # Voxel Geometry
-            if geometry == 'particles':
-                voxel = pyvista.Sphere(center=centers[i],radius=len_voxel)
-                smooth = True
-            else:
-                voxel = pyvista.Cube(center=centers[i],x_length=x_len, y_length=y_len, z_length=z_len)
-                smooth= None
-
-            # Mesh creation and coloring
-            if coloring[:6] == 'custom' or coloring[:4] == 'cmap' :
-                voxel_color, voxel_alpha = self.hashblocks[voxid[i]]
-                pl.add_mesh(voxel, color=voxel_color, smooth_shading=smooth, opacity=voxel_alpha,show_edges=True if wireframe else False, edge_color=wireframe_color)
-            elif coloring == 'none':
-                pl.add_mesh(voxel,smooth_shading=smooth, show_edges=True if wireframe else False, edge_color=wireframe_color)
-            else:
-                pl.add_mesh(voxel, scalars=[i for i in range(
-                    8)] if scalars == '' else scalars,smooth_shading=smooth, show_edges=True if wireframe else False, edge_color=wireframe_color, cmap=coloring)
-
+            voxel, smooth = self.prepare_mesh(centers[i], len_voxel, geometry)
+            self.agglutinate_mesh(pl, voxel, smooth, voxid[i], wireframe, wireframe_color, scalars, coloring)
 
         if show:
             pl.isometric_view_interactive()
             pl.show(interactive=True)
-
         else:
             return pl
-        
+
+    def custom_coloring(self, color_details):
+        if len(color_details) > 1:
+            if len(color_details) > 2:
+                color_all = color_details[1].split(',')[0].strip()
+                alpha_all  = float(color_details[2])
+            else: 
+                color_all = color_details[1].strip()
+                alpha_all  = 1.0
+
+            # iterate list over all non-zero integer types 
+            voxel_types = np.unique(self.array[self.array!=0]) if len(self.hashblocks)==0 else self.hashblocks.keys()      
+
+            for i in voxel_types:
+                self.hashblocks[i] = [color_all,alpha_all] 
+                    
+        print('Voxelmap draw. Using custom colors:\nself.hashblocks =\n',self.hashblocks)
+
+    def colormap_coloring(self, color_details):
+        if len(color_details) > 1:
+            if len(color_details) > 2:
+                colormap = color_details[1].split(',')[0].strip()
+                alpha_all  = float(color_details[2])
+            else: 
+                colormap = color_details[1].strip()
+                alpha_all  = 1.0
+
+            # iterate list over all non-zero integer types 
+            voxel_types = np.unique(self.array[self.array!=0]) 
+
+            try:
+                memory_blocks = False
+                if len(self.hashblocks)!=0:
+                    #keep defined hashblocks in memory
+                    memory_blocks = self.hashblocks.copy()
+                    for j in memory_blocks.keys():
+                        voxel_types = voxel_types[voxel_types != j]
+
+                cmap = eval('plt.cm.'+colormap)
+                norm = plt.Normalize(vmin=voxel_types.min(), vmax=voxel_types.max())  # data normalization (0,1)
+                colorlist = cmap(norm(voxel_types))
+                hex_colors = [colors.rgb2hex(color) for color in colorlist]
+
+                for i in range(len(voxel_types)):
+                    k = voxel_types[i]
+                    col = hex_colors[i]
+                    self.hashblocks[k] = [col,alpha_all] 
+
+                if memory_blocks:
+                    #add custom hashblocks from memory here
+                    for j in memory_blocks.keys():
+                        self.hashblocks[j] = memory_blocks[j]                            
+                
+                print('Voxelmap draw. Using custom colormap: ',colormap)
+
+            except Exception as e: 
+                print('ERROR: colormap {} does not exist / is not available ',colormap)
+                print(e)
+
+    def prepare_mesh(self, center, len_voxel, geometry):
+        if geometry not in ['voxels', 'particles']:
+            raise ValueError(f"Unsupported geometry type: {geometry}")
+        if not isinstance(len_voxel, (int, float, tuple)):
+            raise TypeError(f"Invalid len_voxel type: {type(len_voxel)}")
+
+        x_len, y_len, z_len = (3 * [len_voxel]) if isinstance(len_voxel, (int, float)) else len_voxel
+
+        # Voxel Geometry
+        if geometry == 'particles':
+            voxel = pyvista.Sphere(center=center, radius=len_voxel)
+            smooth = True
+        else:
+
+            x_len, y_len, z_len = (
+                (len_voxel, len_voxel, len_voxel) if isinstance(len_voxel, (int, float)) else tuple(len_voxel)
+            )
+            center = tuple(map(float, center))
+            voxel = pyvista.Cube(center=center, x_length=x_len, y_length=y_len, z_length=z_len)
+            smooth = None
+            
+        print('voxel', voxel )
+        return voxel, smooth
+    
+    def agglutinate_mesh(self, pl, voxel, smooth, voxel_id, wireframe, wireframe_color, scalars, coloring):
+        # Mesh creation and coloring
+        if coloring[:6] == 'custom' or coloring[:4] == 'cmap':
+            voxel_color, voxel_alpha = self.hashblocks[voxel_id]
+            pl.add_mesh(voxel, color=voxel_color, smooth_shading=smooth, opacity=voxel_alpha,
+                        show_edges=True if wireframe else False, edge_color=wireframe_color)
+        elif coloring == 'none':
+            pl.add_mesh(voxel, smooth_shading=smooth, show_edges=True if wireframe else False,
+                        edge_color=wireframe_color)
+        else:
+            pl.add_mesh(voxel, scalars=[i for i in range(8)] if scalars == '' else scalars,
+                        smooth_shading=smooth, show_edges=True if wireframe else False, edge_color=wireframe_color,
+                        cmap=coloring)
 
     def save(self, filename='scene.json'):
         '''Save sparse array + color assignments Model data as a dictionary of keys (DOK) JSON file

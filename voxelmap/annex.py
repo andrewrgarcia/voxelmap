@@ -2,12 +2,7 @@ import json
 import numpy as np
 import pickle
 
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-
 from skimage import measure
-from skimage.draw import ellipsoid
 from scipy import ndimage 
 import pyvista
 

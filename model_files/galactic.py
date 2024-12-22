@@ -7,8 +7,9 @@ or viewed with voxelmap i.e. adding img.MeshView() after the last line
 
 import voxelmap as vxm
 
-img = vxm.Image('galactic.png')       # load image 
+img = vxm.Model(file='galactic.png')       # load image
 img.objfile = 'galactic.obj'          # set name of 3-D model file (.obj) to be made
-img.resize(0.50)                      # resize image to 25% its original size for feasible file size rendering
-img.MarchingMesh(50)                  # make 3-D model from image. 
-# img.MeshView()
+# img.MarchingMesh(10)                  # make 3-D model from image. 
+img.ImageMap(12)   
+img.MeshView()
+
